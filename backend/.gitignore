@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### mac ###
-.DS_Store
+/.DS_Store
 
 ### profiles ###
 application-local.yml

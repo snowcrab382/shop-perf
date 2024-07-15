@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    default: local
+
+    group:
+      local:
+        - common
+      deploy:
+        - common
+
+    active: local

@@ -7,6 +7,7 @@ import perf.shop.global.common.response.ApiResponse;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.product.domain.RequestDto;
 import perf.shop.product.domain.ResponseDto;
+import perf.shop.product.exception.ProductNotFoundException;
 
 @RestController
 public class ProductController {
@@ -27,5 +28,10 @@ public class ProductController {
     @GetMapping("/test3")
     public ApiResponse<Void> test3(@Valid RequestDto request) {
         return ApiResponse.ofNoContent(ResponseCode.GET);
+    }
+
+    @GetMapping("/test4")
+    public ApiResponse<Void> test4() {
+        throw new ProductNotFoundException();
     }
 }

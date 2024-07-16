@@ -27,7 +27,7 @@ public class ProductController {
 
     @GetMapping("/test3")
     public ApiResponse<Void> test3(@Valid RequestDto request) {
-        return ApiResponse.ofNoContent(ResponseCode.GET);
+        return ApiResponse.of(ResponseCode.GET);
     }
 
     @GetMapping("/test4")

@@ -1,6 +1,7 @@
 package perf.shop.global.error;
 
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ErrorResponse handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
+    }
+
+    /**
+     * Authorization 객체가 필요한 권한을 보유하지 않은 경우에 대한 예외 처리
+     *
+     * @param e 접근 권한이 없는 경우 예외 발생
+     * @return ErrorResponse
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
+        return ErrorResponse.of(ErrorCode.ACCESS_DENIED);
     }
 
     /**

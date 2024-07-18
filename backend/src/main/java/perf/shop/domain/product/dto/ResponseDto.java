@@ -1,4 +1,4 @@
-package perf.shop.product.domain;
+package perf.shop.domain.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;

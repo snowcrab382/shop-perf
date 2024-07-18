@@ -1,13 +1,13 @@
-package perf.shop.product.controller;
+package perf.shop.domain.product.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import perf.shop.domain.product.dto.RequestDto;
+import perf.shop.domain.product.dto.ResponseDto;
+import perf.shop.domain.product.exception.ProductNotFoundException;
 import perf.shop.global.common.response.ApiResponse;
 import perf.shop.global.common.response.ResponseCode;
-import perf.shop.product.domain.RequestDto;
-import perf.shop.product.domain.ResponseDto;
-import perf.shop.product.exception.ProductNotFoundException;
 
 @RestController
 public class ProductController {
@@ -34,4 +34,5 @@ public class ProductController {
     public ApiResponse<Void> test4() {
         throw new ProductNotFoundException();
     }
+
 }

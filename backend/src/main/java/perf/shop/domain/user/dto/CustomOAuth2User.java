@@ -1,4 +1,4 @@
-package perf.shop.domain.auth.dto;
+package perf.shop.domain.user.dto;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class CustomOAuth2User implements OAuth2User {
         return userInformation.getName();
     }
 
-    public String getUserName() {
-        return userInformation.getUserName();
+    public String getUsername() {
+        return userInformation.getUsername();
     }
 }

@@ -1,4 +1,4 @@
-package perf.shop.domain.auth.util;
+package perf.shop.domain.auth.jwt;
 
 import static perf.shop.domain.auth.domain.OAuth2Attributes.ROLE;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.USERNAME;

@@ -1,24 +1,29 @@
-package perf.shop.domain.auth.dto;
+package perf.shop.domain.user.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class UserInformation {
 
     private String role;
     private String email;
     private String name;
-    private String userName;
+    private String username;
 
 
-    public static UserInformation from(OAuth2Response response) {
-        return UserInformation.builder()
-                .role("ROLE_USER")
-                .email(response.getEmail())
-                .name(response.getName())
-                .userName(response.getProvider() + "_" + response.getProviderId())
-                .build();
+    @Builder
+    public UserInformation(String role, String email, String name, String username) {
+        this.role = role;
+        this.email = email;
+        this.name = name;
+        this.username = username;
     }
+
+    @Builder
+    public UserInformation(String role, String username) {
+        this.role = role;
+        this.username = username;
+    }
+
 }

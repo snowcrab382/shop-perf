@@ -5,13 +5,19 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum OAuth2Enum {
+public enum OAuth2Attributes {
 
-    GOOGLE("google", "sub", "email", "name"),
-    NAVER("naver", "id", "email", "name");
+    PROVIDER_GO("google"),
+    PROVIDER_NA("naver"),
+    PROVIDER_ID_GO("sub"),
+    PROVIDER_ID_NA("id"),
+    RESPONSE("response"),
+    EMAIL("email"),
+    NAME("name"),
+    USERNAME("username"),
+    ROLE("role"),
+    AUTHORIZATION("Authorization");
 
-    private final String provider;
-    private final String providerId;
-    private final String email;
-    private final String name;
+    private final String attribute;
+
 }

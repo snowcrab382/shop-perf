@@ -1,4 +1,4 @@
-package perf.shop.auth.dto;
+package perf.shop.domain.auth.dto;
 
 public interface OAuth2Response {
 

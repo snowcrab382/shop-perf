@@ -5,7 +5,9 @@ spring:
     group:
       local:
         - common
+        - auth
       deploy:
         - common
+        - auth
 
     active: local

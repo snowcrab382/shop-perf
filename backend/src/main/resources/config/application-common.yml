@@ -3,5 +3,9 @@ spring:
     activate:
       on-profile: common
 
+  jasypt:
+    encryptor:
+      password: ${JASYPT_SECRET_KEY}
+
   flyway:
     enabled: true

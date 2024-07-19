@@ -1,5 +1,6 @@
 package perf.shop.domain.auth.jwt;
 
+import static org.springframework.util.PatternMatchUtils.simpleMatch;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
 
 import jakarta.servlet.FilterChain;
@@ -19,11 +20,24 @@ import perf.shop.domain.user.dto.UserInformation;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    private static final String[] whitelist = {
+            "/",
+            "/actuator/**",
+            "/login"
+    };
+
     private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        String requestUri = request.getRequestURI();
+
+        if (isInWhiteList(requestUri)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         //cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
         String authorization = null;
@@ -80,5 +94,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
 
+    }
+
+    private boolean isInWhiteList(String requestUri) {
+        return simpleMatch(whitelist, requestUri);
     }
 }

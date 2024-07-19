@@ -41,3 +41,7 @@ out/
 
 ### profiles ###
 application-local.yml
+
+### Docker volumes ###
+grafana-data
+mysql-data

@@ -48,6 +48,10 @@ dependencies {
 
     //jasypt
     implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5"
+
+    //monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {

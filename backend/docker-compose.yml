@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    image: snowcrab382/spring-app
+    restart: always
+    container_name: spring-app
+    environment:
+      JASYPT_SECRET_KEY: ${JASYPT_SECRET_KEY}
+      SPRING_PROFILES_ACTIVE: deploy
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/shop?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1024
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - shop-network
+
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - shop-network
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1024
+      MYSQL_DATABASE: shop
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - shop-network
+
+  grafana:
+    image: grafana/grafana
+    restart: always
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - shop-network
+
+volumes:
+  mysql-data:
+  grafana-data:
+
+networks:
+  shop-network:
+    driver: bridge

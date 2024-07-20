@@ -8,9 +8,9 @@ services:
     environment:
       JASYPT_SECRET_KEY: ${JASYPT_SECRET_KEY}
       SPRING_PROFILES_ACTIVE: deploy
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/shop?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 1024
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/shop?useSSL=false&&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "8080:8080"
     depends_on:
@@ -36,12 +36,29 @@ services:
     restart: always
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 1024
+      TZ: ${MYSQL_TIMEZONE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: shop
     ports:
       - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
+    networks:
+      - shop-network
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter
+    restart: unless-stopped
+    container_name: mysqld-exporter
+    environment:
+      DATA_SOURCE_NAME: root:${MYSQL_ROOT_PASSWORD}@(mysql:3306)/shop
+    command:
+      - "--mysqld.username=${MYSQL_USERNAME}:${MYSQL_PASSWORD}"
+      - "--mysqld.address=mysql:3306"
+    ports:
+      - "9104:9104"
+    depends_on:
+      - mysql
     networks:
       - shop-network
 

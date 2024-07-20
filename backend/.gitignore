@@ -45,3 +45,6 @@ application-local.yml
 ### Docker volumes ###
 grafana-data
 mysql-data
+
+### deployment ###
+.env

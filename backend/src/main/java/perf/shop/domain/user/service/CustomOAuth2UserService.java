@@ -47,6 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .email(oAuth2Response.getEmail())
                 .name(oAuth2Response.getName())
                 .username(oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId())
+                .provider(oAuth2Response.getProvider())
                 .build();
 
         updateOrSaveUser(userInformation);

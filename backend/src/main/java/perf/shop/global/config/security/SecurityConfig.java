@@ -43,7 +43,8 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler))
                 //경로별 인가 작업
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
                         .anyRequest().authenticated())
                 //세션 설정 : STATELESS
                 .sessionManagement(session -> session

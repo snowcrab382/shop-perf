@@ -22,13 +22,15 @@ public class User {
     private String name;
     private String email;
     private String role;
+    private String provider;
 
     @Builder
-    public User(String username, String name, String email, String role) {
+    public User(String username, String name, String email, String role, String provider) {
         this.username = username;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.provider = provider;
     }
 
     public static User create(UserInformation userInformation) {
@@ -37,6 +39,7 @@ public class User {
                 .name(userInformation.getName())
                 .email(userInformation.getEmail())
                 .role(userInformation.getRole())
+                .provider(userInformation.getProvider())
                 .build();
     }
 
@@ -44,6 +47,7 @@ public class User {
         this.name = userInformation.getName();
         this.email = userInformation.getEmail();
         this.role = userInformation.getRole();
+        this.provider = userInformation.getProvider();
     }
 
 

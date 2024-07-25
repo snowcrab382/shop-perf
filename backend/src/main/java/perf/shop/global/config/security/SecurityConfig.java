@@ -12,8 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import perf.shop.domain.auth.filter.JwtFilter;
 import perf.shop.domain.auth.handler.OAuth2LoginSuccessHandler;
+import perf.shop.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import perf.shop.domain.user.service.CustomOAuth2UserService;
-import perf.shop.global.util.JwtUtil;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,8 +21,8 @@ import perf.shop.global.util.JwtUtil;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     private final OAuth2LoginSuccessHandler customSuccessHandler;
-    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,13 +40,15 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
-//                        .authorizationEndpoint(authorization -> authorization
-//                                .authorizationRequestRepository(new CustomAuthorizationRequestRepository())
+                        .authorizationEndpoint(authorization -> authorization
+                                .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
                         .successHandler(customSuccessHandler))
                 //경로별 인가 작업
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/"),
+                                new AntPathRequestMatcher("/actuator/**"),
+                                new AntPathRequestMatcher("/login")).permitAll()
                         .anyRequest().authenticated())
                 //세션 설정 : STATELESS
                 .sessionManagement(session -> session

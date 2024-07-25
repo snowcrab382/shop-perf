@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 //csrf disable
                 .csrf(AbstractHttpConfigurer::disable)
-                //From 로그인 방식 disable
+                //Form 로그인 방식 disable
                 .formLogin(AbstractHttpConfigurer::disable)
                 //HTTP Basic 인증 방식 disable
                 .httpBasic(AbstractHttpConfigurer::disable)

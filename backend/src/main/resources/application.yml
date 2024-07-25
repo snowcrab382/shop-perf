@@ -9,7 +9,7 @@ spring:
         - monitor
       deploy:
         - common
-        - auth
+        - auth-deploy
         - monitor
 
     active: local

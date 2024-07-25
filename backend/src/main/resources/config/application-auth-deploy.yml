@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: auth
+      on-profile: auth-deploy
   security:
     oauth2:
       client:
@@ -11,7 +11,7 @@ spring:
             client-id: ENC(iG0mXjPs0E6pumo+dfKb2D5tZPgCgKyG8LUmDO4PhXOkmMR4xS+C9pAUQERX3dPpQKi/UPWdKfWHaBPnIVa9IVUPRINlF/IgH5mRHaI1Y3CeG04YPGwJ2Q==)
             client-secret: ENC(fiztXNpl+F26pvbdJDxvwDPQRgHcfC7EL63RGNFpJ8TMM6A/FZOdI3S6UvvwmX+J)
             #            --- 민감 정보 ---
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            redirect-uri: "http://${LOAD_BANANCER_DNS}/login/oauth2/code/google"
             authorization-grant-type: authorization_code
             scope:
               - email
@@ -22,7 +22,7 @@ spring:
             client-id: ENC(MJ7LjA6H6x8ecEqEw+JFtA0qpsgjzXrTuChWhFVhX2A=)
             client-secret: ENC(8WuOEJELMkEYbw5Lbm5W4/8jCTPcTpTI)
             #            --- 민감 정보 ---
-            redirect-uri: "http://localhost:8080/login/oauth2/code/naver"
+            redirect-uri: "http://${LOAD_BALANCER_DNS}/login/oauth2/code/naver"
             authorization-grant-type: authorization_code
             scope:
               - name
@@ -37,4 +37,4 @@ spring:
   jwt:
     #    --- 민감 정보 ---
     secret: ENC(62BgFgxQeDGfkN8khg1JRKKrMH9+BSiLcSB++/4FLvIpqKsWPnzCSzDlFRsAEJtOOgRRHhMyBK76rwtejoEVziC+Br9wcRVj0FysvMCSJSSoKj0LRDh5OIGlO2UvG53KmmtCOYQ8oho=)
-    redirect-url: "http://localhost:8080"
+    redirect-url: "http://${LOAD_BALANCER_DNS}"

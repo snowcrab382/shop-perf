@@ -109,8 +109,8 @@ jobs:
       run: |
         aws ecs describe-task-definition \
         --task-definition $ECS_TASK_DEFINITION \
-        --query taskDefinition > task-definition.json
-        echo "task-def-file=task-definition.json" >> $GITHUB_OUTPUT
+        --query taskDefinition > $ECS_TASK_DEFINITION.json
+        echo "task-def-file=$ECS_TASK_DEFINITION.json" >> $GITHUB_OUTPUT
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def

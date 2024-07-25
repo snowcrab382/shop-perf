@@ -38,9 +38,3 @@ spring:
     #    --- 민감 정보 ---
     secret: ENC(62BgFgxQeDGfkN8khg1JRKKrMH9+BSiLcSB++/4FLvIpqKsWPnzCSzDlFRsAEJtOOgRRHhMyBK76rwtejoEVziC+Br9wcRVj0FysvMCSJSSoKj0LRDh5OIGlO2UvG53KmmtCOYQ8oho=)
     redirect-url: "http://${LOAD_BALANCER_DNS}"
-
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.security.web: DEBUG
-    org.springframework.security.config: DEBUG

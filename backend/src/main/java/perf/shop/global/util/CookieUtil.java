@@ -25,6 +25,10 @@ public class CookieUtil {
         return Optional.empty();
     }
 
+    public static String getCookieValue(HttpServletRequest request, String name) {
+        return getCookie(request, name).map(Cookie::getValue).orElse(null);
+    }
+
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
@@ -64,5 +68,9 @@ public class CookieUtil {
         } catch (IOException | ClassNotFoundException e) {
             throw new IllegalArgumentException("Failed to deserialize cookie", e);
         }
+    }
+
+    public static boolean hasCookie(HttpServletRequest request, String name) {
+        return getCookie(request, name).isPresent();
     }
 }

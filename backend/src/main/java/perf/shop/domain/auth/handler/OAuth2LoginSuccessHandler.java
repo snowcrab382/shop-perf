@@ -3,7 +3,6 @@ package perf.shop.domain.auth.handler;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import perf.shop.domain.user.dto.CustomOAuth2User;
+import perf.shop.global.util.CookieUtil;
 import perf.shop.global.util.JwtUtil;
 
 @Component
@@ -41,18 +41,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String token = JwtUtil.createJwt(username, role, 86400000L);
 
-        response.addCookie(createCookie(AUTHORIZATION.getAttribute(), token));
+        CookieUtil.addCookie(response, AUTHORIZATION.getAttribute(), token, 86400);
         response.sendRedirect(redirectUrl);
     }
 
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(86400);
-        //cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
-    }
 }

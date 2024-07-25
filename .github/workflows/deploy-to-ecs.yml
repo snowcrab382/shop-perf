@@ -107,13 +107,17 @@ jobs:
     - name: Retrieve most recent ECS task definition JSON file
       id: retrieve-task-def
       run: |
-        aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition \
+        --task-definition $ECS_TASK_DEFINITION \
+        --query taskDefinition > task-definition.json
+        values='cat task-definition.json'
+        echo "task-definition=$values" >> $GITHUB_OUTPUT
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: task-definition.json
+        task-definition: ${{ steps.retrieve-task-def.outputs.task-definition }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
 

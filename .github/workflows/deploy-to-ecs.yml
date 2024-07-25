@@ -111,6 +111,12 @@ jobs:
         --task-definition $ECS_TASK_DEFINITION \
         --query taskDefinition > $ECS_TASK_DEFINITION.json
         echo "task-def-file=$ECS_TASK_DEFINITION.json" >> $GITHUB_OUTPUT
+        ls
+
+    - name: 디렉토리 체크
+      id: check-dir
+      run: |
+        ls
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def

@@ -4,6 +4,7 @@ import static perf.shop.domain.auth.domain.OAuth2Attributes.PROVIDER_GO;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.PROVIDER_NA;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -18,6 +19,7 @@ import perf.shop.domain.user.domain.User;
 import perf.shop.domain.user.dto.CustomOAuth2User;
 import perf.shop.domain.user.dto.UserInformation;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -30,7 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        System.out.println(oAuth2User);
+        log.info("OAuth2User: {}", oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;

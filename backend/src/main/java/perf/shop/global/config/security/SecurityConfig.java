@@ -10,10 +10,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import perf.shop.domain.auth.filter.JwtFilter;
 import perf.shop.domain.auth.handler.OAuth2LoginSuccessHandler;
-import perf.shop.domain.auth.jwt.JwtFilter;
-import perf.shop.domain.auth.jwt.JwtUtil;
 import perf.shop.domain.user.service.CustomOAuth2UserService;
+import perf.shop.global.util.JwtUtil;
 
 @Configuration
 @RequiredArgsConstructor
@@ -35,11 +35,13 @@ public class SecurityConfig {
                 //HTTP Basic 인증 방식 disable
                 .httpBasic(AbstractHttpConfigurer::disable)
                 //jwt 검증 필터
-                .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterAfter(new JwtFilter(), OAuth2LoginAuthenticationFilter.class)
                 //oauth2
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
+//                        .authorizationEndpoint(authorization -> authorization
+//                                .authorizationRequestRepository(new CustomAuthorizationRequestRepository())
                         .successHandler(customSuccessHandler))
                 //경로별 인가 작업
                 .authorizeHttpRequests(auth -> auth

@@ -15,14 +15,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import perf.shop.domain.auth.jwt.JwtUtil;
 import perf.shop.domain.user.dto.CustomOAuth2User;
+import perf.shop.global.util.JwtUtil;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
-    private final JwtUtil jwtUtil;
 
     @Value("${spring.jwt.redirect-url}")
     private String redirectUrl;
@@ -41,7 +39,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, 86400000L);
+        String token = JwtUtil.createJwt(username, role, 86400000L);
 
         response.addCookie(createCookie(AUTHORIZATION.getAttribute(), token));
         response.sendRedirect(redirectUrl);

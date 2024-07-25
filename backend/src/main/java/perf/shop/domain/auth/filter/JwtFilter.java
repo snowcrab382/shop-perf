@@ -1,4 +1,4 @@
-package perf.shop.domain.auth.jwt;
+package perf.shop.domain.auth.filter;
 
 import static org.springframework.util.PatternMatchUtils.simpleMatch;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
@@ -10,13 +10,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import perf.shop.domain.user.dto.CustomOAuth2User;
 import perf.shop.domain.user.dto.UserInformation;
+import perf.shop.global.util.JwtUtil;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -25,8 +28,6 @@ public class JwtFilter extends OncePerRequestFilter {
             "/actuator/**",
             "/login"
     };
-
-    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -44,14 +45,14 @@ public class JwtFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
-            System.out.println("cookie null");
+            log.info(request.getRequestURL() + " : has no cookies");
             filterChain.doFilter(request, response);
             return;
         }
 
         for (Cookie cookie : cookies) {
 
-            System.out.println(cookie.getName());
+            log.info("cookie name : " + cookie.getName());
             if (cookie.getName().equals(AUTHORIZATION.getAttribute())) {
                 authorization = cookie.getValue();
             }
@@ -60,7 +61,7 @@ public class JwtFilter extends OncePerRequestFilter {
         //Authorization 헤더 검증
         if (authorization == null) {
 
-            System.out.println("token null");
+            log.info(request.getRequestURL() + " : has no token");
             filterChain.doFilter(request, response);
 
             //조건이 해당되면 메소드 종료 (필수)
@@ -71,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization;
 
         //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)) {
+        if (JwtUtil.isExpired(token)) {
 
             System.out.println("token expired");
             filterChain.doFilter(request, response);
@@ -81,8 +82,8 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         //토큰에서 username과 role 획득
-        String username = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
+        String username = JwtUtil.getUsername(token);
+        String role = JwtUtil.getRole(token);
 
         //userDTO를 생성하여 값 set
         UserInformation userInformation = UserInformation.builder()

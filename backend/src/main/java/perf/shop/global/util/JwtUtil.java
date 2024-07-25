@@ -1,4 +1,4 @@
-package perf.shop.domain.auth.jwt;
+package perf.shop.global.util;
 
 import static perf.shop.domain.auth.domain.OAuth2Attributes.ROLE;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.USERNAME;
@@ -14,29 +14,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-    private SecretKey secretKey;
+    private static SecretKey secretKey;
 
     public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
-        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
+        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String getUsername(String token) {
+    public static String getUsername(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
                 .get(USERNAME.getAttribute(), String.class);
     }
 
-    public String getRole(String token) {
+    public static String getRole(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
                 .get(ROLE.getAttribute(), String.class);
     }
 
-    public Boolean isExpired(String token) {
+    public static Boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
                 .getExpiration().before(new Date());
     }
 
-    public String createJwt(String username, String role, Long expirationTime) {
+    public static String createJwt(String username, String role, Long expirationTime) {
         return Jwts.builder()
                 .claim(USERNAME.getAttribute(), username)
                 .claim(ROLE.getAttribute(), role)

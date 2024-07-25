@@ -11,7 +11,7 @@ spring:
             client-id: ENC(iG0mXjPs0E6pumo+dfKb2D5tZPgCgKyG8LUmDO4PhXOkmMR4xS+C9pAUQERX3dPpQKi/UPWdKfWHaBPnIVa9IVUPRINlF/IgH5mRHaI1Y3CeG04YPGwJ2Q==)
             client-secret: ENC(fiztXNpl+F26pvbdJDxvwDPQRgHcfC7EL63RGNFpJ8TMM6A/FZOdI3S6UvvwmX+J)
             #            --- 민감 정보 ---
-            redirect-uri: "http://${LOAD_BANANCER_DNS}/login/oauth2/code/google"
+            redirect-uri: "http://${LOAD_BALANCER_DNS}/login/oauth2/code/google"
             authorization-grant-type: authorization_code
             scope:
               - email
@@ -38,3 +38,9 @@ spring:
     #    --- 민감 정보 ---
     secret: ENC(62BgFgxQeDGfkN8khg1JRKKrMH9+BSiLcSB++/4FLvIpqKsWPnzCSzDlFRsAEJtOOgRRHhMyBK76rwtejoEVziC+Br9wcRVj0FysvMCSJSSoKj0LRDh5OIGlO2UvG53KmmtCOYQ8oho=)
     redirect-url: "http://${LOAD_BALANCER_DNS}"
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.security.config: DEBUG

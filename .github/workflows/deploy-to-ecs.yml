@@ -29,8 +29,8 @@ name: Deploy to Amazon ECS
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'backend/**'
+    # paths:
+    #   - 'backend/**'
 
 env:
   JASYPT_SECRET_KEY: ${{ secrets.JASYPT_SECRET_KEY }}
@@ -74,11 +74,11 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+    # - name: Grant execute permission for gradlew
+    #   run: chmod +x ./gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    # - name: Build with Gradle
+    #   run: ./gradlew build
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -91,18 +91,18 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+    # - name: Build, tag, and push image to Amazon ECR
+    #   id: build-image
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     IMAGE_TAG: ${{ github.sha }}
+    #   run: |
+    #     # Build a docker container and
+    #     # push it to ECR so that it can
+    #     # be deployed to ECS.
+    #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+    #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    #     echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
         
     - name: Retrieve most recent ECS task definition JSON file
       id: retrieve-task-def
@@ -116,13 +116,13 @@ jobs:
     - name: 디렉토리 체크
       id: check-dir
       run: |
-        ls
+        ls -R
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ steps.retrieve-task-def.outputs.task-def-file }}
+        task-definition: ./backend/${{ steps.retrieve-task-def.outputs.task-def-file }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
 

@@ -29,7 +29,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         //쿠키가 비어있거나, Authorization 쿠키가 존재하지 않는 경우 반환
         if (!CookieUtil.hasCookie(request, AUTHORIZATION.getAttribute())) {
-            log.info(request.getRequestURL() + " : has no authorization cookie");
             filterChain.doFilter(request, response);
             return;
         }

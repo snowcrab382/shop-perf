@@ -1,2 +1,2 @@
 - 서비스 아키텍쳐
-- ![img.png](img.png)
+- ![img.png](images/service-architecture.png)

@@ -1,0 +1,23 @@
+branchName: short
+ autoCloseIssue: true
+ branches:
+   - label: docs
+     prefix: docs/
+   - label: hotfix
+     prefix: hotfix/
+   - label: refactor
+     prefix: refactor/
+   - label: chore
+     prefix: chore/
+   - label: release
+     prefix: release/
+   - label: test
+     prefix: test/
+   - label: fix
+     prefix: fix/
+   - label: feature
+     prefix: feat/
+ commentMessage: 'Branch ${branchName} created for issue: ${issue.title}'
+ copyIssueLabelsToPR: true
+ copyIssueAssigneeToPR: true
+ 

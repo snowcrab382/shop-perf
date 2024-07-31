@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: common
-
   jasypt:
     encryptor:
       password: ${JASYPT_SECRET_KEY}

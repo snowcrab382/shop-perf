@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: deploy
-
   datasource:
     url: jdbc:mysql://${SPRING_DATASOURCE_URL}:3306/shop?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: ${SPRING_DATASOURCE_USERNAME}

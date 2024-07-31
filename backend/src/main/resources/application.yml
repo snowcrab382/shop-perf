@@ -9,6 +9,4 @@ spring:
       deploy:
         - common
         - auth-deploy
-
-    active: local
     

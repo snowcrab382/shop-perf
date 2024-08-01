@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS `product`;
-DROP TABLE IF EXISTS `order`;
+DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `order_product`;
 DROP TABLE IF EXISTS `category`;
 DROP TABLE IF EXISTS `cart`;
@@ -20,11 +20,10 @@ CREATE TABLE `product`
     primary key (`id`)
 );
 
-CREATE TABLE `order`
+CREATE TABLE `orders`
 (
     `id`           bigint       NOT NULL AUTO_INCREMENT,
     `user_id`      bigint       NOT NULL,
-    `datetime`     date         NOT NULL,
     `total_amount` bigint       NOT NULL,
     `status`       varchar(255) NOT NULL,
     `created_at`   datetime     NULL,

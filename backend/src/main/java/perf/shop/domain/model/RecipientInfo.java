@@ -23,5 +23,5 @@ public class RecipientInfo {
     private String detailAddress;
 
     @Column(length = 50, nullable = false)
-    private String zipCode;
+    private String zipcode;
 }

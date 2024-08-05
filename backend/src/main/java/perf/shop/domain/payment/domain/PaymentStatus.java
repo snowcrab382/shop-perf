@@ -5,4 +5,5 @@ enum PaymentStatus {
     COMPLETED,
     FAILED,
     CANCELED;
+    
 }

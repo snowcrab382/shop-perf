@@ -1,49 +1,43 @@
-package perf.shop.domain.product.domain;
+package perf.shop.domain.payment.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.user.domain.User;
+import perf.shop.domain.order.domain.Order;
 import perf.shop.global.common.domain.BaseEntity;
 
 @Entity
 @Getter
-@Table(name = "product")
+@Table(name = "payment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product extends BaseEntity {
+public class Payment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private User user;
-
-    @Column(length = 30, nullable = false)
-    private String name;
-
-    private String image;
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Column(nullable = false)
-    private String description;
+    private Long amount;
 
     @Column(nullable = false)
-    private Long price;
+    @Enumerated(EnumType.STRING)
+    private PaymentType type;
 
     @Column(nullable = false)
-    private Long stock;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 }

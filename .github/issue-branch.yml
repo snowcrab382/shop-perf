@@ -17,6 +17,8 @@ branches:
     prefix: fix/
   - label: feature
     prefix: feat/
+  - label: infra
+    prefix: infra/
 commentMessage: 'Branch ${branchName} created for issue: ${issue.title}'
 copyIssueLabelsToPR: true
 copyIssueAssigneeToPR: true

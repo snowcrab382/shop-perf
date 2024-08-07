@@ -31,11 +31,6 @@ public class JwtUtil {
                 .get(ROLE.getAttribute(), String.class);
     }
 
-    public static Boolean isExpired(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
-                .getExpiration().before(new Date());
-    }
-
     public static String createJwt(String username, String role, Long expirationTime) {
         return Jwts.builder()
                 .claim(USERNAME.getAttribute(), username)
@@ -44,5 +39,9 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public static void isValid(String token) {
+        Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
     }
 }

@@ -13,6 +13,10 @@ public enum ErrorCode {
     TEST_ERROR(404, "테스트 에러입니다."),
     METHOD_NOT_ALLOWED(405, "허용되지 않은 메소드입니다."),
     ACCESS_DENIED(401, "접근 권한이 없습니다."),
+    JWT_NOT_FOUND(403, "토큰이 존재하지 않습니다."),
+    JWT_MALFORMED(403, "토큰이 변조되었습니다."),
+    JWT_EXPIRED(403, "토큰이 만료되었습니다."),
+    JWT_SIGNATURE_INVALID(403, "토큰의 시그니쳐가 유효하지 않습니다."),
 
     /**
      * Business Error

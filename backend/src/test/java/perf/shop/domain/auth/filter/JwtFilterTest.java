@@ -47,7 +47,7 @@ class JwtFilterTest {
 
     @Test
     @DisplayName("화이트리스트에 포함된 uri인 경우 필터 로직을 수행하지 않고 바로 통과")
-    void PassIfRequestUriIsInWhitelist() throws Exception {
+    void doFilterInternal_Pass_IfRequestUriIsInWhitelist() throws Exception {
         //given
         when(request.getRequestURI()).thenReturn("/login");
 
@@ -60,7 +60,7 @@ class JwtFilterTest {
 
     @Test
     @DisplayName("쿠키가 비어있거나, Authorization이 존재하지 않으면 예외 발생")
-    void FailToPassIfCookieArrayOrAuthorizationCookieIsNull() throws Exception {
+    void doFilterInternal_FailToPass_IfCookieArrayOrAuthorizationCookieIsNull() throws Exception {
         //given
         when(request.getRequestURI()).thenReturn("/need-auth");
         when(CookieUtil.getCookie(request, AUTHORIZATION.getAttribute())).thenReturn(null);

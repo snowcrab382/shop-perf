@@ -31,7 +31,7 @@ class JwtUtilTest {
         @DisplayName("jwt가 변조되었다면 예외 발생")
         void FailToValidJwtIfMalformed() {
             //given
-            String jwt = JwtUtil.createJwt("user", "ROLE_USER", 1000L);
+            String jwt = JwtUtil.createJwt(1L, "user", "ROLE_USER", 1000L);
             String malformedJwt = "a" + jwt;
 
             //when
@@ -45,7 +45,7 @@ class JwtUtilTest {
         @DisplayName("jwt의 시그니쳐가 변경되었다면 예외 발생")
         void FailToValidJwtIfSignatureIsDifferent() {
             //given
-            String jwt = JwtUtil.createJwt("user", "ROLE_USER", 1000L);
+            String jwt = JwtUtil.createJwt(1L, "user", "ROLE_USER", 1000L);
             String differentSignatureJwt = jwt + "a";
 
             //when
@@ -59,7 +59,7 @@ class JwtUtilTest {
         @DisplayName("jwt가 만료되었다면 예외 발생")
         void FailToValidJwtIfExpired() {
             //given
-            String expiredJwt = JwtUtil.createJwt("user", "ROLE_USER", 0L);
+            String expiredJwt = JwtUtil.createJwt(1L, "user", "ROLE_USER", 0L);
 
             //when
 

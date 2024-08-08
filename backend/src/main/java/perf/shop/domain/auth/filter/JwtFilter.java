@@ -52,15 +52,13 @@ public class JwtFilter extends OncePerRequestFilter {
             //토큰 만료기한 검증
             JwtUtil.isValid(token);
 
-            //토큰에서 username과 role 획득
-            String username = JwtUtil.getUsername(token);
+            //토큰에서 role, username, userId 획득
             String role = JwtUtil.getRole(token);
+            String username = JwtUtil.getUsername(token);
+            Long userId = JwtUtil.getUserId(token);
 
             //회원 정보 객체 생성
-            UserInformation userInformation = UserInformation.builder()
-                    .username(username)
-                    .role(role)
-                    .build();
+            UserInformation userInformation = UserInformation.of(role, username, userId);
 
             //UserDetails에 회원 정보 객체 담기
             CustomOAuth2User customOAuth2User = new CustomOAuth2User(userInformation);

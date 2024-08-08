@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
+    @Column(length = 50, updatable = false)
     private String username;
 
     @Column(length = 20)
@@ -35,11 +35,11 @@ public class User extends BaseEntity {
     @Column(length = 10, nullable = false)
     private String role;
 
-    @Column(length = 10)
+    @Column(length = 10, updatable = false)
     private String provider;
 
     @Builder
-    public User(String username, String name, String email, String role, String provider) {
+    private User(String username, String name, String email, String role, String provider) {
         this.username = username;
         this.name = name;
         this.email = email;
@@ -47,7 +47,7 @@ public class User extends BaseEntity {
         this.provider = provider;
     }
 
-    public static User create(UserInformation userInformation) {
+    public static User from(UserInformation userInformation) {
         return User.builder()
                 .username(userInformation.getUsername())
                 .name(userInformation.getName())
@@ -60,8 +60,6 @@ public class User extends BaseEntity {
     public void update(UserInformation userInformation) {
         this.name = userInformation.getName();
         this.email = userInformation.getEmail();
-        this.role = userInformation.getRole();
-        this.provider = userInformation.getProvider();
     }
 
 

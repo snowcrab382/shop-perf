@@ -32,6 +32,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         //OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
+        Long userId = customUserDetails.getUserId();
         String username = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -39,7 +40,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = JwtUtil.createJwt(username, role, 86400000L);
+        String token = JwtUtil.createJwt(userId, username, role, 86400000L);
 
         CookieUtil.addCookie(response, AUTHORIZATION.getAttribute(), token, 86400);
         response.sendRedirect(redirectUrl);

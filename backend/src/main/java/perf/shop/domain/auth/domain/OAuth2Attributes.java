@@ -14,6 +14,7 @@ public enum OAuth2Attributes {
     RESPONSE("response"),
     EMAIL("email"),
     NAME("name"),
+    ID("id"),
     USERNAME("username"),
     ROLE("role"),
     AUTHORIZATION("Authorization");

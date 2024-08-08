@@ -1,5 +1,6 @@
 package perf.shop.global.util;
 
+import static perf.shop.domain.auth.domain.OAuth2Attributes.ID;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.ROLE;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.USERNAME;
 
@@ -21,6 +22,11 @@ public class JwtUtil {
                 Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
+    public static Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+                .get(ID.getAttribute(), Long.class);
+    }
+
     public static String getUsername(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
                 .get(USERNAME.getAttribute(), String.class);
@@ -31,8 +37,9 @@ public class JwtUtil {
                 .get(ROLE.getAttribute(), String.class);
     }
 
-    public static String createJwt(String username, String role, Long expirationTime) {
+    public static String createJwt(Long userId, String username, String role, Long expirationTime) {
         return Jwts.builder()
+                .claim(ID.getAttribute(), userId)
                 .claim(USERNAME.getAttribute(), username)
                 .claim(ROLE.getAttribute(), role)
                 .issuedAt(new Date(System.currentTimeMillis()))

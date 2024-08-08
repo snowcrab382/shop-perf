@@ -44,24 +44,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
         }
 
-        UserInformation userInformation = UserInformation.builder()
-                .role("ROLE_USER")
-                .email(oAuth2Response.getEmail())
-                .name(oAuth2Response.getName())
-                .username(oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId())
-                .provider(oAuth2Response.getProvider())
-                .build();
-
-        updateOrSaveUser(userInformation);
-
-        return new CustomOAuth2User(userInformation);
-    }
-
-    private void updateOrSaveUser(UserInformation userInformation) {
+        UserInformation userInformation = UserInformation.from(oAuth2Response);
         userRepository.findByUsername(userInformation.getUsername())
                 .ifPresentOrElse(
-                        u -> u.update(userInformation),
-                        () -> userRepository.save(User.create(userInformation)));
+                        existingUser -> existingUser.update(userInformation),
+                        () -> {
+                            User savedUser = userRepository.save(User.from(userInformation));
+                            userInformation.setUserId(savedUser.getId());
+                        }
+                );
+        return new CustomOAuth2User(userInformation);
     }
 
 }

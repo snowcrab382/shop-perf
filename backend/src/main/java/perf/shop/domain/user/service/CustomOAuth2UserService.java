@@ -45,14 +45,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         UserInformation userInformation = UserInformation.from(oAuth2Response);
-        userRepository.findByUsername(userInformation.getUsername())
-                .ifPresentOrElse(
-                        existingUser -> existingUser.update(userInformation),
-                        () -> {
-                            User savedUser = userRepository.save(User.from(userInformation));
-                            userInformation.setUserId(savedUser.getId());
-                        }
-                );
+        User user = userRepository.findByUsername(userInformation.getUsername())
+                .orElseGet(() -> userRepository.save(User.from(userInformation)));
+        userInformation.setUserId(user.getId());
+
         return new CustomOAuth2User(userInformation);
     }
 

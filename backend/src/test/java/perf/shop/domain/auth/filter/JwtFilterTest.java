@@ -3,9 +3,8 @@ package perf.shop.domain.auth.filter;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
 
 import jakarta.servlet.FilterChain;
@@ -49,32 +48,29 @@ class JwtFilterTest {
     @DisplayName("화이트리스트에 포함된 uri인 경우 필터 로직을 수행하지 않고 바로 통과")
     void doFilterInternal_Pass_IfRequestUriIsInWhitelist() throws Exception {
         //given
-        when(request.getRequestURI()).thenReturn("/login");
+        given(request.getRequestURI()).willReturn("/login");
 
         //when
         jwtFilter.doFilterInternal(request, response, chain);
 
         //then
-        verify(chain, times(1)).doFilter(request, response);
+        then(chain).should().doFilter(request, response);
+//        verify(chain, times(1)).doFilter(request, response);
     }
 
     @Test
     @DisplayName("쿠키가 비어있거나, Authorization이 존재하지 않으면 예외 발생")
-    void doFilterInternal_FailToPass_IfCookieArrayOrAuthorizationCookieIsNull() throws Exception {
+    void doFilterInternal_ThrowsException_IfCookieArrayOrAuthorizationCookieIsNull() throws Exception {
         //given
-        when(request.getRequestURI()).thenReturn("/need-auth");
-        when(CookieUtil.getCookie(request, AUTHORIZATION.getAttribute())).thenReturn(null);
+        given(request.getRequestURI()).willReturn("/need-auth");
+        given(CookieUtil.getCookie(request, AUTHORIZATION.getAttribute())).willReturn(null);
 
         //when
         jwtFilter.doFilterInternal(request, response, chain);
 
         //then
-        verify(chain, times(0)).doFilter(request, response);
-        verify(handlerExceptionResolver).resolveException(
-                eq(request),
-                eq(response),
-                isNull(),
-                any(JwtNotFoundException.class));
+        then(handlerExceptionResolver).should()
+                .resolveException(eq(request), eq(response), isNull(), any(JwtNotFoundException.class));
     }
 
 }

@@ -1,5 +1,6 @@
 package perf.shop.domain.product.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public class ProductApi {
     private final ProductService productService;
 
     @PostMapping
-    public ApiResponse<Void> save(@RequestBody ProductSaveRequest productSaveRequest,
+    public ApiResponse<Void> save(@RequestBody @Valid ProductSaveRequest productSaveRequest,
                                   @UserId Long sellerId) {
         productService.saveProduct(productSaveRequest, sellerId);
         return ApiResponse.of(ResponseCode.CREATED);

@@ -24,19 +24,19 @@ import perf.shop.global.util.CookieUtil;
 @DisplayName("[단위 테스트] JwtFilter")
 class JwtFilterTest {
 
-    private JwtFilter jwtFilter;
+    JwtFilter jwtFilter;
 
     @Mock
-    private HandlerExceptionResolver handlerExceptionResolver;
+    HandlerExceptionResolver handlerExceptionResolver;
 
     @Mock
-    private HttpServletRequest request;
+    HttpServletRequest request;
 
     @Mock
-    private HttpServletResponse response;
+    HttpServletResponse response;
 
     @Mock
-    private FilterChain chain;
+    FilterChain chain;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +55,6 @@ class JwtFilterTest {
 
         //then
         then(chain).should().doFilter(request, response);
-//        verify(chain, times(1)).doFilter(request, response);
     }
 
     @Test

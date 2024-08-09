@@ -20,16 +20,16 @@ import perf.shop.domain.product.dto.request.ProductSaveRequest;
 class ProductServiceTest {
 
     @InjectMocks
-    private ProductService productService;
+    ProductService productService;
 
     @Mock
-    private CategoryService categoryService;
+    CategoryService categoryService;
 
     @Mock
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
 
     @Mock
-    private ProductSaveRequest productSaveRequest;
+    ProductSaveRequest productSaveRequest;
 
     @Nested
     @DisplayName("상품 저장 테스트")

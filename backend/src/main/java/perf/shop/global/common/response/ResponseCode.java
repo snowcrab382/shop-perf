@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum ResponseCode {
 
     GET(200, "조회 성공"),
-    CREATED(201, "조회 성공. 생성됨"),
+    CREATED(201, "생성 성공"),
     ;
 
     private final int status;

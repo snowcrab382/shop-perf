@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = FieldError.of(e.getBindingResult());
-        return ErrorResponse.of(ErrorCode.TEST_ERROR, fieldErrors);
+        return ErrorResponse.of(ErrorCode.METHOD_ARGUMENT_NOT_VALID, fieldErrors);
     }
 
     /**

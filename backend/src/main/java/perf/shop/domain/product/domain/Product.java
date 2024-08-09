@@ -5,14 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.user.domain.User;
+import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.global.common.domain.BaseEntity;
 
 @Entity
@@ -25,13 +23,11 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(nullable = false)
+    private Long categoryId;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private User user;
+    @Column(nullable = false)
+    private Long sellerId;
 
     @Column(length = 30, nullable = false)
     private String name;
@@ -46,4 +42,26 @@ public class Product extends BaseEntity {
 
     @Column(nullable = false)
     private Long stock;
+
+    @Builder
+    private Product(Long categoryId, Long sellerId, String name, String description, Long price, Long stock) {
+        this.categoryId = categoryId;
+        this.sellerId = sellerId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+    }
+
+    //TODO 이미지 업로드는 고민이 필요
+    public static Product of(ProductSaveRequest productSaveRequest, Long sellerId) {
+        return Product.builder()
+                .categoryId(productSaveRequest.getCategoryId())
+                .sellerId(sellerId)
+                .name(productSaveRequest.getName())
+                .description(productSaveRequest.getDescription())
+                .price(productSaveRequest.getPrice())
+                .stock(productSaveRequest.getStock())
+                .build();
+    }
 }

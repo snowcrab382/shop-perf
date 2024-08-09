@@ -10,7 +10,7 @@ public enum ErrorCode {
     /**
      * Global Error
      */
-    TEST_ERROR(404, "테스트 에러입니다."),
+    METHOD_ARGUMENT_NOT_VALID(400, "요청 값이 유효하지 않습니다."),
     METHOD_NOT_ALLOWED(405, "허용되지 않은 메소드입니다."),
     ACCESS_DENIED(401, "접근 권한이 없습니다."),
     JWT_NOT_FOUND(403, "토큰이 존재하지 않습니다."),

@@ -57,10 +57,4 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    public void update(UserInformation userInformation) {
-        this.name = userInformation.getName();
-        this.email = userInformation.getEmail();
-    }
-
-
 }

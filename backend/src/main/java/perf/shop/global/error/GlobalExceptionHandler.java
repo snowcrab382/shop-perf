@@ -3,6 +3,7 @@ package perf.shop.global.error;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,7 @@ import perf.shop.global.error.ErrorResponse.FieldError;
 import perf.shop.global.error.exception.BusinessException;
 import perf.shop.global.error.exception.ErrorCode;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -23,7 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = FieldError.of(e.getBindingResult());
-        return ErrorResponse.of(ErrorCode.TEST_ERROR, fieldErrors);
+        return ErrorResponse.of(ErrorCode.METHOD_ARGUMENT_NOT_VALID, fieldErrors);
     }
 
     /**
@@ -58,5 +60,17 @@ public class GlobalExceptionHandler {
     protected ErrorResponse handleBusinessException(BusinessException e) {
         ErrorCode errorCode = e.getErrorCode();
         return ErrorResponse.of(errorCode);
+    }
+
+    /**
+     * 직접 핸들링하지 않은 예외들을 처리
+     *
+     * @param e 핸들링하지 않은 예외들(ex. InvalidDataAccessApiUsageException)
+     * @return ErrorResponse
+     */
+    @ExceptionHandler(Exception.class)
+    protected ErrorResponse handleException(Exception e) {
+        log.error("handleEntityNotFoundException", e);
+        return ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 }

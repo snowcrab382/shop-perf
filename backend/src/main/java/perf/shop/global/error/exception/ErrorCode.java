@@ -10,6 +10,7 @@ public enum ErrorCode {
     /**
      * Global Error
      */
+    INTERNAL_SERVER_ERROR(500, "서버에서 핸들링되지 않은 에러가 발생하였습니다."),
     METHOD_ARGUMENT_NOT_VALID(400, "요청 값이 유효하지 않습니다."),
     METHOD_NOT_ALLOWED(405, "허용되지 않은 메소드입니다."),
     ACCESS_DENIED(401, "접근 권한이 없습니다."),

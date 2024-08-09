@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +31,14 @@ public class ProductSaveRequest {
     @Min(1)
     @Max(100000)
     private Long stock;
+
+    @Builder
+    private ProductSaveRequest(Long categoryId, String name, String description, Long price, Long stock) {
+        this.categoryId = categoryId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+    }
 
 }

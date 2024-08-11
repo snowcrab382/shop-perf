@@ -1,6 +1,5 @@
 package perf.shop.domain.auth.filter;
 
-import static org.springframework.util.PatternMatchUtils.simpleMatch;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
 
 import jakarta.servlet.FilterChain;
@@ -8,10 +7,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import perf.shop.domain.auth.exception.JwtNotFoundException;
@@ -22,23 +23,18 @@ import perf.shop.global.util.CookieUtil;
 import perf.shop.global.util.JwtUtil;
 
 @Slf4j
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final HandlerExceptionResolver exceptionResolver;
-    private final String[] whitelist;
-
-    public JwtFilter(HandlerExceptionResolver exceptionResolver,
-                     String[] whitelist) {
-        this.exceptionResolver = exceptionResolver;
-        this.whitelist = whitelist;
-    }
+    private final RequestMatcher publicEndpoints;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
             //필터 로직을 수행 할 필요 없는 uri인 경우 곧바로 통과
-            if (isInWhitelist(request.getRequestURI())) {
+            if (publicEndpoints.matches(request)) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -76,10 +72,6 @@ public class JwtFilter extends OncePerRequestFilter {
             exceptionResolver.resolveException(request, response, null, e);
         }
 
-    }
-
-    private boolean isInWhitelist(String requestURI) {
-        return simpleMatch(whitelist, requestURI);
     }
 
 }

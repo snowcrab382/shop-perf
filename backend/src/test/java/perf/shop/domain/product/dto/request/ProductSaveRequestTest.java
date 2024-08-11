@@ -24,17 +24,22 @@ class ProductSaveRequestTest {
         validator = factory.getValidator();
     }
 
+    private ProductSaveRequest createProductSaveRequest(Long categoryId, String name, Long price, String description,
+                                                        Long stock) {
+        return ProductSaveRequest.builder()
+                .categoryId(categoryId)
+                .name(name)
+                .price(price)
+                .description(description)
+                .stock(stock)
+                .build();
+    }
+
     @Test
     @DisplayName("카테고리ID가 없으면 유효성 검증 실패")
     void categoryId_FailValidation_IsNull() {
         // given
-        ProductSaveRequest dto = ProductSaveRequest.builder()
-                .categoryId(null)
-                .name("상품명")
-                .price(10000L)
-                .description("상품 설명")
-                .stock(100L)
-                .build();
+        ProductSaveRequest dto = createProductSaveRequest(null, "상품명", 10000L, "상품 설명", 100L);
 
         // when
         Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
@@ -48,13 +53,7 @@ class ProductSaveRequestTest {
     @DisplayName("상품명이 비어있으면 유효성 검증 실패")
     void name_FailValidation_IsBlank() {
         // given
-        ProductSaveRequest dto = ProductSaveRequest.builder()
-                .categoryId(1L)
-                .name(null)
-                .price(10000L)
-                .description("상품 설명")
-                .stock(100L)
-                .build();
+        ProductSaveRequest dto = createProductSaveRequest(1L, null, 10000L, "상품 설명", 100L);
 
         // when
         Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
@@ -68,13 +67,7 @@ class ProductSaveRequestTest {
     @DisplayName("상품설명이 비어있으면 유효성 검증 실패")
     void description_FailValidation_IsBlank() {
         // given
-        ProductSaveRequest dto = ProductSaveRequest.builder()
-                .categoryId(1L)
-                .name("상품명")
-                .price(10000L)
-                .description(null)
-                .stock(100L)
-                .build();
+        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 10000L, null, 100L);
 
         // when
         Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
@@ -89,13 +82,7 @@ class ProductSaveRequestTest {
     @DisplayName("가격이 최소값보다 작으면 유효성 검증 실패")
     void price_FailValidation_IsLessThanMin(long price) {
         // given
-        ProductSaveRequest dto = ProductSaveRequest.builder()
-                .categoryId(1L)
-                .name("상품명")
-                .price(price)
-                .description("상품 설명")
-                .stock(100L)
-                .build();
+        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", price, "상품 설명", 100L);
 
         // when
         Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
@@ -110,13 +97,7 @@ class ProductSaveRequestTest {
     @DisplayName("가격이 최대값보다 크다면 유효성 검증 실패")
     void price_FailValidation_IsGreaterThanMax(long price) {
         // given
-        ProductSaveRequest dto = ProductSaveRequest.builder()
-                .categoryId(1L)
-                .name("상품명")
-                .price(price)
-                .description("상품 설명")
-                .stock(100L)
-                .build();
+        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", price, "상품 설명", 100L);
 
         // when
         Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
@@ -124,5 +105,35 @@ class ProductSaveRequestTest {
         // then
         assertThat(violations.size()).isEqualTo(1);
         assertThat(violations.stream().findFirst().get().getMessage()).isEqualTo("1000000 이하여야 합니다");
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0, -1000})
+    @DisplayName("재고수량이 최소값보다 작으면 유효성 검증 실패")
+    void stock_FailValidation_IsLessThanMin(long stock) {
+        // given
+        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 1000L, "상품 설명", stock);
+
+        // when
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+
+        // then
+        assertThat(violations.size()).isEqualTo(1);
+        assertThat(violations.stream().findFirst().get().getMessage()).isEqualTo("1 이상이어야 합니다");
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {100001, 999999})
+    @DisplayName("가격이 최대값보다 크다면 유효성 검증 실패")
+    void stock_FailValidation_IsGreaterThanMax(long stock) {
+        // given
+        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 1000L, "상품 설명", stock);
+
+        // when
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+
+        // then
+        assertThat(violations.size()).isEqualTo(1);
+        assertThat(violations.stream().findFirst().get().getMessage()).isEqualTo("100000 이하여야 합니다");
     }
 }

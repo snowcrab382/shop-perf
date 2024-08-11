@@ -41,6 +41,28 @@ class ProductApiTest {
     @MockBean
     ProductService productService;
 
+    private ProductSaveRequest createProductSaveRequest(String name, String description, Long price, Long stock,
+                                                        Long categoryId) {
+        return ProductSaveRequest.builder()
+                .name(name)
+                .description(description)
+                .price(price)
+                .stock(stock)
+                .categoryId(categoryId)
+                .build();
+    }
+
+    private ProductFindByIdResponse createProductFindByIdResponse(String name, Long price, String image,
+                                                                  String description, Long stock) {
+        return ProductFindByIdResponse.builder()
+                .name(name)
+                .price(price)
+                .image(image)
+                .description(description)
+                .stock(stock)
+                .build();
+    }
+
     @Nested
     @DisplayName("상품 저장 API 테스트")
     class Save {
@@ -58,13 +80,7 @@ class ProductApiTest {
         @DisplayName("상품 저장 성공")
         void saveProduct_Success() throws Exception {
             // given
-            ProductSaveRequest dto = ProductSaveRequest.builder()
-                    .name("상품명")
-                    .price(10000L)
-                    .description("상품 설명")
-                    .stock(100L)
-                    .categoryId(1L)
-                    .build();
+            ProductSaveRequest dto = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
 
             // when
             ResultActions resultActions = save(dto);
@@ -77,30 +93,51 @@ class ProductApiTest {
                     .andExpect(jsonPath("$.data", equalTo(null)));
         }
 
+        @Test
+        @DisplayName("입력값 검증에 실패하면 예외 발생")
+        void saveProduct_ThrowException_IfInputValueIsInvalid() throws Exception {
+            // given
+            ProductSaveRequest dto = createProductSaveRequest(null, "상품 설명", 10000L, 100L, 1L);
+
+            // when
+            ResultActions resultActions = save(dto);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpectAll(
+                            jsonPath("$.errors").exists(),
+                            jsonPath("$.errors[0].field", equalTo("name")),
+                            jsonPath("$.errors[0].value", equalTo(null)),
+                            jsonPath("$.errors[0].message", equalTo("must not be blank"))
+                    );
+        }
+
     }
 
     @Nested
     @DisplayName("상품 조회 API 테스트")
     class FindById {
 
+        ResultActions findById(Long id) throws Exception {
+            return mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", id)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andDo(print());
+        }
+
         @Test
         @DisplayName("상품 조회 성공")
         void findById_Success() throws Exception {
             // given
             Long id = 1L;
-            ProductFindByIdResponse productDetail = ProductFindByIdResponse.builder()
-                    .name("상품명")
-                    .price(10000L)
-                    .image("상품 이미지 URL")
-                    .description("상품 설명")
-                    .stock(100L)
-                    .build();
+            ProductFindByIdResponse productDetail = createProductFindByIdResponse("상품명", 10000L, "image", "상품 설명",
+                    100L);
             given(productService.findProductById(id)).willReturn(productDetail);
 
             // when
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", id)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+            ResultActions resultActions = findById(id);
 
             // then
             resultActions
@@ -125,9 +162,7 @@ class ProductApiTest {
                     new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
             // when
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", id)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+            ResultActions resultActions = findById(id);
 
             // then
             resultActions

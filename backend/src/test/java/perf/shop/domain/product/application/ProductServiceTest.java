@@ -37,6 +37,16 @@ class ProductServiceTest {
     @Mock
     ProductSaveRequest productSaveRequest;
 
+    private Product createProduct(String name, Long price, String description, Long stock, Long categoryId) {
+        return Product.builder()
+                .name(name)
+                .price(price)
+                .description(description)
+                .stock(stock)
+                .categoryId(categoryId)
+                .build();
+    }
+
     @Nested
     @DisplayName("상품 저장 테스트")
     class SaveProduct {
@@ -67,13 +77,7 @@ class ProductServiceTest {
         void findProductById_Success_IfProductExists() {
             // given
             Long productId = 1L;
-            Product product = Product.builder()
-                    .name("상품명")
-                    .price(10000L)
-                    .description("상품 설명")
-                    .stock(100L)
-                    .categoryId(1L)
-                    .build();
+            Product product = createProduct("상품명", 10000L, "상품 설명", 100L, 1L);
             given(productRepository.findById(productId)).willReturn(Optional.ofNullable(product));
 
             // when

@@ -2,12 +2,15 @@ package perf.shop.domain.product.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import perf.shop.domain.product.application.ProductService;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
+import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
 import perf.shop.global.annotation.UserId;
 import perf.shop.global.common.response.ApiResponse;
 import perf.shop.global.common.response.ResponseCode;
@@ -24,5 +27,10 @@ public class ProductApi {
                                   @UserId Long sellerId) {
         productService.saveProduct(productSaveRequest, sellerId);
         return ApiResponse.of(ResponseCode.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<ProductFindByIdResponse> findById(@PathVariable("id") Long id) {
+        return ApiResponse.of(ResponseCode.GET, productService.findProductById(id));
     }
 }

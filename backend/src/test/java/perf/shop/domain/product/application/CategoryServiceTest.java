@@ -2,8 +2,10 @@ package perf.shop.domain.product.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.BDDAssertions.tuple;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.product.dao.CategoryRepository;
+import perf.shop.domain.product.domain.Category;
 import perf.shop.domain.product.exception.CategoryNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 
@@ -54,6 +57,30 @@ class CategoryServiceTest {
             assertThatThrownBy(() -> categoryService.validateCategoryExistsById(categoryId))
                     .isInstanceOf(CategoryNotFoundException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_FOUND);
+        }
+    }
+
+    @Nested
+    @DisplayName("카테고리 목록 조회 테스트")
+    class FindAll {
+
+        @Test
+        @DisplayName("카테고리 목록 조회 성공")
+        void findAll_ReturnCategoryResponseList() {
+            // given
+            Category category1 = Category.builder().id(1L).name("카테고리1").build();
+            Category category2 = Category.builder().id(2L).name("카테고리2").build();
+            given(categoryRepository.findAll()).willReturn(List.of(category1, category2));
+
+            // when
+            categoryService.findAll();
+
+            // then
+            assertThat(categoryService.findAll()).extracting("id", "name")
+                    .containsExactly(
+                            tuple(1L, "카테고리1"),
+                            tuple(2L, "카테고리2")
+                    );
         }
     }
 

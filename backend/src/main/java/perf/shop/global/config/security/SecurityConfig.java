@@ -3,12 +3,16 @@ package perf.shop.global.config.security;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import perf.shop.domain.auth.filter.JwtFilter;
 import perf.shop.domain.auth.handler.OAuth2LoginSuccessHandler;
@@ -18,12 +22,6 @@ import perf.shop.domain.user.service.CustomOAuth2UserService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private static final String[] whitelist = {
-            "/",
-            "/login",
-            "/actuator", "/actuator/*"
-    };
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
@@ -43,6 +41,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        RequestMatcher publicEndpoints = new OrRequestMatcher(
+                new AntPathRequestMatcher("/", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/login", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/actuator/**", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/products/**", HttpMethod.GET.name())
+        );
+
         http
                 //csrf disable
                 .csrf(AbstractHttpConfigurer::disable)
@@ -50,8 +55,6 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 //HTTP Basic 인증 방식 disable
                 .httpBasic(AbstractHttpConfigurer::disable)
-                //jwt 검증 필터
-                .addFilterAfter(new JwtFilter(exceptionResolver, whitelist), OAuth2LoginAuthenticationFilter.class)
                 //oauth2
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
@@ -61,8 +64,11 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler))
                 //경로별 인가 작업
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(whitelist).permitAll()
+                        .requestMatchers(publicEndpoints).permitAll()
                         .anyRequest().authenticated())
+                //jwt 검증 필터
+                .addFilterBefore(new JwtFilter(exceptionResolver, publicEndpoints),
+                        UsernamePasswordAuthenticationFilter.class)
                 //세션 설정 : STATELESS
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

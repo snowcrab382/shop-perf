@@ -28,6 +28,10 @@ class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    private Category createCategory(Long id, String name) {
+        return Category.builder().id(id).name(name).build();
+    }
+
     @Nested
     @DisplayName("카테고리 검증 테스트")
     class ValidateCategoryExistsById {
@@ -68,8 +72,8 @@ class CategoryServiceTest {
         @DisplayName("카테고리 목록 조회 성공")
         void findAll_ReturnCategoryResponseList() {
             // given
-            Category category1 = Category.builder().id(1L).name("카테고리1").build();
-            Category category2 = Category.builder().id(2L).name("카테고리2").build();
+            Category category1 = createCategory(1L, "카테고리1");
+            Category category2 = createCategory(2L, "카테고리2");
             given(categoryRepository.findAll()).willReturn(List.of(category1, category2));
 
             // when

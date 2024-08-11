@@ -45,7 +45,7 @@ class CategoryServiceTest {
 
         @Test
         @DisplayName("카테고리가 존재하지 않으면 예외 발생")
-        void validateCategoryExistsById_ThrowsException_IfCategoryNotExists() {
+        void validateCategoryExistsById_ThrowException_IfCategoryNotExists() {
             // given
             Long categoryId = 1L;
             given(categoryRepository.existsById(categoryId)).willReturn(false);

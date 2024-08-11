@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import perf.shop.global.common.domain.BaseEntity;
@@ -23,4 +24,10 @@ public class Category extends BaseEntity {
 
     @Column(length = 50, nullable = false)
     private String name;
+
+    @Builder
+    private Category(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

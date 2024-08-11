@@ -1,9 +1,13 @@
 package perf.shop.domain.product.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.product.dao.CategoryRepository;
+import perf.shop.domain.product.domain.Category;
+import perf.shop.domain.product.dto.response.CategoryResponse;
 import perf.shop.domain.product.exception.CategoryNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 
@@ -19,5 +23,13 @@ public class CategoryService {
         if (!categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException(ErrorCode.CATEGORY_NOT_FOUND);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> findAll() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(CategoryResponse::from)
+                .collect(Collectors.toList());
     }
 }

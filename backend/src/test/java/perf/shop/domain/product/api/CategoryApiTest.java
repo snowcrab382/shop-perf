@@ -2,7 +2,6 @@ package perf.shop.domain.product.api;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,8 +54,7 @@ class CategoryApiTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/categories")
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+                    .accept(MediaType.APPLICATION_JSON));
 
             // then
             resultActions

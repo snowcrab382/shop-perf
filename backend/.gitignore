@@ -47,7 +47,7 @@ grafana-data
 mysql-data
 
 ### deployment ###
-depricated/.env
+deprecated/.env
 
 ### QueryDSL ###
 src/main/generated

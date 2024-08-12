@@ -48,3 +48,6 @@ mysql-data
 
 ### deployment ###
 depricated/.env
+
+### QueryDSL ###
+src/main/generated

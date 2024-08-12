@@ -3,7 +3,6 @@ package perf.shop.domain.product.api;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,11 +68,10 @@ class ProductApiTest {
 
         ResultActions save(ProductSaveRequest dto) throws Exception {
             return mockMvc.perform(MockMvcRequestBuilders.post("/products")
-                            .with(csrf())
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto))
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(dto))
+                    .accept(MediaType.APPLICATION_JSON));
         }
 
         @Test
@@ -123,8 +121,7 @@ class ProductApiTest {
 
         ResultActions findById(Long id) throws Exception {
             return mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", id)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+                    .accept(MediaType.APPLICATION_JSON));
         }
 
         @Test

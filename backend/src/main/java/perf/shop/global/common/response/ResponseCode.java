@@ -9,6 +9,7 @@ public enum ResponseCode {
 
     GET(200, "조회 성공"),
     CREATED(201, "생성 성공"),
+    UPDATED(200, "수정 성공"),
     ;
 
     private final int status;

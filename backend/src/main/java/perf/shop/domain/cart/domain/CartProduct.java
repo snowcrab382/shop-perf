@@ -57,4 +57,8 @@ public class CartProduct extends BaseEntity {
         this.quantity += quantity;
     }
 
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
 }

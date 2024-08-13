@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.cart.domain.Cart;
 import perf.shop.domain.cart.domain.CartProduct;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
+import perf.shop.domain.cart.dto.request.UpdateProductRequest;
 import perf.shop.domain.cart.dto.response.CartProductResponse;
+import perf.shop.domain.cart.repository.CartProductRepository;
 import perf.shop.domain.cart.repository.CartRepository;
 import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
@@ -22,6 +24,7 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
+    private final CartProductRepository cartProductRepository;
 
     public List<CartProductResponse> getCartProducts(Long userId) {
         List<CartProduct> cartProducts = getCart(userId).getCartProducts();
@@ -46,6 +49,13 @@ public class CartService {
                         cartProduct -> cartProduct.addQuantity(addProductRequest.getQuantity()),
                         () -> cart.addProduct(CartProduct.from(addProductRequest, cart, product))
                 );
+    }
+
+    public void updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest, Long userId) {
+        CartProduct cartProduct = cartProductRepository.findById(cartProductId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
+
+        cartProduct.updateQuantity(updateProductRequest.getQuantity());
     }
 
     public Cart getCart(Long userId) {

@@ -1,11 +1,14 @@
 package perf.shop.domain.cart.service;
 
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.cart.domain.Cart;
 import perf.shop.domain.cart.domain.CartProduct;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
+import perf.shop.domain.cart.dto.response.CartProductResponse;
 import perf.shop.domain.cart.repository.CartRepository;
 import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
@@ -19,6 +22,17 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
+
+    public List<CartProductResponse> getCartProducts(Long userId) {
+        List<CartProduct> cartProducts = getCart(userId).getCartProducts();
+        if (cartProducts.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return cartProducts.stream()
+                .map(CartProductResponse::from)
+                .toList();
+    }
 
     public void addProduct(AddProductRequest addProductRequest, Long userId) {
         Product product = productRepository.findById(addProductRequest.getProductId())

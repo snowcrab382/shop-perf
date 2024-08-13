@@ -24,7 +24,9 @@ public enum ErrorCode {
      */
     CATEGORY_NOT_FOUND(400, "카테고리를 찾을 수 없습니다."),
     USER_NOT_FOUND(400, "사용자를 찾을 수 없습니다."),
-    PRODUCT_NOT_FOUND(400, "상품을 찾을 수 없습니다.");
+    PRODUCT_NOT_FOUND(400, "상품을 찾을 수 없습니다."),
+    CART_PRODUCT_NOT_FOUND(400, "장바구니 상품을 찾을 수 없습니다."),
+    ;
 
     private final int status;
     private final String message;

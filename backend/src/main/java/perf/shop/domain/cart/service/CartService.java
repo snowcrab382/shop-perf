@@ -62,6 +62,11 @@ public class CartService {
         cartProductRepository.deleteById(cartProductId);
     }
 
+    public void deleteAllCartProducts(Long userId) {
+        Cart cart = getCart(userId);
+        cartProductRepository.deleteAllByCartId(cart.getId());
+    }
+
     public Cart getCart(Long userId) {
         return cartRepository.findByUserId(userId)
                 .orElseGet(() -> cartRepository.save(Cart.of(userId)));

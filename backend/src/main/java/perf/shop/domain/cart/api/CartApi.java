@@ -53,4 +53,10 @@ public class CartApi {
         return ApiResponse.of(ResponseCode.DELETED);
     }
 
+    @DeleteMapping
+    public ApiResponse<Void> deleteAllCartproducts(@UserId Long userId) {
+        cartService.deleteAllCartProducts(userId);
+        return ApiResponse.of(ResponseCode.DELETED);
+    }
+
 }

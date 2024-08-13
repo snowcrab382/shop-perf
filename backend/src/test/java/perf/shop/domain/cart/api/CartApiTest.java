@@ -55,7 +55,7 @@ class CartApiTest {
         }
 
         @Test
-        @DisplayName("상품 장바구니 추가 성공")
+        @DisplayName("성공")
         void addProduct_Success() throws Exception {
             // given
             AddProductRequest dto = createAddProductRequest(1L, 2);
@@ -72,7 +72,7 @@ class CartApiTest {
         }
 
         @Test
-        @DisplayName("입력값 검증에 실패한 경우 예외 발생")
+        @DisplayName("실패 - 입력값 검증에 실패한 경우 예외 발생")
         void addProduct_ThrowException_IfInputValueIsInvalid() throws Exception {
             // given
             AddProductRequest dto = createAddProductRequest(null, 2);

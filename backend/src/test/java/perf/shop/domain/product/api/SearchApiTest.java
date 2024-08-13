@@ -42,23 +42,6 @@ class SearchApiTest {
     @MockBean
     SearchService searchService;
 
-    private SearchCondition createSearchCondition(Long categoryId, String keyword, String sorter) {
-        return SearchCondition.builder()
-                .categoryId(categoryId)
-                .keyword(keyword)
-                .sorter(sorter)
-                .build();
-    }
-
-    private ProductSearchResponse createProductSearchResponse(Long id, String name, Long price, String image) {
-        return ProductSearchResponse.builder()
-                .id(id)
-                .name(name)
-                .price(price)
-                .image(image)
-                .build();
-    }
-
     @Nested
     @DisplayName("상품 검색 API 테스트")
     class SearchByCondition {
@@ -73,9 +56,26 @@ class SearchApiTest {
                     .accept(MediaType.APPLICATION_JSON));
         }
 
+        ProductSearchResponse createProductSearchResponse(Long id, String name, Long price, String image) {
+            return ProductSearchResponse.builder()
+                    .id(id)
+                    .name(name)
+                    .price(price)
+                    .image(image)
+                    .build();
+        }
+
+        SearchCondition createSearchCondition(Long categoryId, String keyword, String sorter) {
+            return SearchCondition.builder()
+                    .categoryId(categoryId)
+                    .keyword(keyword)
+                    .sorter(sorter)
+                    .build();
+        }
+
         @Test
-        @DisplayName("상품 검색 성공")
-        void SearchByCondition_Success() throws Exception {
+        @DisplayName("성공")
+        void searchByCondition_success() throws Exception {
             // given
             SearchCondition condition = createSearchCondition(1L, "상품", "priceDesc");
             Pageable pageable = Pageable.ofSize(1).withPage(0);
@@ -114,8 +114,8 @@ class SearchApiTest {
         }
 
         @Test
-        @DisplayName("상품 정렬 조건이 ENUM값과 다를 경우 예외 발생")
-        void searchByCondition_ThrowException_IfInvalidSorter() throws Exception {
+        @DisplayName("실패 - 상품 정렬 조건이 ENUM값과 다를 경우 예외 발생")
+        void searchByCondition_throwException_ifInvalidSorter() throws Exception {
             // given
             SearchCondition condition = createSearchCondition(1L, "상품", "invalidSorter");
             Pageable pageable = Pageable.ofSize(1).withPage(0);

@@ -24,8 +24,8 @@ class ProductSaveRequestTest {
         validator = factory.getValidator();
     }
 
-    private ProductSaveRequest createProductSaveRequest(Long categoryId, String name, Long price, String description,
-                                                        Long stock) {
+    ProductSaveRequest createProductSaveRequest(Long categoryId, String name, Long price, String description,
+                                                Long stock) {
         return ProductSaveRequest.builder()
                 .categoryId(categoryId)
                 .name(name)
@@ -36,8 +36,8 @@ class ProductSaveRequestTest {
     }
 
     @Test
-    @DisplayName("카테고리ID가 없으면 유효성 검증 실패")
-    void categoryId_FailValidation_IsNull() {
+    @DisplayName("실패 - 카테고리ID가 없으면 유효성 검증 실패")
+    void categoryId_failValidation_isNull() {
         // given
         ProductSaveRequest dto = createProductSaveRequest(null, "상품명", 10000L, "상품 설명", 100L);
 
@@ -50,8 +50,8 @@ class ProductSaveRequestTest {
     }
 
     @Test
-    @DisplayName("상품명이 비어있으면 유효성 검증 실패")
-    void name_FailValidation_IsBlank() {
+    @DisplayName("실패 - 상품명이 비어있으면 유효성 검증 실패")
+    void name_failValidation_isBlank() {
         // given
         ProductSaveRequest dto = createProductSaveRequest(1L, null, 10000L, "상품 설명", 100L);
 
@@ -64,8 +64,8 @@ class ProductSaveRequestTest {
     }
 
     @Test
-    @DisplayName("상품설명이 비어있으면 유효성 검증 실패")
-    void description_FailValidation_IsBlank() {
+    @DisplayName("실패 - 상품설명이 비어있으면 유효성 검증 실패")
+    void description_failValidation_isBlank() {
         // given
         ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 10000L, null, 100L);
 
@@ -79,8 +79,8 @@ class ProductSaveRequestTest {
 
     @ParameterizedTest
     @ValueSource(longs = {0, -1000})
-    @DisplayName("가격이 최소값보다 작으면 유효성 검증 실패")
-    void price_FailValidation_IsLessThanMin(long price) {
+    @DisplayName("실패 - 가격이 최소값보다 작으면 유효성 검증 실패")
+    void price_failValidation_isLessThanMin(long price) {
         // given
         ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", price, "상품 설명", 100L);
 
@@ -94,8 +94,8 @@ class ProductSaveRequestTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1000001, 9999999})
-    @DisplayName("가격이 최대값보다 크다면 유효성 검증 실패")
-    void price_FailValidation_IsGreaterThanMax(long price) {
+    @DisplayName("실패 - 가격이 최대값보다 크다면 유효성 검증 실패")
+    void price_failValidation_isGreaterThanMax(long price) {
         // given
         ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", price, "상품 설명", 100L);
 
@@ -109,8 +109,8 @@ class ProductSaveRequestTest {
 
     @ParameterizedTest
     @ValueSource(longs = {0, -1000})
-    @DisplayName("재고수량이 최소값보다 작으면 유효성 검증 실패")
-    void stock_FailValidation_IsLessThanMin(long stock) {
+    @DisplayName("실패 - 재고수량이 최소값보다 작으면 유효성 검증 실패")
+    void stock_failValidation_isLessThanMin(long stock) {
         // given
         ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 1000L, "상품 설명", stock);
 
@@ -124,8 +124,8 @@ class ProductSaveRequestTest {
 
     @ParameterizedTest
     @ValueSource(longs = {100001, 999999})
-    @DisplayName("가격이 최대값보다 크다면 유효성 검증 실패")
-    void stock_FailValidation_IsGreaterThanMax(long stock) {
+    @DisplayName("실패 - 가격이 최대값보다 크다면 유효성 검증 실패")
+    void stock_failValidation_isGreaterThanMax(long stock) {
         // given
         ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 1000L, "상품 설명", stock);
 

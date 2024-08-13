@@ -1,11 +1,11 @@
 package perf.shop.domain.cart.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.cart.domain.Cart;
-import perf.shop.domain.cart.domain.CartProduct;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
 import perf.shop.domain.cart.repository.CartProductRepository;
 import perf.shop.domain.cart.repository.CartRepository;
@@ -70,7 +69,7 @@ class CartServiceTest {
                     new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
             // when & then
-            Assertions.assertThatThrownBy(() -> cartService.addProduct(addProductRequest, 1L))
+            assertThatThrownBy(() -> cartService.addProduct(addProductRequest, 1L))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
         }
@@ -85,14 +84,6 @@ class CartServiceTest {
         Cart createCart(Long userId) {
             return Cart.builder()
                     .userId(userId)
-                    .build();
-        }
-
-        CartProduct createCartProduct(Cart cart, Product product, Integer quantity) {
-            return CartProduct.builder()
-                    .cart(cart)
-                    .product(product)
-                    .quantity(quantity)
                     .build();
         }
 

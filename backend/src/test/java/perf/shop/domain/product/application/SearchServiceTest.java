@@ -1,6 +1,7 @@
 package perf.shop.domain.product.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -41,8 +42,8 @@ class SearchServiceTest {
     class Search {
 
         @Test
-        @DisplayName("상품 검색 성공")
-        void search_Success() {
+        @DisplayName("성공")
+        void search_success() {
             // given
             SearchCondition condition = createSearchCondition(1L, "키워드", "sorter");
             Pageable pageable = PageRequest.of(0, 10);
@@ -55,6 +56,19 @@ class SearchServiceTest {
             // then
             assertThat(result).isEqualTo(productSearchResponses);
             then(productSearchRepository).should().search(condition, pageable);
+        }
+
+        @Test
+        @DisplayName("실패 - 검색 조건이 모두 null이면 예외 발생")
+        void search_throwException_ifSearchConditionIsNull() {
+            // given
+            SearchCondition condition = createSearchCondition(null, null, null);
+            Pageable pageable = PageRequest.of(0, 10);
+            given(productSearchRepository.search(condition, pageable)).willThrow(NullPointerException.class);
+
+            // when & then
+            assertThatThrownBy(() -> searchService.search(condition, pageable))
+                    .isInstanceOf(NullPointerException.class);
         }
     }
 

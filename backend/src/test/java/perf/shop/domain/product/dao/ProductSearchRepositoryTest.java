@@ -63,7 +63,7 @@ class ProductSearchRepositoryTest {
     class Search {
 
         @Test
-        @DisplayName("입력 조건에 카테고리id가 존재할 경우 where절에 적용되어 반환")
+        @DisplayName("성공 - 입력 조건에 카테고리id가 존재할 경우 where절에 적용되어 반환")
         void search_ReturnResult_IfCategoryIdExistsInSearchCondition() {
             // given
             SearchCondition condition = createSearchCondition(1L, "상품", Sort.PRICEDESC.getValue());
@@ -79,7 +79,7 @@ class ProductSearchRepositoryTest {
         }
 
         @Test
-        @DisplayName("입력 조건에 키워드가 존재할 경우 where절에 적용되어 반환")
+        @DisplayName("성공 - 입력 조건에 키워드가 존재할 경우 where절에 적용되어 반환")
         void search_ReturnResult_IfKeywordExistsInSearchCondition() {
             // given
             SearchCondition condition = createSearchCondition(null, "키워드", Sort.PRICEDESC.getValue());
@@ -95,7 +95,7 @@ class ProductSearchRepositoryTest {
         }
 
         @Test
-        @DisplayName("입력 조건에 정렬 조건이 존재할 경우 order by절에 적용되어 반환")
+        @DisplayName("성공 - 입력 조건에 정렬 조건이 존재할 경우 order by절에 적용되어 반환")
         void search_ReturnResult_IfSorterExistsInSearchCondition() {
             // given
             SearchCondition condition = createSearchCondition(null, "상품", Sort.PRICEDESC.getValue());
@@ -112,7 +112,7 @@ class ProductSearchRepositoryTest {
         }
 
         @Test
-        @DisplayName("페이지 관련 정보도 함께 반환")
+        @DisplayName("성공 - 페이지 관련 정보도 함께 반환")
         void search_ReturnPageInfo() {
             // given
             SearchCondition condition = createSearchCondition(null, null, Sort.LATEST.getValue());
@@ -129,7 +129,7 @@ class ProductSearchRepositoryTest {
         }
 
         @Test
-        @DisplayName("검색 조건 중 where과 order by에 대한 조건이 모두 null인 경우 예외 발생")
+        @DisplayName("실패 - 검색 조건 중 where과 order by에 대한 조건이 모두 null인 경우 예외 발생")
         void search_ThrowException_IfWhereAndOrderByIsNull() {
             // given
             SearchCondition condition = createSearchCondition(null, null, null);

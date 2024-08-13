@@ -3,6 +3,7 @@ package perf.shop.domain.cart.api;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,13 @@ public class CartApi {
                                            @UserId Long userId) {
         cartService.updateProduct(cartProductId, updateProductRequest, userId);
         return ApiResponse.of(ResponseCode.UPDATED);
+    }
+
+    @DeleteMapping("/{cart_product_id}")
+    public ApiResponse<Void> deleteProduct(@PathVariable("cart_product_id") Long cartProductId,
+                                           @UserId Long userId) {
+        cartService.deleteProduct(cartProductId, userId);
+        return ApiResponse.of(ResponseCode.DELETED);
     }
 
 }

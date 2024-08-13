@@ -51,14 +51,14 @@ public class CartService {
                 );
     }
 
-    public void updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest, Long userId) {
+    public void updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest) {
         CartProduct cartProduct = cartProductRepository.findById(cartProductId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
 
         cartProduct.updateQuantity(updateProductRequest.getQuantity());
     }
 
-    public void deleteProduct(Long cartProductId, Long userId) {
+    public void deleteProduct(Long cartProductId) {
         cartProductRepository.deleteById(cartProductId);
     }
 
@@ -67,7 +67,7 @@ public class CartService {
         cartProductRepository.deleteAllByCartId(cart.getId());
     }
 
-    public Cart getCart(Long userId) {
+    private Cart getCart(Long userId) {
         return cartRepository.findByUserId(userId)
                 .orElseGet(() -> cartRepository.save(Cart.of(userId)));
     }

@@ -37,16 +37,6 @@ class ProductServiceTest {
     @Mock
     ProductSaveRequest productSaveRequest;
 
-    private Product createProduct(String name, Long price, String description, Long stock, Long categoryId) {
-        return Product.builder()
-                .name(name)
-                .price(price)
-                .description(description)
-                .stock(stock)
-                .categoryId(categoryId)
-                .build();
-    }
-
     @Nested
     @DisplayName("상품 저장 테스트")
     class SaveProduct {
@@ -105,6 +95,17 @@ class ProductServiceTest {
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
 
         }
+
+        Product createProduct(String name, Long price, String description, Long stock, Long categoryId) {
+            return Product.builder()
+                    .name(name)
+                    .price(price)
+                    .description(description)
+                    .stock(stock)
+                    .categoryId(categoryId)
+                    .build();
+        }
+
     }
 
 }

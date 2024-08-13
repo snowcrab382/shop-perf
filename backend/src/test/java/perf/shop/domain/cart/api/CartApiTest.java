@@ -48,7 +48,7 @@ class CartApiTest {
         }
 
         ResultActions addProduct(AddProductRequest dto) throws Exception {
-            return mockMvc.perform(MockMvcRequestBuilders.post("/cart")
+            return mockMvc.perform(MockMvcRequestBuilders.post("/carts")
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(dto)));

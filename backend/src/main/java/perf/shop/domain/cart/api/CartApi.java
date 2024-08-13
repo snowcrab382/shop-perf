@@ -20,7 +20,7 @@ import perf.shop.global.common.response.ApiResponse;
 import perf.shop.global.common.response.ResponseCode;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/carts")
 @RequiredArgsConstructor
 public class CartApi {
 
@@ -38,23 +38,21 @@ public class CartApi {
         return ApiResponse.of(ResponseCode.CREATED);
     }
 
-    @PutMapping("/{cart_product_id}")
-    public ApiResponse<Void> updateProduct(@PathVariable("cart_product_id") Long cartProductId,
-                                           @RequestBody @Valid UpdateProductRequest updateProductRequest,
-                                           @UserId Long userId) {
-        cartService.updateProduct(cartProductId, updateProductRequest, userId);
+    @PutMapping("/{cartProductId}")
+    public ApiResponse<Void> updateProduct(@PathVariable("cartProductId") Long cartProductId,
+                                           @RequestBody @Valid UpdateProductRequest updateProductRequest) {
+        cartService.updateProduct(cartProductId, updateProductRequest);
         return ApiResponse.of(ResponseCode.UPDATED);
     }
 
-    @DeleteMapping("/{cart_product_id}")
-    public ApiResponse<Void> deleteProduct(@PathVariable("cart_product_id") Long cartProductId,
-                                           @UserId Long userId) {
-        cartService.deleteProduct(cartProductId, userId);
+    @DeleteMapping("/{cartProductId}")
+    public ApiResponse<Void> deleteProduct(@PathVariable("cartProductId") Long cartProductId) {
+        cartService.deleteProduct(cartProductId);
         return ApiResponse.of(ResponseCode.DELETED);
     }
 
     @DeleteMapping
-    public ApiResponse<Void> deleteAllCartproducts(@UserId Long userId) {
+    public ApiResponse<Void> deleteAllCartProducts(@UserId Long userId) {
         cartService.deleteAllCartProducts(userId);
         return ApiResponse.of(ResponseCode.DELETED);
     }

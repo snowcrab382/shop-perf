@@ -60,8 +60,9 @@ class CartServiceTest {
                 .build();
     }
 
-    CartProduct createCartProduct(Cart cart, Product product, Integer quantity) {
+    CartProduct createCartProduct(Long cartProductId, Cart cart, Product product, Integer quantity) {
         return CartProduct.builder()
+                .id(cartProductId)
                 .cart(cart)
                 .product(product)
                 .quantity(quantity)
@@ -95,7 +96,7 @@ class CartServiceTest {
             Long userId = 1L;
             Cart cart = createCart(userId);
             Product product = createProduct(1L, 1L, "상품1", "상품1 설명", 1000L, 10L);
-            CartProduct cartProduct = createCartProduct(cart, product, 2);
+            CartProduct cartProduct = createCartProduct(1L, cart, product, 2);
             cart.addProduct(cartProduct);
             given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
 
@@ -167,7 +168,7 @@ class CartServiceTest {
 
             Cart cart = createCart(1L);
             Product product = createProduct(1L, 1L, "상품1", "상품1 설명", 1000L, 10L);
-            CartProduct cartProduct = createCartProduct(cart, product, 5);
+            CartProduct cartProduct = createCartProduct(1L, cart, product, 5);
             cart.addProduct(cartProduct);
             given(cartProductRepository.findById(any())).willReturn(Optional.of(cartProduct));
 
@@ -209,12 +210,33 @@ class CartServiceTest {
         void deleteProduct_success() throws Exception {
             // given
             Long cartProductId = 1L;
+            Long userId = 1L;
+            Cart cart = createCart(userId);
+            Product product = createProduct(1L, 1L, "상품1", "상품1 설명", 1000L, 10L);
+            CartProduct cartProduct = createCartProduct(1L, cart, product, 5);
+            cart.addProduct(cartProduct);
+            given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
 
             // when
-            cartService.deleteProduct(cartProductId);
+            cartService.deleteProduct(cartProductId, userId);
 
             // then
-            then(cartProductRepository).should().deleteById(cartProductId);
+            then(cartProductRepository).should().delete(cartProduct);
+        }
+
+        @Test
+        @DisplayName("실패 - 장바구니에 해당 상품이 존재하지 않으면 예외 발생")
+        void deleteProduct_throwException_ifProductNotExistsInCart() throws Exception {
+            // given
+            Long userId = 1L;
+            Long cartProductId = 1L;
+            Cart cart = createCart(1L);
+            given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
+
+            // when & then
+            assertThatThrownBy(() -> cartService.deleteProduct(cartProductId, userId))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_PRODUCT_NOT_FOUND);
         }
     }
 

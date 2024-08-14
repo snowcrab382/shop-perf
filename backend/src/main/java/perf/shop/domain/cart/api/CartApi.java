@@ -46,8 +46,9 @@ public class CartApi {
     }
 
     @DeleteMapping("/{cartProductId}")
-    public ApiResponse<Void> deleteProduct(@PathVariable("cartProductId") Long cartProductId) {
-        cartService.deleteProduct(cartProductId);
+    public ApiResponse<Void> deleteProduct(@PathVariable("cartProductId") Long cartProductId,
+                                           @UserId Long userId) {
+        cartService.deleteProduct(cartProductId, userId);
         return ApiResponse.of(ResponseCode.DELETED);
     }
 

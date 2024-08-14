@@ -39,7 +39,8 @@ public class CartProduct extends BaseEntity {
     private Integer quantity;
 
     @Builder
-    private CartProduct(Cart cart, Product product, Integer quantity) {
+    private CartProduct(Long id, Cart cart, Product product, Integer quantity) {
+        this.id = id;
         this.cart = cart;
         this.product = product;
         this.quantity = quantity;

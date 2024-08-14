@@ -26,6 +26,23 @@ public class CartService {
     private final ProductRepository productRepository;
     private final CartProductRepository cartProductRepository;
 
+    private static CartProduct getCartProductFromCart(Long cartProductId, Cart cart) {
+        return cart.getCartProducts().stream()
+                .filter(cp -> cp.getId().equals(cartProductId))
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
+    }
+
+    private static void addProductToCartByRequest(AddProductRequest addProductRequest, Cart cart, Product product) {
+        cart.getCartProducts().stream()
+                .filter(cartProduct -> cartProduct.getProduct().getId().equals(addProductRequest.getProductId()))
+                .findAny()
+                .ifPresentOrElse(
+                        cartProduct -> cartProduct.addQuantity(addProductRequest.getQuantity()),
+                        () -> cart.addProduct(CartProduct.from(addProductRequest, cart, product))
+                );
+    }
+
     public List<CartProductResponse> getCartProducts(Long userId) {
         List<CartProduct> cartProducts = getCart(userId).getCartProducts();
         if (cartProducts.isEmpty()) {
@@ -42,13 +59,7 @@ public class CartService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
         Cart cart = getCart(userId);
-        cart.getCartProducts().stream()
-                .filter(cartProduct -> cartProduct.getProduct().getId().equals(addProductRequest.getProductId()))
-                .findAny()
-                .ifPresentOrElse(
-                        cartProduct -> cartProduct.addQuantity(addProductRequest.getQuantity()),
-                        () -> cart.addProduct(CartProduct.from(addProductRequest, cart, product))
-                );
+        addProductToCartByRequest(addProductRequest, cart, product);
     }
 
     public void updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest) {
@@ -58,8 +69,11 @@ public class CartService {
         cartProduct.updateQuantity(updateProductRequest.getQuantity());
     }
 
-    public void deleteProduct(Long cartProductId) {
-        cartProductRepository.deleteById(cartProductId);
+    public void deleteProduct(Long cartProductId, Long userId) {
+        Cart cart = getCart(userId);
+        CartProduct cartProduct = getCartProductFromCart(cartProductId, cart);
+
+        cartProductRepository.delete(cartProduct);
     }
 
     public void deleteAllCartProducts(Long userId) {

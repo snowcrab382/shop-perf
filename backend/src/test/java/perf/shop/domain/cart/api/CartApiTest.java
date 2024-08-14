@@ -246,7 +246,7 @@ class CartApiTest {
     @DisplayName("장바구니 상품 단건 삭제 API 테스트")
     class DeleteProduct {
 
-        ResultActions deleteProduct(Long cartProductId) throws Exception {
+        ResultActions deleteProduct(Long cartProductId, Long userId) throws Exception {
             return mockMvc.perform(MockMvcRequestBuilders.delete("/carts/" + cartProductId)
                     .with(csrf()));
         }
@@ -255,10 +255,11 @@ class CartApiTest {
         @DisplayName("성공")
         void deleteProduct_success() throws Exception {
             // given
+            Long userId = 1L;
             Long cartProductId = 1L;
 
             // when
-            ResultActions resultActions = deleteProduct(cartProductId);
+            ResultActions resultActions = deleteProduct(cartProductId, userId);
 
             // then
             resultActions
@@ -266,6 +267,26 @@ class CartApiTest {
                     .andExpect(jsonPath("$.status", equalTo(ResponseCode.DELETED.getStatus())))
                     .andExpect(jsonPath("$.message", equalTo(ResponseCode.DELETED.getMessage())))
                     .andExpect(jsonPath("$.data", equalTo(null)));
+        }
+
+        @Test
+        @DisplayName("실패 - 장바구니 상품을 찾을 수 없는 경우 예외 발생")
+        void deleteProduct_throwException_IfCartProductNotFound() throws Exception {
+            // given
+            Long cartProductId = 1L;
+            Long userId = 1L;
+            doThrow(new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND))
+                    .when(cartService).deleteProduct(anyLong(), anyLong());
+
+            // when
+            ResultActions resultActions = deleteProduct(cartProductId, userId);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
     }
 

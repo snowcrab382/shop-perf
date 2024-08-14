@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -55,6 +56,20 @@ class ProductServiceTest {
             // then
             then(productRepository).should().save(any(Product.class));
 
+        }
+
+        @Test
+        @DisplayName("실패 - 카테고리가 존재하지 않으면 예외 발생")
+        void saveProduct_throwException_ifCategoryIdNotExists() throws Exception {
+            // given
+            Long sellerId = 1L;
+            doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
+                    .when(categoryService).validateCategoryExistsById(any(Long.class));
+
+            // when & then
+            assertThatThrownBy(() -> productService.saveProduct(productSaveRequest, sellerId))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_FOUND);
         }
     }
 

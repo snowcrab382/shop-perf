@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.cart.domain.Cart;
+import perf.shop.domain.cart.domain.CartProduct;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
+import perf.shop.domain.cart.dto.response.CartProductResponse;
 import perf.shop.domain.cart.repository.CartProductRepository;
 import perf.shop.domain.cart.repository.CartRepository;
 import perf.shop.domain.product.dao.ProductRepository;
@@ -37,6 +40,71 @@ class CartServiceTest {
 
     @Mock
     ProductRepository productRepository;
+
+    Cart createCart(Long userId) {
+        return Cart.builder()
+                .userId(userId)
+                .build();
+    }
+
+    Product createProduct(Long categoryId, Long sellerId, String name, String description, Long price, Long stock) {
+        return Product.builder()
+                .categoryId(categoryId)
+                .sellerId(sellerId)
+                .name(name)
+                .description(description)
+                .price(price)
+                .stock(stock)
+                .build();
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 목록 조회 테스트")
+    class GetCartProducts {
+
+        CartProduct createCartProduct(Cart cart, Product product, Integer quantity) {
+            return CartProduct.builder()
+                    .cart(cart)
+                    .product(product)
+                    .quantity(quantity)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("성공 - 장바구니에 상품이 없으면 빈 목록 반환")
+        void getCartProducts_success_returnEmptyList() throws Exception {
+            // given
+            Long userId = 1L;
+            Cart cart = createCart(userId);
+            given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
+
+            // when
+            List<CartProductResponse> cartProducts = cartService.getCartProducts(userId);
+
+            // then
+            assertThat(cartProducts.size()).isEqualTo(0);
+
+        }
+
+        @Test
+        @DisplayName("성공 - 장바구니에 상품이 존재하면 목록 반환")
+        void getCartProducts_success_returnCartProducts() throws Exception {
+            // given
+            Long userId = 1L;
+            Cart cart = createCart(userId);
+            Product product = createProduct(1L, 1L, "상품1", "상품1 설명", 1000L, 10L);
+            CartProduct cartProduct = createCartProduct(cart, product, 2);
+            cart.addProduct(cartProduct);
+            given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
+
+            // when
+            List<CartProductResponse> cartProducts = cartService.getCartProducts(userId);
+
+            // then
+            assertThat(cartProducts.size()).isEqualTo(1);
+
+        }
+    }
 
     @Nested
     @DisplayName("장바구니 상품 등록 테스트")
@@ -81,21 +149,5 @@ class CartServiceTest {
                     .build();
         }
 
-        Cart createCart(Long userId) {
-            return Cart.builder()
-                    .userId(userId)
-                    .build();
-        }
-
-        Product createProduct(Long categoryId, Long sellerId, String name, String description, Long price, Long stock) {
-            return Product.builder()
-                    .categoryId(categoryId)
-                    .sellerId(sellerId)
-                    .name(name)
-                    .description(description)
-                    .price(price)
-                    .stock(stock)
-                    .build();
-        }
     }
 }

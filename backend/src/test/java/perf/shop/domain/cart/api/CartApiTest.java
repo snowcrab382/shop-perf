@@ -1,11 +1,13 @@
 package perf.shop.domain.cart.api;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
+import perf.shop.domain.cart.dto.response.CartProductResponse;
 import perf.shop.domain.cart.service.CartService;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.global.error.exception.ErrorCode;
@@ -35,6 +38,64 @@ class CartApiTest {
 
     @MockBean
     CartService cartService;
+
+    @Nested
+    @DisplayName("장바구니 상품목록 조회 API 테스트")
+    class GetCartProducts {
+
+        ResultActions getCartProducts() throws Exception {
+            return mockMvc.perform(MockMvcRequestBuilders.get("/carts")
+                    .accept(MediaType.APPLICATION_JSON));
+        }
+
+        CartProductResponse createCartProductResponse(Long id, String name, String image, Long price,
+                                                      Integer quantity) {
+            return CartProductResponse.builder()
+                    .cartProductId(id)
+                    .productId(id)
+                    .productName(name)
+                    .image(image)
+                    .price(price)
+                    .quantity(quantity)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void getCartProducts_success() throws Exception {
+            //given
+            Long userId = 1L;
+            List<CartProductResponse> cartProducts = List.of(
+                    createCartProductResponse(1L, "상품1", "image1", 1000L, 2),
+                    createCartProductResponse(2L, "상품2", "image2", 2000L, 3)
+            );
+            given(cartService.getCartProducts(userId)).willReturn(cartProducts);
+
+            // when
+            ResultActions resultActions = getCartProducts();
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ResponseCode.GET.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ResponseCode.GET.getMessage())))
+                    .andExpectAll(
+                            jsonPath("$.data[0].cartProductId", equalTo(1)),
+                            jsonPath("$.data[0].productId", equalTo(1)),
+                            jsonPath("$.data[0].productName", equalTo("상품1")),
+                            jsonPath("$.data[0].image", equalTo("image1")),
+                            jsonPath("$.data[0].price", equalTo(1000)),
+                            jsonPath("$.data[0].quantity", equalTo(2)),
+                            jsonPath("$.data[1].cartProductId", equalTo(2)),
+                            jsonPath("$.data[1].productId", equalTo(2)),
+                            jsonPath("$.data[1].productName", equalTo("상품2")),
+                            jsonPath("$.data[1].image", equalTo("image2")),
+                            jsonPath("$.data[1].price", equalTo(2000)),
+                            jsonPath("$.data[1].quantity", equalTo(3))
+                    );
+        }
+
+    }
 
     @Nested
     @DisplayName("장바구니 상품 추가 API 테스트")

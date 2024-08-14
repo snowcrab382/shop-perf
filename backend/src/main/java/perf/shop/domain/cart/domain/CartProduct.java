@@ -10,8 +10,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import perf.shop.domain.cart.dto.request.AddProductRequest;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.global.common.domain.BaseEntity;
 
@@ -36,6 +38,28 @@ public class CartProduct extends BaseEntity {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
-    private Long price;
+    @Builder
+    private CartProduct(Long id, Cart cart, Product product, Integer quantity) {
+        this.id = id;
+        this.cart = cart;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public static CartProduct from(AddProductRequest request, Cart cart, Product product) {
+        return CartProduct.builder()
+                .cart(cart)
+                .product(product)
+                .quantity(request.getQuantity())
+                .build();
+    }
+
+    public void addQuantity(Integer quantity) {
+        this.quantity += quantity;
+    }
+
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
 }

@@ -60,7 +60,6 @@ CREATE TABLE `cart_product`
     `cart_id`     bigint   NOT NULL,
     `product_id`  bigint   NOT NULL,
     `quantity`    int      NOT NULL,
-    `price`       bigint   NOT NULL,
     `created_at`  datetime NULL,
     `modified_at` datetime NULL,
     PRIMARY KEY (`id`)

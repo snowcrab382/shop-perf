@@ -40,28 +40,6 @@ class ProductApiTest {
     @MockBean
     ProductService productService;
 
-    private ProductSaveRequest createProductSaveRequest(String name, String description, Long price, Long stock,
-                                                        Long categoryId) {
-        return ProductSaveRequest.builder()
-                .name(name)
-                .description(description)
-                .price(price)
-                .stock(stock)
-                .categoryId(categoryId)
-                .build();
-    }
-
-    private ProductFindByIdResponse createProductFindByIdResponse(String name, Long price, String image,
-                                                                  String description, Long stock) {
-        return ProductFindByIdResponse.builder()
-                .name(name)
-                .price(price)
-                .image(image)
-                .description(description)
-                .stock(stock)
-                .build();
-    }
-
     @Nested
     @DisplayName("상품 저장 API 테스트")
     class Save {
@@ -74,9 +52,20 @@ class ProductApiTest {
                     .accept(MediaType.APPLICATION_JSON));
         }
 
+        ProductSaveRequest createProductSaveRequest(String name, String description, Long price, Long stock,
+                                                    Long categoryId) {
+            return ProductSaveRequest.builder()
+                    .name(name)
+                    .description(description)
+                    .price(price)
+                    .stock(stock)
+                    .categoryId(categoryId)
+                    .build();
+        }
+
         @Test
-        @DisplayName("상품 저장 성공")
-        void saveProduct_Success() throws Exception {
+        @DisplayName("성공")
+        void saveProduct_success() throws Exception {
             // given
             ProductSaveRequest dto = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
 
@@ -92,8 +81,8 @@ class ProductApiTest {
         }
 
         @Test
-        @DisplayName("입력값 검증에 실패하면 예외 발생")
-        void saveProduct_ThrowException_IfInputValueIsInvalid() throws Exception {
+        @DisplayName("실패 - 입력값 검증에 실패하면 예외 발생")
+        void saveProduct_throwException_ifInputValueIsInvalid() throws Exception {
             // given
             ProductSaveRequest dto = createProductSaveRequest(null, "상품 설명", 10000L, 100L, 1L);
 
@@ -124,9 +113,20 @@ class ProductApiTest {
                     .accept(MediaType.APPLICATION_JSON));
         }
 
+        ProductFindByIdResponse createProductFindByIdResponse(String name, Long price, String image,
+                                                              String description, Long stock) {
+            return ProductFindByIdResponse.builder()
+                    .name(name)
+                    .price(price)
+                    .image(image)
+                    .description(description)
+                    .stock(stock)
+                    .build();
+        }
+
         @Test
-        @DisplayName("상품 조회 성공")
-        void findById_Success() throws Exception {
+        @DisplayName("성공")
+        void findById_success() throws Exception {
             // given
             Long id = 1L;
             ProductFindByIdResponse productDetail = createProductFindByIdResponse("상품명", 10000L, "image", "상품 설명",
@@ -151,8 +151,8 @@ class ProductApiTest {
         }
 
         @Test
-        @DisplayName("상품이 존재하지 않으면 예외 발생")
-        void findById_ThrowException_IfProductNotFound() throws Exception {
+        @DisplayName("실패 - 상품이 존재하지 않으면 예외 발생")
+        void findById_throwException_ifProductNotFound() throws Exception {
             // given
             Long id = 1L;
             given(productService.findProductById(id)).willThrow(

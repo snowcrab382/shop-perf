@@ -37,23 +37,13 @@ class ProductServiceTest {
     @Mock
     ProductSaveRequest productSaveRequest;
 
-    private Product createProduct(String name, Long price, String description, Long stock, Long categoryId) {
-        return Product.builder()
-                .name(name)
-                .price(price)
-                .description(description)
-                .stock(stock)
-                .categoryId(categoryId)
-                .build();
-    }
-
     @Nested
     @DisplayName("상품 저장 테스트")
     class SaveProduct {
 
         @Test
-        @DisplayName("카테고리 검증에 성공하면 상품 저장 성공")
-        void saveProduct_Saved_IfCategoryIdExists() {
+        @DisplayName("성공")
+        void saveProduct_saved_ifCategoryIdExists() {
             // given
             Long sellerId = 1L;
             Product newProduct = Product.of(productSaveRequest, sellerId);
@@ -73,8 +63,8 @@ class ProductServiceTest {
     class FindProductById {
 
         @Test
-        @DisplayName("상품이 존재하면 조회 성공")
-        void findProductById_Success_IfProductExists() {
+        @DisplayName("성공")
+        void findProductById_success_ifProductExists() {
             // given
             Long productId = 1L;
             Product product = createProduct("상품명", 10000L, "상품 설명", 100L, 1L);
@@ -93,8 +83,8 @@ class ProductServiceTest {
         }
 
         @Test
-        @DisplayName("상품이 존재하지 않으면 예외 발생")
-        void findProductById_ThrowException_IfProductNotExists() {
+        @DisplayName("실패 - 상품이 존재하지 않으면 예외 발생")
+        void findProductById_throwException_ifProductNotExists() {
             // given
             Long productId = 1L;
             given(productRepository.findById(productId)).willReturn(Optional.empty());
@@ -105,6 +95,17 @@ class ProductServiceTest {
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
 
         }
+
+        Product createProduct(String name, Long price, String description, Long stock, Long categoryId) {
+            return Product.builder()
+                    .name(name)
+                    .price(price)
+                    .description(description)
+                    .stock(stock)
+                    .categoryId(categoryId)
+                    .build();
+        }
+
     }
 
 }

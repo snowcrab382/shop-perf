@@ -242,4 +242,58 @@ class CartApiTest {
         }
     }
 
+    @Nested
+    @DisplayName("장바구니 상품 단건 삭제 API 테스트")
+    class DeleteProduct {
+
+        ResultActions deleteProduct(Long cartProductId) throws Exception {
+            return mockMvc.perform(MockMvcRequestBuilders.delete("/carts/" + cartProductId)
+                    .with(csrf()));
+        }
+
+        @Test
+        @DisplayName("성공")
+        void deleteProduct_success() throws Exception {
+            // given
+            Long cartProductId = 1L;
+
+            // when
+            ResultActions resultActions = deleteProduct(cartProductId);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ResponseCode.DELETED.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ResponseCode.DELETED.getMessage())))
+                    .andExpect(jsonPath("$.data", equalTo(null)));
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 전체삭제 API 테스트")
+    class DeleteAllCartProducts {
+
+        ResultActions deleteAllCartProducts(Long userId) throws Exception {
+            return mockMvc.perform(MockMvcRequestBuilders.delete("/carts")
+                    .with(csrf()));
+        }
+
+        @Test
+        @DisplayName("성공")
+        void deleteAllCartProducts_success() throws Exception {
+            // given
+            Long userId = 1L;
+
+            // when
+            ResultActions resultActions = deleteAllCartProducts(userId);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ResponseCode.DELETED.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ResponseCode.DELETED.getMessage())))
+                    .andExpect(jsonPath("$.data", equalTo(null)));
+        }
+    }
+
 }

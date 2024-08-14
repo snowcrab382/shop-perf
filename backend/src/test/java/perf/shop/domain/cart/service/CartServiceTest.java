@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import java.util.List;
 import java.util.Optional;
@@ -198,4 +199,44 @@ class CartServiceTest {
                     .build();
         }
     }
+
+    @Nested
+    @DisplayName("장바구니 상품 삭제 테스트")
+    class DeleteProduct {
+
+        @Test
+        @DisplayName("성공")
+        void deleteProduct_success() throws Exception {
+            // given
+            Long cartProductId = 1L;
+
+            // when
+            cartService.deleteProduct(cartProductId);
+
+            // then
+            then(cartProductRepository).should().deleteById(cartProductId);
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 전체 삭제 테스트")
+    class DeleteAllCartProducts {
+
+        @Test
+        @DisplayName("성공")
+        void deleteAllCartProducts_success() throws Exception {
+            // given
+            Long userId = 1L;
+            Cart cart = createCart(userId);
+            given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
+
+            // when
+            cartService.deleteAllCartProducts(userId);
+
+            // then
+            then(cartProductRepository).should().deleteAllByCartId(cart.getId());
+
+        }
+    }
+
 }

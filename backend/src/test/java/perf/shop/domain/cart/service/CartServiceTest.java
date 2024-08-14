@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.cart.domain.Cart;
 import perf.shop.domain.cart.domain.CartProduct;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
+import perf.shop.domain.cart.dto.request.UpdateProductRequest;
 import perf.shop.domain.cart.dto.response.CartProductResponse;
 import perf.shop.domain.cart.repository.CartProductRepository;
 import perf.shop.domain.cart.repository.CartRepository;
@@ -58,17 +59,17 @@ class CartServiceTest {
                 .build();
     }
 
+    CartProduct createCartProduct(Cart cart, Product product, Integer quantity) {
+        return CartProduct.builder()
+                .cart(cart)
+                .product(product)
+                .quantity(quantity)
+                .build();
+    }
+
     @Nested
     @DisplayName("장바구니 상품 목록 조회 테스트")
     class GetCartProducts {
-
-        CartProduct createCartProduct(Cart cart, Product product, Integer quantity) {
-            return CartProduct.builder()
-                    .cart(cart)
-                    .product(product)
-                    .quantity(quantity)
-                    .build();
-        }
 
         @Test
         @DisplayName("성공 - 장바구니에 상품이 없으면 빈 목록 반환")
@@ -104,6 +105,7 @@ class CartServiceTest {
             assertThat(cartProducts.size()).isEqualTo(1);
 
         }
+
     }
 
     @Nested
@@ -149,5 +151,51 @@ class CartServiceTest {
                     .build();
         }
 
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 수정 테스트")
+    class UpdateProduct {
+
+        @Test
+        @DisplayName("성공")
+        void updateProduct_success() throws Exception {
+            // given
+            Long cartProductId = 1L;
+            UpdateProductRequest updateProductRequest = createUpdateProductRequest(10);
+
+            Cart cart = createCart(1L);
+            Product product = createProduct(1L, 1L, "상품1", "상품1 설명", 1000L, 10L);
+            CartProduct cartProduct = createCartProduct(cart, product, 5);
+            cart.addProduct(cartProduct);
+            given(cartProductRepository.findById(any())).willReturn(Optional.of(cartProduct));
+
+            // when
+            cartService.updateProduct(cartProductId, updateProductRequest);
+
+            // then
+            assertThat(cartProduct.getQuantity()).isEqualTo(10);
+        }
+
+        @Test
+        @DisplayName("실패 - 장바구니 상품이 존재하지 않으면 예외 발생")
+        void updateProduct_throwException_IfCartProductNotExists() throws Exception {
+            // given
+            Long cartProductId = 1L;
+            UpdateProductRequest updateProductRequest = createUpdateProductRequest(10);
+            given(cartProductRepository.findById(any())).willThrow(
+                    new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
+
+            // when & then
+            assertThatThrownBy(() -> cartService.updateProduct(cartProductId, updateProductRequest))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_PRODUCT_NOT_FOUND);
+        }
+
+        UpdateProductRequest createUpdateProductRequest(Integer quantity) {
+            return UpdateProductRequest.builder()
+                    .quantity(quantity)
+                    .build();
+        }
     }
 }

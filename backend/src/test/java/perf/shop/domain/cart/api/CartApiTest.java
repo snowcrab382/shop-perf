@@ -1,12 +1,16 @@
 package perf.shop.domain.cart.api;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,9 +23,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import perf.shop.domain.cart.dto.request.AddProductRequest;
+import perf.shop.domain.cart.dto.request.UpdateProductRequest;
 import perf.shop.domain.cart.dto.response.CartProductResponse;
 import perf.shop.domain.cart.service.CartService;
 import perf.shop.global.common.response.ResponseCode;
+import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 import perf.shop.mock.InjectMockUser;
 
@@ -152,6 +158,87 @@ class CartApiTest {
                             jsonPath("$.errors[0].value", equalTo(null)),
                             jsonPath("$.errors[0].message", equalTo("must not be null"))
                     );
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 수정 API 테스트")
+    class UpdateProduct {
+
+        ResultActions updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest) throws Exception {
+            return mockMvc.perform(MockMvcRequestBuilders.put("/carts/" + cartProductId)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updateProductRequest)));
+        }
+
+        UpdateProductRequest createUpdateProductRequest(Long cartProductId, Integer quantity) {
+            return UpdateProductRequest.builder()
+                    .cartProductId(cartProductId)
+                    .quantity(quantity)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void updateProduct_success() throws Exception {
+            // given
+            Long cartProductId = 1L;
+            UpdateProductRequest dto = createUpdateProductRequest(cartProductId, 3);
+
+            // when
+            ResultActions resultActions = updateProduct(1L, dto);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ResponseCode.UPDATED.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ResponseCode.UPDATED.getMessage())))
+                    .andExpect(jsonPath("$.data", equalTo(null)));
+
+        }
+
+        @Test
+        @DisplayName("실패 - 장바구니 상품을 찾을 수 없는 경우 예외 발생")
+        void updateProduct_throwException_ifCartProductIdNotExists() throws Exception {
+            // given
+            Long cartProductId = 1L;
+            UpdateProductRequest dto = createUpdateProductRequest(cartProductId, 3);
+            doThrow(new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND))
+                    .when(cartService).updateProduct(anyLong(), any(UpdateProductRequest.class));
+
+            // when
+            ResultActions resultActions = updateProduct(1L, createUpdateProductRequest(1L, 3));
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
+
+        }
+
+        @Test
+        @DisplayName("실패 - 입력값 검증에 실패하면 예외 발생")
+        void updateProduct_throwException_ifInputValueIsInvalid() throws Exception {
+            // given
+            Long cartProductId = 1L;
+            UpdateProductRequest dto = createUpdateProductRequest(null, 3);
+
+            // when
+            ResultActions resultActions = updateProduct(cartProductId, dto);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.errors").exists())
+                    .andExpect(jsonPath("$.errors[0].field", equalTo("cartProductId")))
+                    .andExpect(jsonPath("$.errors[0].value", equalTo(null)))
+                    .andExpect(jsonPath("$.errors[0].message", equalTo("must not be null")));
+
         }
     }
 

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.product.dao.CategoryRepository;
 import perf.shop.domain.product.domain.Category;
 import perf.shop.domain.product.dto.response.CategoryResponse;
-import perf.shop.domain.product.exception.CategoryNotFoundException;
+import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 
 @Transactional
@@ -21,7 +21,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public void validateCategoryExistsById(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
-            throw new CategoryNotFoundException(ErrorCode.CATEGORY_NOT_FOUND);
+            throw new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND);
         }
     }
 

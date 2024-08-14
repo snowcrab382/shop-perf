@@ -18,7 +18,7 @@ import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
-import perf.shop.domain.product.exception.ProductNotFoundException;
+import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,7 +91,7 @@ class ProductServiceTest {
 
             // when & then
             assertThatThrownBy(() -> productService.findProductById(productId))
-                    .isInstanceOf(ProductNotFoundException.class)
+                    .isInstanceOf(EntityNotFoundException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
 
         }

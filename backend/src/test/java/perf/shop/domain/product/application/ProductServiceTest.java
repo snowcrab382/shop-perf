@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
-import perf.shop.domain.product.exception.ProductNotFoundException;
+import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +57,20 @@ class ProductServiceTest {
             then(productRepository).should().save(any(Product.class));
 
         }
+
+        @Test
+        @DisplayName("실패 - 카테고리가 존재하지 않으면 예외 발생")
+        void saveProduct_throwException_ifCategoryIdNotExists() throws Exception {
+            // given
+            Long sellerId = 1L;
+            doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
+                    .when(categoryService).validateCategoryExistsById(any(Long.class));
+
+            // when & then
+            assertThatThrownBy(() -> productService.saveProduct(productSaveRequest, sellerId))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_FOUND);
+        }
     }
 
     @Nested
@@ -91,7 +106,7 @@ class ProductServiceTest {
 
             // when & then
             assertThatThrownBy(() -> productService.findProductById(productId))
-                    .isInstanceOf(ProductNotFoundException.class)
+                    .isInstanceOf(EntityNotFoundException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
 
         }

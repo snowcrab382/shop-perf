@@ -1,6 +1,5 @@
 package perf.shop.domain.cart.service;
 
-import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,13 +25,6 @@ public class CartService {
     private final ProductRepository productRepository;
     private final CartProductRepository cartProductRepository;
 
-    private static CartProduct getCartProductFromCart(Long cartProductId, Cart cart) {
-        return cart.getCartProducts().stream()
-                .filter(cp -> cp.getId().equals(cartProductId))
-                .findAny()
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
-    }
-
     private static void addProductToCartByRequest(AddProductRequest addProductRequest, Cart cart, Product product) {
         cart.getCartProducts().stream()
                 .filter(cartProduct -> cartProduct.getProduct().getId().equals(addProductRequest.getProductId()))
@@ -44,12 +36,7 @@ public class CartService {
     }
 
     public List<CartProductResponse> getCartProducts(Long userId) {
-        List<CartProduct> cartProducts = getCart(userId).getCartProducts();
-        if (cartProducts.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return cartProducts.stream()
+        return getCart(userId).getCartProducts().stream()
                 .map(CartProductResponse::from)
                 .toList();
     }
@@ -71,7 +58,8 @@ public class CartService {
 
     public void deleteProduct(Long cartProductId, Long userId) {
         Cart cart = getCart(userId);
-        CartProduct cartProduct = getCartProductFromCart(cartProductId, cart);
+        CartProduct cartProduct = cartProductRepository.findByIdAndCartId(cartProductId, cart.getId())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
 
         cartProductRepository.delete(cartProduct);
     }

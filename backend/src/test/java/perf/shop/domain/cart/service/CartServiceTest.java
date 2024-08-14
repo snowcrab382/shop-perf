@@ -213,9 +213,10 @@ class CartServiceTest {
             Long userId = 1L;
             Cart cart = createCart(userId);
             Product product = createProduct(1L, 1L, "상품1", "상품1 설명", 1000L, 10L);
-            CartProduct cartProduct = createCartProduct(1L, cart, product, 5);
-            cart.addProduct(cartProduct);
+            CartProduct cartProduct = createCartProduct(cartProductId, cart, product, 5);
             given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
+            given(cartProductRepository.findByIdAndCartId(cartProductId, cart.getId())).willReturn(
+                    Optional.of(cartProduct));
 
             // when
             cartService.deleteProduct(cartProductId, userId);
@@ -232,6 +233,7 @@ class CartServiceTest {
             Long cartProductId = 1L;
             Cart cart = createCart(1L);
             given(cartRepository.findByUserId(any())).willReturn(Optional.of(cart));
+            given(cartProductRepository.findByIdAndCartId(cartProductId, cart.getId())).willReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> cartService.deleteProduct(cartProductId, userId))

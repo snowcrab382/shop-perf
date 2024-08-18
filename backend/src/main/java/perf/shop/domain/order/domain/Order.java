@@ -1,17 +1,22 @@
 package perf.shop.domain.order.domain;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.user.domain.User;
+import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.common.domain.BaseEntity;
 
 @Entity
@@ -24,12 +29,43 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Embedded
+    private Orderer orderer;
 
-    @Column(nullable = false)
-    private Long totalAmount;
+    @Embedded
+    private ShippingInfo shippingInfo;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderLine> orderLines = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private OrderState state;
+
+    @Builder
+    private Order(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+        this.orderer = orderer;
+        this.shippingInfo = shippingInfo;
+        this.orderLines = orderLines;
+        this.state = OrderState.CREATED;
+    }
+
+    public static Order of(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+        return Order.builder()
+                .orderer(orderer)
+                .shippingInfo(shippingInfo)
+                .orderLines(orderLines)
+                .build();
+    }
+
+    public void addOrderLine(OrderLine orderLine) {
+        orderLines.add(orderLine);
+    }
+
+    public Long calculateTotalAmounts() {
+        return orderLines.stream()
+                .mapToLong(OrderLine::getAmounts)
+                .sum();
+    }
 
 
 }

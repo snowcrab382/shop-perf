@@ -19,11 +19,19 @@ DROP TABLE IF EXISTS `orders`;
 
 CREATE TABLE `orders`
 (
-    `id`           bigint   NOT NULL AUTO_INCREMENT,
-    `user_id`      bigint   NOT NULL,
-    `total_amount` bigint   NOT NULL,
-    `created_at`   datetime NULL,
-    `modified_at`  datetime NULL,
+    `id`              bigint       NOT NULL AUTO_INCREMENT,
+    `user_id`         bigint       NOT NULL,
+    `orderer_name`    varchar(20)  NOT NULL,
+    `orderer_email`   varchar(100) NOT NULL,
+    `road_address`    varchar(100) NOT NULL,
+    `address_detail`  varchar(100) NOT NULL,
+    `zipcode`         varchar(50)  NOT NULL,
+    `receiver_name`   varchar(20)  NOT NULL,
+    `receiver_phone`  varchar(20)  NOT NULL,
+    `request_message` varchar(255) NULL,
+    `state`           varchar(20)  NOT NULL,
+    `created_at`      datetime     NULL,
+    `modified_at`     datetime     NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -38,15 +46,16 @@ CREATE TABLE `category`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `order_product`;
+DROP TABLE IF EXISTS `order_line`;
 
-CREATE TABLE `order_product`
+CREATE TABLE `order_line`
 (
     `id`          bigint   NOT NULL AUTO_INCREMENT,
     `order_id`    bigint   NOT NULL,
     `product_id`  bigint   NOT NULL,
     `quantity`    int      NOT NULL,
     `price`       bigint   NOT NULL,
+    `amounts`     bigint   NOT NULL,
     `created_at`  datetime NULL,
     `modified_at` datetime NULL,
     PRIMARY KEY (`id`)
@@ -105,19 +114,20 @@ CREATE TABLE `payment`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `recipient`;
+DROP TABLE IF EXISTS `address_book`;
 
-CREATE TABLE `recipient`
+CREATE TABLE `address_book`
 (
-    `id`             bigint       NOT NULL AUTO_INCREMENT,
-    `user_id`        bigint       NOT NULL,
-    `name`           varchar(20)  NOT NULL,
-    `phone`          varchar(15)  NOT NULL,
-    `street_address` varchar(100) NOT NULL,
-    `detail_address` varchar(50)  NOT NULL,
-    `zipcode`        varchar(50)  NOT NULL,
-    `created_at`     datetime     NULL,
-    `modified_at`    datetime     NULL,
+    `id`              bigint       NOT NULL AUTO_INCREMENT,
+    `user_id`         bigint       NOT NULL,
+    `road_address`    varchar(100) NOT NULL,
+    `address_detail`  varchar(100) NOT NULL,
+    `zipcode`         varchar(50)  NOT NULL,
+    `receiver_name`   varchar(20)  NOT NULL,
+    `receiver_phone`  varchar(20)  NOT NULL,
+    `request_message` varchar(255) NULL,
+    `created_at`      datetime     NULL,
+    `modified_at`     datetime     NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -125,28 +135,16 @@ DROP TABLE IF EXISTS `delivery`;
 
 CREATE TABLE `delivery`
 (
-    `id`             bigint       NOT NULL AUTO_INCREMENT,
-    `order_id`       bigint       NOT NULL,
-    `name`           varchar(20)  NOT NULL,
-    `phone`          varchar(15)  NOT NULL,
-    `street_address` varchar(100) NOT NULL,
-    `detail_address` varchar(50)  NOT NULL,
-    `zipcode`        varchar(50)  NOT NULL,
-    `request`        text         NULL,
-    `status`         varchar(20)  NOT NULL,
-    `created_at`     datetime     NULL,
-    `modified_at`    datetime     NULL,
-    PRIMARY KEY (`id`)
-);
-
-DROP TABLE IF EXISTS `order_history`;
-
-CREATE TABLE `order_history`
-(
-    `id`          bigint      NOT NULL AUTO_INCREMENT,
-    `order_id`    bigint      NOT NULL,
-    `status`      varchar(20) NOT NULL,
-    `created_at`  datetime    NULL,
-    `modified_at` datetime    NULL,
+    `id`              bigint       NOT NULL AUTO_INCREMENT,
+    `order_id`        bigint       NOT NULL,
+    `road_address`    varchar(100) NOT NULL,
+    `address_detail`  varchar(100) NOT NULL,
+    `zipcode`         varchar(50)  NOT NULL,
+    `receiver_name`   varchar(20)  NOT NULL,
+    `receiver_phone`  varchar(20)  NOT NULL,
+    `request_message` varchar(255) NULL,
+    `status`          varchar(20)  NOT NULL,
+    `created_at`      datetime     NULL,
+    `modified_at`     datetime     NULL,
     PRIMARY KEY (`id`)
 );

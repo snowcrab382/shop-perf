@@ -1,4 +1,5 @@
 package perf.shop.domain.order.domain;
 
-public enum OrderStatus {
+public enum OrderState {
+    CREATED
 }

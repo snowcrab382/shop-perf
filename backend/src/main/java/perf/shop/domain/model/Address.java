@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import perf.shop.domain.order.dto.request.AddressRequest;
 
 @Embeddable
 @Getter
@@ -24,11 +25,11 @@ public class Address {
         this.zipcode = zipcode;
     }
 
-    public static Address of(String roadAddress, String addressDetail, String zipcode) {
+    public static Address from(AddressRequest request) {
         return Address.builder()
-                .roadAddress(roadAddress)
-                .addressDetail(addressDetail)
-                .zipcode(zipcode)
+                .roadAddress(request.getRoadAddress())
+                .addressDetail(request.getAddressDetail())
+                .zipcode(request.getZipcode())
                 .build();
     }
 }

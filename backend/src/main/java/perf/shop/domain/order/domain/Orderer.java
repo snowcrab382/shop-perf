@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import perf.shop.domain.order.dto.request.OrdererRequest;
 
 @Embeddable
 @Getter
@@ -28,11 +29,11 @@ public class Orderer {
         this.ordererEmail = ordererEmail;
     }
 
-    public static Orderer of(Long userId, String ordererName, String ordererEmail) {
+    public static Orderer from(Long userId, OrdererRequest request) {
         return Orderer.builder()
                 .userId(userId)
-                .ordererName(ordererName)
-                .ordererEmail(ordererEmail)
+                .ordererName(request.getOrdererName())
+                .ordererEmail(request.getOrdererEmail())
                 .build();
     }
 }

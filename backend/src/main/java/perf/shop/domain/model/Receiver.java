@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import perf.shop.domain.order.dto.request.ReceiverRequest;
 
 @Embeddable
 @Getter
@@ -27,11 +28,11 @@ public class Receiver {
         this.requestMessage = requestMessage;
     }
 
-    public static Receiver of(String receiverName, String receiverPhone, String requestMessage) {
+    public static Receiver from(ReceiverRequest request) {
         return Receiver.builder()
-                .receiverName(receiverName)
-                .receiverPhone(receiverPhone)
-                .requestMessage(requestMessage)
+                .receiverName(request.getReceiverName())
+                .receiverPhone(request.getReceiverPhone())
+                .requestMessage(request.getRequestMessage())
                 .build();
     }
 }

@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import perf.shop.domain.order.dto.request.ShippingInfoRequest;
 
 @Embeddable
 @Getter
@@ -24,7 +25,10 @@ public class ShippingInfo {
         this.receiver = receiver;
     }
 
-    public static ShippingInfo of(Address address, Receiver receiver) {
+    public static ShippingInfo from(ShippingInfoRequest request) {
+        Address address = Address.from(request.getAddress());
+        Receiver receiver = Receiver.from(request.getReceiver());
+
         return ShippingInfo.builder()
                 .address(address)
                 .receiver(receiver)

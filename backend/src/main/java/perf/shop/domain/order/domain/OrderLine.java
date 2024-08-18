@@ -2,6 +2,7 @@ package perf.shop.domain.order.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.global.common.domain.BaseEntity;
 
 @Entity
@@ -24,7 +26,7 @@ public class OrderLine extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -49,12 +51,12 @@ public class OrderLine extends BaseEntity {
         this.amounts = price * quantity;
     }
 
-    public static OrderLine of(Order order, Long productId, Integer quantity, Long price) {
+    public static OrderLine of(Order order, OrderLineRequest request) {
         return OrderLine.builder()
                 .order(order)
-                .productId(productId)
-                .quantity(quantity)
-                .price(price)
+                .productId(request.getProductId())
+                .quantity(request.getQuantity())
+                .price(request.getPrice())
                 .build();
     }
 }

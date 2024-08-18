@@ -42,18 +42,16 @@ public class Order extends BaseEntity {
     private OrderState state;
 
     @Builder
-    private Order(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+    private Order(Orderer orderer, ShippingInfo shippingInfo) {
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
-        this.orderLines = orderLines;
         this.state = OrderState.CREATED;
     }
 
-    public static Order of(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+    public static Order of(Orderer orderer, ShippingInfo shippingInfo) {
         return Order.builder()
                 .orderer(orderer)
                 .shippingInfo(shippingInfo)
-                .orderLines(orderLines)
                 .build();
     }
 

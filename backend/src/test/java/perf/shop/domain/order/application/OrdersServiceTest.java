@@ -3,6 +3,12 @@ package perf.shop.domain.order.application;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static perf.shop.mock.fixtures.common.CommonFixture.createAddressRequest;
+import static perf.shop.mock.fixtures.common.CommonFixture.createReceiverRequest;
+import static perf.shop.mock.fixtures.common.CommonFixture.createShippingInfoRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createOrderCreateRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createOrderLineRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createOrdererRequest;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -62,54 +68,5 @@ class OrdersServiceTest {
             then(ordersRepository).should().save(any(Order.class));
 
         }
-
-        OrderCreateRequest createOrderCreateRequest(OrdererRequest orderer, ShippingInfoRequest shippingInfo,
-                                                    List<OrderLineRequest> orderLines) {
-            return OrderCreateRequest.builder()
-                    .orderer(orderer)
-                    .shippingInfo(shippingInfo)
-                    .orderLines(orderLines)
-                    .build();
-        }
-
-        OrdererRequest createOrdererRequest(String ordererName, String ordererEmail) {
-            return OrdererRequest.builder()
-                    .ordererName(ordererName)
-                    .ordererEmail(ordererEmail)
-                    .build();
-        }
-
-        AddressRequest createAddressRequest(String roadAddress, String addressDetail, String zipcode) {
-            return AddressRequest.builder()
-                    .roadAddress(roadAddress)
-                    .addressDetail(addressDetail)
-                    .zipcode(zipcode)
-                    .build();
-        }
-
-        ReceiverRequest createReceiverRequest(String receiverName, String receiverPhone, String requestMessage) {
-            return ReceiverRequest.builder()
-                    .receiverName(receiverName)
-                    .receiverPhone(receiverPhone)
-                    .requestMessage(requestMessage)
-                    .build();
-        }
-
-        ShippingInfoRequest createShippingInfoRequest(AddressRequest address, ReceiverRequest receiver) {
-            return ShippingInfoRequest.builder()
-                    .address(address)
-                    .receiver(receiver)
-                    .build();
-        }
-
-        OrderLineRequest createOrderLineRequest(Long productId, Integer quantity, Long price) {
-            return OrderLineRequest.builder()
-                    .productId(productId)
-                    .quantity(quantity)
-                    .price(price)
-                    .build();
-        }
-
     }
-
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.tuple;
 import static org.mockito.BDDMockito.given;
+import static perf.shop.mock.fixtures.product.CategoryFixture.createCategory;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -28,16 +29,12 @@ class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
-    private Category createCategory(Long id, String name) {
-        return Category.builder().id(id).name(name).build();
-    }
-
     @Nested
     @DisplayName("카테고리 검증 테스트")
     class ValidateCategoryExistsById {
 
         @Test
-        @DisplayName("카테고리가 존재하면 검증 성공")
+        @DisplayName("성공")
         void validateCategoryExistsById_Success_IfCategoryExists() {
             // given
             Long categoryId = 1L;
@@ -51,7 +48,7 @@ class CategoryServiceTest {
         }
 
         @Test
-        @DisplayName("카테고리가 존재하지 않으면 예외 발생")
+        @DisplayName("실패 - 카테고리가 존재하지 않으면 예외 발생")
         void validateCategoryExistsById_ThrowException_IfCategoryNotExists() {
             // given
             Long categoryId = 1L;
@@ -69,7 +66,7 @@ class CategoryServiceTest {
     class FindAll {
 
         @Test
-        @DisplayName("카테고리 목록 조회 성공")
+        @DisplayName("성공 - 카테고리 목록이 비어있어도 빈 리스트 반환")
         void findAll_ReturnCategoryResponseList() {
             // given
             Category category1 = createCategory(1L, "카테고리1");

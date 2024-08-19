@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static perf.shop.mock.fixtures.product.CategoryFixture.createCategoryResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -36,17 +37,13 @@ class CategoryApiTest {
     @MockBean
     CategoryService categoryService;
 
-    private CategoryResponse createCategoryResponse(Long id, String name) {
-        return CategoryResponse.builder().id(id).name(name).build();
-    }
-
     @Nested
     @DisplayName("카테고리 목록 조회 API 테스트")
     class FindAll {
 
         @Test
-        @DisplayName("카테고리 목록 조회 성공")
-        void findAll_Success() throws Exception {
+        @DisplayName("성공")
+        void findAll_success() throws Exception {
             // given
             CategoryResponse category1 = createCategoryResponse(1L, "카테고리1");
             CategoryResponse category2 = createCategoryResponse(2L, "카테고리2");
@@ -68,7 +65,5 @@ class CategoryApiTest {
                             jsonPath("$.data[1].name", equalTo("카테고리2"))
                     );
         }
-
     }
-
 }

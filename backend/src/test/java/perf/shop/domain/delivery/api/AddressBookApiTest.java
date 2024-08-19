@@ -12,6 +12,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static perf.shop.mock.fixtures.common.CommonFixture.createAddress;
+import static perf.shop.mock.fixtures.common.CommonFixture.createAddressRequest;
+import static perf.shop.mock.fixtures.common.CommonFixture.createReceiver;
+import static perf.shop.mock.fixtures.common.CommonFixture.createReceiverRequest;
+import static perf.shop.mock.fixtures.common.CommonFixture.createShippingInfo;
+import static perf.shop.mock.fixtures.common.CommonFixture.createShippingInfoRequest;
+import static perf.shop.mock.fixtures.delivery.AddressBookFixture.createAddressBookRequest;
+import static perf.shop.mock.fixtures.delivery.AddressBookFixture.createAddressBookResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
@@ -53,35 +61,6 @@ class AddressBookApiTest {
     @MockBean
     AddressBookService addressBookService;
 
-    AddressRequest createAddressRequest(String roadAddress, String addressDetail, String zipcode) {
-        return AddressRequest.builder()
-                .roadAddress(roadAddress)
-                .addressDetail(addressDetail)
-                .zipcode(zipcode)
-                .build();
-    }
-
-    ReceiverRequest createReceiverRequest(String receiverName, String receiverPhone, String requestMessage) {
-        return ReceiverRequest.builder()
-                .receiverName(receiverName)
-                .receiverPhone(receiverPhone)
-                .requestMessage(requestMessage)
-                .build();
-    }
-
-    ShippingInfoRequest createShippingInfoRequest(AddressRequest address, ReceiverRequest receiver) {
-        return ShippingInfoRequest.builder()
-                .address(address)
-                .receiver(receiver)
-                .build();
-    }
-
-    AddressBookRequest createAddressBookRequest(ShippingInfoRequest shippingInfo) {
-        return AddressBookRequest.builder()
-                .shippingInfo(shippingInfo)
-                .build();
-    }
-
     @Nested
     @DisplayName("주소록 조회 API 테스트")
     class GetAddressBook {
@@ -100,7 +79,8 @@ class AddressBookApiTest {
             Address address = createAddress("서울시 강남구", "주소", "12345");
             Receiver receiver = createReceiver("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfo shippingInfo = createShippingInfo(address, receiver);
-            AddressBookResponse addressBookResponse = createAddressBookResponse(addressBookId, shippingInfo);
+            AddressBookResponse addressBookResponse = createAddressBookResponse(addressBookId,
+                    shippingInfo);
             given(addressBookService.findAllByUserId(addressBookId)).willReturn(List.of(addressBookResponse));
 
             // when
@@ -122,37 +102,6 @@ class AddressBookApiTest {
                             jsonPath("$.data[0].shippingInfo.receiver.requestMessage", equalTo("부재시 연락주세요"))
                     );
         }
-
-        Address createAddress(String roadAddress, String addressDetail, String zipcode) {
-            return Address.builder()
-                    .roadAddress(roadAddress)
-                    .addressDetail(addressDetail)
-                    .zipcode(zipcode)
-                    .build();
-        }
-
-        Receiver createReceiver(String receiverName, String receiverPhone, String requestMessage) {
-            return Receiver.builder()
-                    .receiverName(receiverName)
-                    .receiverPhone(receiverPhone)
-                    .requestMessage(requestMessage)
-                    .build();
-        }
-
-        ShippingInfo createShippingInfo(Address address, Receiver receiver) {
-            return ShippingInfo.builder()
-                    .address(address)
-                    .receiver(receiver)
-                    .build();
-        }
-
-        AddressBookResponse createAddressBookResponse(Long addressBookId, ShippingInfo shippingInfo) {
-            return AddressBookResponse.builder()
-                    .addressBookId(addressBookId)
-                    .shippingInfo(shippingInfo)
-                    .build();
-        }
-
     }
 
     @Nested
@@ -173,10 +122,10 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("서울시 강남구", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfo);
+            AddressBookRequest addressBookRequest = createAddressBookRequest(shippingInfo);
 
             // when
-            ResultActions resultActions = saveAddressBook(dto);
+            ResultActions resultActions = saveAddressBook(addressBookRequest);
 
             // then
             resultActions
@@ -192,10 +141,10 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfo);
+            AddressBookRequest addressBookRequest = createAddressBookRequest(shippingInfo);
 
             // when
-            ResultActions resultActions = saveAddressBook(dto);
+            ResultActions resultActions = saveAddressBook(addressBookRequest);
 
             // then
             resultActions
@@ -231,10 +180,10 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("서울시 강남구", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfo);
+            AddressBookRequest addressBookRequest = createAddressBookRequest(shippingInfo);
 
             // when
-            ResultActions resultActions = updateAddressBook(addressBookId, dto);
+            ResultActions resultActions = updateAddressBook(addressBookId, addressBookRequest);
 
             // then
             resultActions
@@ -252,10 +201,10 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfo);
+            AddressBookRequest addressBookRequest = createAddressBookRequest(shippingInfo);
 
             // when
-            ResultActions resultActions = updateAddressBook(addressBookId, dto);
+            ResultActions resultActions = updateAddressBook(addressBookId, addressBookRequest);
 
             // then
             resultActions
@@ -278,12 +227,12 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("서울시 강남구", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfo);
+            AddressBookRequest addressBookRequest = createAddressBookRequest(shippingInfo);
             doThrow(new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND))
                     .when(addressBookService).updateAddressBook(anyLong(), any(AddressBookRequest.class), anyLong());
 
             // when
-            ResultActions resultActions = updateAddressBook(addressBookId, dto);
+            ResultActions resultActions = updateAddressBook(addressBookId, addressBookRequest);
 
             // then
             resultActions

@@ -1,6 +1,7 @@
 package perf.shop.domain.product.dto.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static perf.shop.mock.fixtures.product.ProductFixture.createProductSaveRequest;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -24,25 +25,14 @@ class ProductSaveRequestTest {
         validator = factory.getValidator();
     }
 
-    ProductSaveRequest createProductSaveRequest(Long categoryId, String name, Long price, String description,
-                                                Long stock) {
-        return ProductSaveRequest.builder()
-                .categoryId(categoryId)
-                .name(name)
-                .price(price)
-                .description(description)
-                .stock(stock)
-                .build();
-    }
-
     @Test
     @DisplayName("실패 - 카테고리ID가 없으면 유효성 검증 실패")
     void categoryId_failValidation_isNull() {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(null, "상품명", 10000L, "상품 설명", 100L);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상품 설명", 10000L, 10L, null);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);
@@ -53,10 +43,10 @@ class ProductSaveRequestTest {
     @DisplayName("실패 - 상품명이 비어있으면 유효성 검증 실패")
     void name_failValidation_isBlank() {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(1L, null, 10000L, "상품 설명", 100L);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("", "상풍 설명", 10000L, 10L, 100L);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);
@@ -67,10 +57,10 @@ class ProductSaveRequestTest {
     @DisplayName("실패 - 상품설명이 비어있으면 유효성 검증 실패")
     void description_failValidation_isBlank() {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 10000L, null, 100L);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "", 10000L, 10L, 100L);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);
@@ -82,10 +72,10 @@ class ProductSaveRequestTest {
     @DisplayName("실패 - 가격이 최소값보다 작으면 유효성 검증 실패")
     void price_failValidation_isLessThanMin(long price) {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", price, "상품 설명", 100L);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상풍 설명", price, 10L, 100L);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);
@@ -97,10 +87,10 @@ class ProductSaveRequestTest {
     @DisplayName("실패 - 가격이 최대값보다 크다면 유효성 검증 실패")
     void price_failValidation_isGreaterThanMax(long price) {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", price, "상품 설명", 100L);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상풍 설명", price, 10L, 100L);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);
@@ -112,10 +102,10 @@ class ProductSaveRequestTest {
     @DisplayName("실패 - 재고수량이 최소값보다 작으면 유효성 검증 실패")
     void stock_failValidation_isLessThanMin(long stock) {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 1000L, "상품 설명", stock);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상풍 설명", 10000L, stock, 100L);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);
@@ -127,10 +117,10 @@ class ProductSaveRequestTest {
     @DisplayName("실패 - 가격이 최대값보다 크다면 유효성 검증 실패")
     void stock_failValidation_isGreaterThanMax(long stock) {
         // given
-        ProductSaveRequest dto = createProductSaveRequest(1L, "상품명", 1000L, "상품 설명", stock);
+        ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상풍 설명", 10000L, stock, 100L);
 
         // when
-        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<ProductSaveRequest>> violations = validator.validate(productSaveRequest);
 
         // then
         assertThat(violations.size()).isEqualTo(1);

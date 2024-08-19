@@ -26,6 +26,8 @@ import perf.shop.domain.model.dto.request.ReceiverRequest;
 import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.mock.fixtures.common.CommonFixture;
+import perf.shop.mock.fixtures.delivery.AddressBookFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[단위 테스트] AddressBookService")
@@ -37,65 +39,6 @@ class AddressBookServiceTest {
     @Mock
     AddressBookRepository addressBookRepository;
 
-    AddressRequest createAddressRequest(String roadAddress, String addressDetail, String zipcode) {
-        return AddressRequest.builder()
-                .roadAddress(roadAddress)
-                .addressDetail(addressDetail)
-                .zipcode(zipcode)
-                .build();
-    }
-
-    ReceiverRequest createReceiverRequest(String receiverName, String receiverPhone, String requestMessage) {
-        return ReceiverRequest.builder()
-                .receiverName(receiverName)
-                .receiverPhone(receiverPhone)
-                .requestMessage(requestMessage)
-                .build();
-    }
-
-    ShippingInfoRequest createShippingInfoRequest(AddressRequest address, ReceiverRequest receiver) {
-        return ShippingInfoRequest.builder()
-                .address(address)
-                .receiver(receiver)
-                .build();
-    }
-
-    AddressBookRequest createAddressBookRequest(ShippingInfoRequest shippingInfo) {
-        return AddressBookRequest.builder()
-                .shippingInfo(shippingInfo)
-                .build();
-    }
-
-    Address createAddress(String roadAddress, String addressDetail, String zipcode) {
-        return Address.builder()
-                .roadAddress(roadAddress)
-                .addressDetail(addressDetail)
-                .zipcode(zipcode)
-                .build();
-    }
-
-    Receiver createReceiver(String receiverName, String receiverPhone, String requestMessage) {
-        return Receiver.builder()
-                .receiverName(receiverName)
-                .receiverPhone(receiverPhone)
-                .requestMessage(requestMessage)
-                .build();
-    }
-
-    ShippingInfo createShippingInfo(Address address, Receiver receiver) {
-        return ShippingInfo.builder()
-                .address(address)
-                .receiver(receiver)
-                .build();
-    }
-
-    AddressBook createAddressBook(Long userId, ShippingInfo shippingInfo) {
-        return AddressBook.builder()
-                .userId(userId)
-                .shippingInfo(shippingInfo)
-                .build();
-    }
-
     @Nested
     @DisplayName("주소록 조회 테스트")
     class GetAddressBook {
@@ -105,7 +48,7 @@ class AddressBookServiceTest {
         void getAddressBook_success() {
             // given
             Long userId = 1L;
-            given(addressBookRepository.findAllByUserId(1L)).willReturn(List.of());
+            given(addressBookRepository.findAllByUserId(userId)).willReturn(List.of());
 
             // when
             addressBookService.findAllByUserId(userId);
@@ -124,17 +67,17 @@ class AddressBookServiceTest {
         void saveAddressBook_success() {
             // given
             Long userId = 1L;
-            AddressRequest address = createAddressRequest("", "주소", "12345");
-            ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
-            ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(address, receiver);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfoRequest);
+            AddressRequest address = CommonFixture.createAddressRequest("서울시 강남구", "주소", "12345");
+            ReceiverRequest receiver = CommonFixture.createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
+            ShippingInfoRequest shippingInfoRequest = CommonFixture.createShippingInfoRequest(address, receiver);
+            AddressBookRequest addressBookRequest = AddressBookFixture.createAddressBookRequest(shippingInfoRequest);
 
             ShippingInfo shippingInfo = ShippingInfo.from(shippingInfoRequest);
             AddressBook addressBook = AddressBook.of(userId, shippingInfo);
             given(addressBookRepository.save(any(AddressBook.class))).willReturn(addressBook);
 
             // when
-            addressBookService.saveAddressBook(dto, 1L);
+            addressBookService.saveAddressBook(addressBookRequest, userId);
 
             // then
             then(addressBookRepository).should().save(any(AddressBook.class));
@@ -151,20 +94,21 @@ class AddressBookServiceTest {
             // given
             Long addressBookId = 1L;
             Long userId = 1L;
-            AddressRequest addressRequest = createAddressRequest("변경된 주소", "주소", "12345");
-            ReceiverRequest receiverRequest = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
-            ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(addressRequest, receiverRequest);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfoRequest);
+            AddressRequest addressRequest = CommonFixture.createAddressRequest("변경된 주소", "주소", "12345");
+            ReceiverRequest receiverRequest = CommonFixture.createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
+            ShippingInfoRequest shippingInfoRequest = CommonFixture.createShippingInfoRequest(addressRequest,
+                    receiverRequest);
+            AddressBookRequest addressBookRequest = AddressBookFixture.createAddressBookRequest(shippingInfoRequest);
 
-            Address address = createAddress("서울시 강남구", "주소", "12345");
-            Receiver receiver = createReceiver("받는사람", "010-1234-5678", "부재시 연락주세요");
-            ShippingInfo shippingInfo = createShippingInfo(address, receiver);
-            AddressBook addressBook = createAddressBook(userId, shippingInfo);
+            Address address = CommonFixture.createAddress("기존 주소", "주소", "12345");
+            Receiver receiver = CommonFixture.createReceiver("받는사람", "010-1234-5678", "부재시 연락주세요");
+            ShippingInfo shippingInfo = CommonFixture.createShippingInfo(address, receiver);
+            AddressBook addressBook = AddressBookFixture.createAddressBook(userId, shippingInfo);
             given(addressBookRepository.findByIdAndUserId(addressBookId, userId)).willReturn(
                     Optional.ofNullable(addressBook));
 
             // when
-            addressBookService.updateAddressBook(addressBookId, dto, userId);
+            addressBookService.updateAddressBook(addressBookId, addressBookRequest, userId);
 
             // then
             assertThat(addressBook.getShippingInfo().getAddress().getRoadAddress()).isEqualTo("변경된 주소");
@@ -176,16 +120,17 @@ class AddressBookServiceTest {
             // given
             Long addressBookId = 1L;
             Long userId = 1L;
-            AddressRequest addressRequest = createAddressRequest("변경된 주소", "주소", "12345");
-            ReceiverRequest receiverRequest = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
-            ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(addressRequest, receiverRequest);
-            AddressBookRequest dto = createAddressBookRequest(shippingInfoRequest);
+            AddressRequest addressRequest = CommonFixture.createAddressRequest("변경된 주소", "주소", "12345");
+            ReceiverRequest receiverRequest = CommonFixture.createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
+            ShippingInfoRequest shippingInfoRequest = CommonFixture.createShippingInfoRequest(addressRequest,
+                    receiverRequest);
+            AddressBookRequest addressBookRequest = AddressBookFixture.createAddressBookRequest(shippingInfoRequest);
 
             given(addressBookRepository.findByIdAndUserId(addressBookId, userId)).willReturn(
                     Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> addressBookService.updateAddressBook(addressBookId, dto, userId))
+            assertThatThrownBy(() -> addressBookService.updateAddressBook(addressBookId, addressBookRequest, userId))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ADDRESS_BOOK_NOT_FOUND);
         }
@@ -201,7 +146,10 @@ class AddressBookServiceTest {
             // given
             Long userId = 1L;
             Long addressBookId = 1L;
-            AddressBook addressBook = createAddressBook(userId, null);
+            Address address = CommonFixture.createAddress("서울시 강남구", "주소", "12345");
+            Receiver receiver = CommonFixture.createReceiver("받는사람", "010-1234-5678", "부재시 연락주세요");
+            ShippingInfo shippingInfo = CommonFixture.createShippingInfo(address, receiver);
+            AddressBook addressBook = AddressBookFixture.createAddressBook(userId, shippingInfo);
             given(addressBookRepository.findByIdAndUserId(addressBookId, userId)).willReturn(
                     Optional.ofNullable(addressBook));
 

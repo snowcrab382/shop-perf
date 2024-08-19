@@ -5,6 +5,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static perf.shop.mock.fixtures.common.CommonFixture.createAddressRequest;
+import static perf.shop.mock.fixtures.common.CommonFixture.createReceiverRequest;
+import static perf.shop.mock.fixtures.common.CommonFixture.createShippingInfoRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createOrderCreateRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createOrderLineRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createOrdererRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -112,53 +118,6 @@ class OrdersApiTest {
                                     containsInAnyOrder("이메일 형식이 올바르지 않습니다.", "휴대폰 번호 형식이 올바르지 않습니다."))
                     );
 
-        }
-
-        OrderCreateRequest createOrderCreateRequest(OrdererRequest orderer, ShippingInfoRequest shippingInfo,
-                                                    List<OrderLineRequest> orderLines) {
-            return OrderCreateRequest.builder()
-                    .orderer(orderer)
-                    .shippingInfo(shippingInfo)
-                    .orderLines(orderLines)
-                    .build();
-        }
-
-        OrdererRequest createOrdererRequest(String ordererName, String ordererEmail) {
-            return OrdererRequest.builder()
-                    .ordererName(ordererName)
-                    .ordererEmail(ordererEmail)
-                    .build();
-        }
-
-        AddressRequest createAddressRequest(String roadAddress, String addressDetail, String zipcode) {
-            return AddressRequest.builder()
-                    .roadAddress(roadAddress)
-                    .addressDetail(addressDetail)
-                    .zipcode(zipcode)
-                    .build();
-        }
-
-        ReceiverRequest createReceiverRequest(String receiverName, String receiverPhone, String requestMessage) {
-            return ReceiverRequest.builder()
-                    .receiverName(receiverName)
-                    .receiverPhone(receiverPhone)
-                    .requestMessage(requestMessage)
-                    .build();
-        }
-
-        ShippingInfoRequest createShippingInfoRequest(AddressRequest address, ReceiverRequest receiver) {
-            return ShippingInfoRequest.builder()
-                    .address(address)
-                    .receiver(receiver)
-                    .build();
-        }
-
-        OrderLineRequest createOrderLineRequest(Long productId, Integer quantity, Long price) {
-            return OrderLineRequest.builder()
-                    .productId(productId)
-                    .quantity(quantity)
-                    .price(price)
-                    .build();
         }
     }
 

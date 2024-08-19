@@ -8,6 +8,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static perf.shop.mock.fixtures.cart.CartFixture.createAddProductRequest;
+import static perf.shop.mock.fixtures.cart.CartFixture.createCartProductResponse;
+import static perf.shop.mock.fixtures.cart.CartFixture.createUpdateProductRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
@@ -54,18 +57,6 @@ class CartApiTest {
                     .accept(MediaType.APPLICATION_JSON));
         }
 
-        CartProductResponse createCartProductResponse(Long id, String name, String image, Long price,
-                                                      Integer quantity) {
-            return CartProductResponse.builder()
-                    .cartProductId(id)
-                    .productId(id)
-                    .productName(name)
-                    .image(image)
-                    .price(price)
-                    .quantity(quantity)
-                    .build();
-        }
-
         @Test
         @DisplayName("성공")
         void getCartProducts_success() throws Exception {
@@ -107,28 +98,21 @@ class CartApiTest {
     @DisplayName("장바구니 상품 추가 API 테스트")
     class AddProduct {
 
-        AddProductRequest createAddProductRequest(Long productId, Integer quantity) {
-            return AddProductRequest.builder()
-                    .productId(productId)
-                    .quantity(quantity)
-                    .build();
-        }
-
-        ResultActions addProduct(AddProductRequest dto) throws Exception {
+        ResultActions addProduct(AddProductRequest addProductRequest) throws Exception {
             return mockMvc.perform(MockMvcRequestBuilders.post("/carts")
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(dto)));
+                    .content(objectMapper.writeValueAsString(addProductRequest)));
         }
 
         @Test
         @DisplayName("성공")
         void addProduct_Success() throws Exception {
             // given
-            AddProductRequest dto = createAddProductRequest(1L, 2);
+            AddProductRequest addProductRequest = createAddProductRequest(1L, 2);
 
             // when
-            ResultActions resultActions = addProduct(dto);
+            ResultActions resultActions = addProduct(addProductRequest);
 
             // then
             resultActions
@@ -142,10 +126,10 @@ class CartApiTest {
         @DisplayName("실패 - 입력값 검증에 실패한 경우 예외 발생")
         void addProduct_ThrowException_IfInputValueIsInvalid() throws Exception {
             // given
-            AddProductRequest dto = createAddProductRequest(null, 2);
+            AddProductRequest addProductRequest = createAddProductRequest(null, 2);
 
             // when
-            ResultActions resultActions = addProduct(dto);
+            ResultActions resultActions = addProduct(addProductRequest);
 
             // then
             resultActions
@@ -166,17 +150,10 @@ class CartApiTest {
     class UpdateProduct {
 
         ResultActions updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest) throws Exception {
-            return mockMvc.perform(MockMvcRequestBuilders.put("/carts/" + cartProductId)
+            return mockMvc.perform(MockMvcRequestBuilders.put("/carts/{cartProductId}", cartProductId)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(updateProductRequest)));
-        }
-
-        UpdateProductRequest createUpdateProductRequest(Long cartProductId, Integer quantity) {
-            return UpdateProductRequest.builder()
-                    .cartProductId(cartProductId)
-                    .quantity(quantity)
-                    .build();
         }
 
         @Test
@@ -184,10 +161,10 @@ class CartApiTest {
         void updateProduct_success() throws Exception {
             // given
             Long cartProductId = 1L;
-            UpdateProductRequest dto = createUpdateProductRequest(cartProductId, 3);
+            UpdateProductRequest updateProductRequest = createUpdateProductRequest(cartProductId, 3);
 
             // when
-            ResultActions resultActions = updateProduct(1L, dto);
+            ResultActions resultActions = updateProduct(cartProductId, updateProductRequest);
 
             // then
             resultActions
@@ -203,12 +180,12 @@ class CartApiTest {
         void updateProduct_throwException_ifCartProductIdNotExists() throws Exception {
             // given
             Long cartProductId = 1L;
-            UpdateProductRequest dto = createUpdateProductRequest(cartProductId, 3);
+            UpdateProductRequest updateProductRequest = createUpdateProductRequest(cartProductId, 3);
             doThrow(new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND))
                     .when(cartService).updateProduct(anyLong(), any(UpdateProductRequest.class));
 
             // when
-            ResultActions resultActions = updateProduct(1L, createUpdateProductRequest(1L, 3));
+            ResultActions resultActions = updateProduct(cartProductId, updateProductRequest);
 
             // then
             resultActions
@@ -224,10 +201,10 @@ class CartApiTest {
         void updateProduct_throwException_ifInputValueIsInvalid() throws Exception {
             // given
             Long cartProductId = 1L;
-            UpdateProductRequest dto = createUpdateProductRequest(null, 3);
+            UpdateProductRequest updateProductRequest = createUpdateProductRequest(null, 3);
 
             // when
-            ResultActions resultActions = updateProduct(cartProductId, dto);
+            ResultActions resultActions = updateProduct(cartProductId, updateProductRequest);
 
             // then
             resultActions
@@ -247,7 +224,7 @@ class CartApiTest {
     class DeleteProduct {
 
         ResultActions deleteProduct(Long cartProductId, Long userId) throws Exception {
-            return mockMvc.perform(MockMvcRequestBuilders.delete("/carts/" + cartProductId)
+            return mockMvc.perform(MockMvcRequestBuilders.delete("/carts/{cartProductId}", cartProductId)
                     .with(csrf()));
         }
 

@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static perf.shop.mock.fixtures.product.ProductFixture.createProductFindByIdResponse;
+import static perf.shop.mock.fixtures.product.ProductFixture.createProductSaveRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
@@ -48,33 +50,22 @@ class ProductApiTest {
     @DisplayName("상품 저장 API 테스트")
     class Save {
 
-        ResultActions save(ProductSaveRequest dto) throws Exception {
+        ResultActions save(ProductSaveRequest productSaveRequest) throws Exception {
             return mockMvc.perform(MockMvcRequestBuilders.post("/products")
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(dto))
+                    .content(objectMapper.writeValueAsString(productSaveRequest))
                     .accept(MediaType.APPLICATION_JSON));
-        }
-
-        ProductSaveRequest createProductSaveRequest(String name, String description, Long price, Long stock,
-                                                    Long categoryId) {
-            return ProductSaveRequest.builder()
-                    .name(name)
-                    .description(description)
-                    .price(price)
-                    .stock(stock)
-                    .categoryId(categoryId)
-                    .build();
         }
 
         @Test
         @DisplayName("성공")
         void saveProduct_success() throws Exception {
             // given
-            ProductSaveRequest dto = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
+            ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
 
             // when
-            ResultActions resultActions = save(dto);
+            ResultActions resultActions = save(productSaveRequest);
 
             // then
             resultActions
@@ -88,10 +79,10 @@ class ProductApiTest {
         @DisplayName("실패 - 입력값 검증에 실패하면 예외 발생")
         void saveProduct_throwException_ifInputValueIsInvalid() throws Exception {
             // given
-            ProductSaveRequest dto = createProductSaveRequest(null, "상품 설명", 10000L, 100L, 1L);
+            ProductSaveRequest productSaveRequest = createProductSaveRequest(null, "상품 설명", 10000L, 100L, 1L);
 
             // when
-            ResultActions resultActions = save(dto);
+            ResultActions resultActions = save(productSaveRequest);
 
             // then
             resultActions
@@ -110,13 +101,12 @@ class ProductApiTest {
         @DisplayName("실패 - 상품 카테고리가 유효하지 않으면 예외 발생")
         void saveProduct_throwException_ifCategoryInvalid() throws Exception {
             // given
-            Long sellerId = 1L;
-            ProductSaveRequest dto = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
+            ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
             doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
                     .when(productService).saveProduct(any(ProductSaveRequest.class), anyLong());
 
             // when
-            ResultActions resultActions = save(dto);
+            ResultActions resultActions = save(productSaveRequest);
 
             // then
             resultActions
@@ -137,28 +127,17 @@ class ProductApiTest {
                     .accept(MediaType.APPLICATION_JSON));
         }
 
-        ProductFindByIdResponse createProductFindByIdResponse(String name, Long price, String image,
-                                                              String description, Long stock) {
-            return ProductFindByIdResponse.builder()
-                    .name(name)
-                    .price(price)
-                    .image(image)
-                    .description(description)
-                    .stock(stock)
-                    .build();
-        }
-
         @Test
         @DisplayName("성공")
         void findById_success() throws Exception {
             // given
-            Long id = 1L;
+            Long productId = 1L;
             ProductFindByIdResponse productDetail = createProductFindByIdResponse("상품명", 10000L, "image", "상품 설명",
                     100L);
-            given(productService.findProductById(id)).willReturn(productDetail);
+            given(productService.findProductById(productId)).willReturn(productDetail);
 
             // when
-            ResultActions resultActions = findById(id);
+            ResultActions resultActions = findById(productId);
 
             // then
             resultActions
@@ -178,12 +157,12 @@ class ProductApiTest {
         @DisplayName("실패 - 상품이 존재하지 않으면 예외 발생")
         void findById_throwException_ifProductNotFound() throws Exception {
             // given
-            Long id = 1L;
-            given(productService.findProductById(id)).willThrow(
+            Long productId = 1L;
+            given(productService.findProductById(productId)).willThrow(
                     new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
             // when
-            ResultActions resultActions = findById(id);
+            ResultActions resultActions = findById(productId);
 
             // then
             resultActions

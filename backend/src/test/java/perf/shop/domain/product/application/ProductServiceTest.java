@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doThrow;
+import static perf.shop.mock.fixtures.product.ProductFixture.createProduct;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +48,7 @@ class ProductServiceTest {
         void saveProduct_saved_ifCategoryIdExists() {
             // given
             Long sellerId = 1L;
-            Product newProduct = Product.of(productSaveRequest, sellerId);
+            Product newProduct = createProduct(1L, 1L, "상품명", "상품 설명", 10000L, 10L);
             given(productRepository.save(any(Product.class))).willReturn(newProduct);
 
             // when
@@ -60,7 +61,7 @@ class ProductServiceTest {
 
         @Test
         @DisplayName("실패 - 카테고리가 존재하지 않으면 예외 발생")
-        void saveProduct_throwException_ifCategoryIdNotExists() throws Exception {
+        void saveProduct_throwException_ifCategoryIdNotExists() {
             // given
             Long sellerId = 1L;
             doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
@@ -82,7 +83,7 @@ class ProductServiceTest {
         void findProductById_success_ifProductExists() {
             // given
             Long productId = 1L;
-            Product product = createProduct("상품명", 10000L, "상품 설명", 100L, 1L);
+            Product product = createProduct(1L, 10000L, "상품명", "상품 설명", 1L, 10L);
             given(productRepository.findById(productId)).willReturn(Optional.ofNullable(product));
 
             // when
@@ -110,17 +111,6 @@ class ProductServiceTest {
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
 
         }
-
-        Product createProduct(String name, Long price, String description, Long stock, Long categoryId) {
-            return Product.builder()
-                    .name(name)
-                    .price(price)
-                    .description(description)
-                    .stock(stock)
-                    .categoryId(categoryId)
-                    .build();
-        }
-
     }
 
 }

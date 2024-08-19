@@ -13,14 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.model.ShippingInfo;
+import perf.shop.domain.model.dto.request.AddressRequest;
+import perf.shop.domain.model.dto.request.ReceiverRequest;
+import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.domain.Orderer;
-import perf.shop.domain.order.dto.request.AddressRequest;
 import perf.shop.domain.order.dto.request.OrderCreateRequest;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.order.dto.request.OrdererRequest;
-import perf.shop.domain.order.dto.request.ReceiverRequest;
-import perf.shop.domain.order.dto.request.ShippingInfoRequest;
 import perf.shop.domain.order.repository.OrdersRepository;
 
 @ExtendWith(MockitoExtension.class)

@@ -26,7 +26,7 @@ public class OrdersService {
             OrderLine orderLine = OrderLine.of(newOrder, orderLineRequest);
             newOrder.addOrderLine(orderLine);
         });
-        
+
         ordersRepository.save(newOrder);
     }
 }

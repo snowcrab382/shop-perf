@@ -44,7 +44,7 @@ class JwtFilterTest {
     FilterChain chain;
 
     @Test
-    @DisplayName("화이트리스트에 포함된 uri인 경우 필터 로직을 수행하지 않고 바로 통과")
+    @DisplayName("성공 - 화이트리스트에 포함된 uri인 경우 필터 로직을 수행하지 않고 바로 통과")
     void doFilterInternal_Pass_IfRequestMatchesWithPublicEndpoints() throws Exception {
         //given
         given(publicEndpoints.matches(request)).willReturn(true);
@@ -57,7 +57,7 @@ class JwtFilterTest {
     }
 
     @Test
-    @DisplayName("쿠키가 비어있거나, Authorization이 존재하지 않으면 예외 발생")
+    @DisplayName("실패 - 쿠키가 비어있거나, Authorization이 존재하지 않으면 예외 발생")
     void doFilterInternal_ThrowException_IfCookieArrayOrAuthorizationCookieIsNull() throws Exception {
         //given
         given(publicEndpoints.matches(request)).willReturn(false);

@@ -42,8 +42,8 @@ class CategoryApiTest {
     class FindAll {
 
         @Test
-        @DisplayName("카테고리 목록 조회 성공")
-        void findAll_Success() throws Exception {
+        @DisplayName("성공")
+        void findAll_success() throws Exception {
             // given
             CategoryResponse category1 = createCategoryResponse(1L, "카테고리1");
             CategoryResponse category2 = createCategoryResponse(2L, "카테고리2");

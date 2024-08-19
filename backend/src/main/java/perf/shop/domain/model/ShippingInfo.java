@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.order.dto.request.ShippingInfoRequest;
+import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 
 @Embeddable
 @Getter

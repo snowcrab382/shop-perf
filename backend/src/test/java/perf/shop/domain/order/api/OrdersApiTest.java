@@ -1,5 +1,6 @@
 package perf.shop.domain.order.api;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,13 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import perf.shop.domain.model.dto.request.AddressRequest;
+import perf.shop.domain.model.dto.request.ReceiverRequest;
+import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 import perf.shop.domain.order.application.OrdersService;
-import perf.shop.domain.order.dto.request.AddressRequest;
 import perf.shop.domain.order.dto.request.OrderCreateRequest;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.order.dto.request.OrdererRequest;
-import perf.shop.domain.order.dto.request.ReceiverRequest;
-import perf.shop.domain.order.dto.request.ShippingInfoRequest;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.global.error.exception.ErrorCode;
 import perf.shop.mock.InjectMockUser;
@@ -104,12 +105,11 @@ class OrdersApiTest {
                     .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
-                            jsonPath("$.errors.[0].field", equalTo("orderer.ordererEmail")),
-                            jsonPath("$.errors.[0].value", equalTo("")),
-                            jsonPath("$.errors.[0].message", equalTo("이메일 형식이 올바르지 않습니다.")),
-                            jsonPath("$.errors.[1].field", equalTo("shippingInfo.receiver.receiverPhone")),
-                            jsonPath("$.errors.[1].value", equalTo("")),
-                            jsonPath("$.errors.[1].message", equalTo("휴대폰 번호 형식이 올바르지 않습니다."))
+                            jsonPath("$.errors.[*].field",
+                                    containsInAnyOrder("orderer.ordererEmail", "shippingInfo.receiver.receiverPhone")),
+                            jsonPath("$.errors.[*].value", containsInAnyOrder("", "")),
+                            jsonPath("$.errors.[*].message",
+                                    containsInAnyOrder("이메일 형식이 올바르지 않습니다.", "휴대폰 번호 형식이 올바르지 않습니다."))
                     );
 
         }

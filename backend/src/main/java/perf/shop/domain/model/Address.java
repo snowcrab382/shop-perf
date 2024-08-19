@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.order.dto.request.AddressRequest;
+import perf.shop.domain.model.dto.request.AddressRequest;
 
 @Embeddable
 @Getter

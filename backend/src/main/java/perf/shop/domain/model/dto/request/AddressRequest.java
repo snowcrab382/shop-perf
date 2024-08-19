@@ -1,4 +1,4 @@
-package perf.shop.domain.order.dto.request;
+package perf.shop.domain.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;

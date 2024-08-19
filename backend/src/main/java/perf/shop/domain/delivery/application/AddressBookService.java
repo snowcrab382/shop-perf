@@ -42,4 +42,9 @@ public class AddressBookService {
         AddressBook addressBook = findByIdAndUserId(addressBookId, userId);
         addressBook.updateShippingInfo(ShippingInfo.from(addressBookRequest.getShippingInfo()));
     }
+
+    public void deleteAddressBook(Long addressBookId, Long userId) {
+        AddressBook addressBook = findByIdAndUserId(addressBookId, userId);
+        addressBookRepository.delete(addressBook);
+    }
 }

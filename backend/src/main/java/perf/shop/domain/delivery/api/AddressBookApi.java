@@ -3,6 +3,7 @@ package perf.shop.domain.delivery.api;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +43,12 @@ public class AddressBookApi {
                                                @UserId Long userId) {
         addressBookService.updateAddressBook(addressBookId, addressBookRequest, userId);
         return ApiResponse.of(ResponseCode.UPDATED);
+    }
+
+    @DeleteMapping("/{addressBookId}")
+    public ApiResponse<Void> deleteAddressBook(@PathVariable("addressBookId") Long addressBookId,
+                                               @UserId Long userId) {
+        addressBookService.deleteAddressBook(addressBookId, userId);
+        return ApiResponse.of(ResponseCode.DELETED);
     }
 }

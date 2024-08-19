@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.delivery.domain.AddressBook;
-import perf.shop.domain.delivery.dto.request.AddressBookSaveRequest;
+import perf.shop.domain.delivery.dto.request.AddressBookRequest;
 import perf.shop.domain.delivery.dto.response.AddressBookResponse;
 import perf.shop.domain.delivery.repository.AddressBookRepository;
 import perf.shop.domain.model.ShippingInfo;
@@ -33,13 +33,13 @@ public class AddressBookService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
     }
 
-    public void saveAddressBook(AddressBookSaveRequest addressBookSaveRequest, Long userId) {
-        ShippingInfo shippingInfo = ShippingInfo.from(addressBookSaveRequest.getShippingInfo());
+    public void saveAddressBook(AddressBookRequest addressBookRequest, Long userId) {
+        ShippingInfo shippingInfo = ShippingInfo.from(addressBookRequest.getShippingInfo());
         addressBookRepository.save(AddressBook.of(userId, shippingInfo));
     }
 
-    public void updateAddressBook(Long addressBookId, AddressBookSaveRequest addressBookSaveRequest, Long userId) {
+    public void updateAddressBook(Long addressBookId, AddressBookRequest addressBookRequest, Long userId) {
         AddressBook addressBook = findByIdAndUserId(addressBookId, userId);
-        addressBook.updateShippingInfo(ShippingInfo.from(addressBookSaveRequest.getShippingInfo()));
+        addressBook.updateShippingInfo(ShippingInfo.from(addressBookRequest.getShippingInfo()));
     }
 }

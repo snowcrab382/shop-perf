@@ -9,13 +9,13 @@ import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AddressBookSaveRequest {
+public class AddressBookRequest {
 
     @Valid
     private ShippingInfoRequest shippingInfo;
 
     @Builder
-    private AddressBookSaveRequest(ShippingInfoRequest shippingInfo) {
+    private AddressBookRequest(ShippingInfoRequest shippingInfo) {
         this.shippingInfo = shippingInfo;
     }
 }

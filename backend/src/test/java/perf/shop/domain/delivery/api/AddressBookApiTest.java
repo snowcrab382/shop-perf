@@ -20,7 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import perf.shop.domain.delivery.application.AddressBookService;
-import perf.shop.domain.delivery.dto.request.AddressBookSaveRequest;
+import perf.shop.domain.delivery.dto.request.AddressBookRequest;
 import perf.shop.domain.delivery.dto.response.AddressBookResponse;
 import perf.shop.domain.model.Address;
 import perf.shop.domain.model.Receiver;
@@ -123,7 +123,7 @@ class AddressBookApiTest {
     @DisplayName("주소록 저장 API 테스트")
     class SaveAddressBook {
 
-        ResultActions saveAddressBook(AddressBookSaveRequest dto) throws Exception {
+        ResultActions saveAddressBook(AddressBookRequest dto) throws Exception {
             return mockMvc.perform(post("/address-book")
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("서울시 강남구", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookSaveRequest dto = createAddressBookSaveRequest(shippingInfo);
+            AddressBookRequest dto = createAddressBookSaveRequest(shippingInfo);
 
             // when
             ResultActions resultActions = saveAddressBook(dto);
@@ -156,7 +156,7 @@ class AddressBookApiTest {
             AddressRequest address = createAddressRequest("", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
-            AddressBookSaveRequest dto = createAddressBookSaveRequest(shippingInfo);
+            AddressBookRequest dto = createAddressBookSaveRequest(shippingInfo);
 
             // when
             ResultActions resultActions = saveAddressBook(dto);
@@ -198,8 +198,8 @@ class AddressBookApiTest {
                     .build();
         }
 
-        AddressBookSaveRequest createAddressBookSaveRequest(ShippingInfoRequest shippingInfo) {
-            return AddressBookSaveRequest.builder()
+        AddressBookRequest createAddressBookSaveRequest(ShippingInfoRequest shippingInfo) {
+            return AddressBookRequest.builder()
                     .shippingInfo(shippingInfo)
                     .build();
         }

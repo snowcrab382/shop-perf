@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import perf.shop.domain.delivery.application.AddressBookService;
-import perf.shop.domain.delivery.dto.request.AddressBookSaveRequest;
+import perf.shop.domain.delivery.dto.request.AddressBookRequest;
 import perf.shop.domain.delivery.dto.response.AddressBookResponse;
 import perf.shop.global.annotation.UserId;
 import perf.shop.global.common.response.ApiResponse;
@@ -30,17 +30,17 @@ public class AddressBookApi {
     }
 
     @PostMapping
-    public ApiResponse<Void> saveAddressBook(@RequestBody @Valid AddressBookSaveRequest addressBookSaveRequest,
+    public ApiResponse<Void> saveAddressBook(@RequestBody @Valid AddressBookRequest addressBookRequest,
                                              @UserId Long userId) {
-        addressBookService.saveAddressBook(addressBookSaveRequest, userId);
+        addressBookService.saveAddressBook(addressBookRequest, userId);
         return ApiResponse.of(ResponseCode.CREATED);
     }
 
     @PutMapping("/{addressBookId}")
     public ApiResponse<Void> updateAddressBook(@PathVariable("addressBookId") Long addressBookId,
-                                               @RequestBody @Valid AddressBookSaveRequest addressBookSaveRequest,
+                                               @RequestBody @Valid AddressBookRequest addressBookRequest,
                                                @UserId Long userId) {
-        addressBookService.updateAddressBook(addressBookId, addressBookSaveRequest, userId);
+        addressBookService.updateAddressBook(addressBookId, addressBookRequest, userId);
         return ApiResponse.of(ResponseCode.UPDATED);
     }
 }

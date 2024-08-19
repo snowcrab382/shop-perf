@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.delivery.domain.AddressBook;
-import perf.shop.domain.delivery.dto.request.AddressBookSaveRequest;
+import perf.shop.domain.delivery.dto.request.AddressBookRequest;
 import perf.shop.domain.delivery.repository.AddressBookRepository;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.domain.model.dto.request.AddressRequest;
@@ -61,7 +61,7 @@ class AddressBookServiceTest {
             AddressRequest address = createAddressRequest("", "주소", "12345");
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(address, receiver);
-            AddressBookSaveRequest dto = createAddressBookSaveRequest(shippingInfoRequest);
+            AddressBookRequest dto = createAddressBookSaveRequest(shippingInfoRequest);
 
             ShippingInfo shippingInfo = ShippingInfo.from(shippingInfoRequest);
             AddressBook addressBook = AddressBook.of(userId, shippingInfo);
@@ -97,8 +97,8 @@ class AddressBookServiceTest {
                     .build();
         }
 
-        AddressBookSaveRequest createAddressBookSaveRequest(ShippingInfoRequest shippingInfo) {
-            return AddressBookSaveRequest.builder()
+        AddressBookRequest createAddressBookSaveRequest(ShippingInfoRequest shippingInfo) {
+            return AddressBookRequest.builder()
                     .shippingInfo(shippingInfo)
                     .build();
         }

@@ -2,6 +2,8 @@ package perf.shop.domain.product.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static perf.shop.mock.fixtures.product.ProductFixture.createProduct;
+import static perf.shop.mock.fixtures.product.SearchFixture.createSearchCondition;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +15,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import perf.shop.domain.product.domain.Product;
 import perf.shop.domain.product.dto.request.SearchCondition;
 import perf.shop.domain.product.dto.request.Sort;
 import perf.shop.domain.product.dto.response.ProductSearchResponse;
@@ -29,26 +30,6 @@ class ProductSearchRepositoryTest {
 
     @Autowired
     ProductRepository productRepository;
-
-    private Product createProduct(Long categoryId, Long sellerId, String name, String description, Long price,
-                                  Long stock) {
-        return Product.builder()
-                .categoryId(categoryId)
-                .sellerId(sellerId)
-                .name(name)
-                .description(description)
-                .price(price)
-                .stock(stock)
-                .build();
-    }
-
-    private SearchCondition createSearchCondition(Long categoryId, String keyword, String sorter) {
-        return SearchCondition.builder()
-                .categoryId(categoryId)
-                .keyword(keyword)
-                .sorter(sorter)
-                .build();
-    }
 
     @BeforeEach
     void setUp() {

@@ -22,6 +22,7 @@ import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
 import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.mock.fixtures.product.ProductFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[단위 테스트] ProductService")
@@ -36,9 +37,6 @@ class ProductServiceTest {
     @Mock
     ProductRepository productRepository;
 
-    @Mock
-    ProductSaveRequest productSaveRequest;
-
     @Nested
     @DisplayName("상품 저장 테스트")
     class SaveProduct {
@@ -49,6 +47,8 @@ class ProductServiceTest {
             // given
             Long sellerId = 1L;
             Product newProduct = createProduct(1L, 1L, "상품명", "상품 설명", 10000L, 10L);
+            ProductSaveRequest productSaveRequest = ProductFixture.createProductSaveRequest("상품명", "상품 설명", 10000L, 10L,
+                    1L);
             given(productRepository.save(any(Product.class))).willReturn(newProduct);
 
             // when
@@ -64,6 +64,8 @@ class ProductServiceTest {
         void saveProduct_throwException_ifCategoryIdNotExists() {
             // given
             Long sellerId = 1L;
+            ProductSaveRequest productSaveRequest = ProductFixture.createProductSaveRequest("상품명", "상품 설명", 10000L, 10L,
+                    1L);
             doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
                     .when(categoryService).validateCategoryExistsById(any(Long.class));
 

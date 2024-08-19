@@ -2,9 +2,13 @@ package perf.shop.domain.order.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReceiverRequest {
 
     @NotBlank
@@ -14,4 +18,11 @@ public class ReceiverRequest {
     private String receiverPhone;
 
     private String requestMessage;
+
+    @Builder
+    private ReceiverRequest(String receiverName, String receiverPhone, String requestMessage) {
+        this.receiverName = receiverName;
+        this.receiverPhone = receiverPhone;
+        this.requestMessage = requestMessage;
+    }
 }

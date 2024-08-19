@@ -1,0 +1,34 @@
+package perf.shop.mock.fixtures.order;
+
+import java.util.List;
+import perf.shop.domain.model.dto.request.ShippingInfoRequest;
+import perf.shop.domain.order.dto.request.OrderCreateRequest;
+import perf.shop.domain.order.dto.request.OrderLineRequest;
+import perf.shop.domain.order.dto.request.OrdererRequest;
+
+public class OrderFixture {
+
+    public static OrderCreateRequest createOrderCreateRequest(OrdererRequest orderer, ShippingInfoRequest shippingInfo,
+                                                              List<OrderLineRequest> orderLines) {
+        return OrderCreateRequest.builder()
+                .orderer(orderer)
+                .shippingInfo(shippingInfo)
+                .orderLines(orderLines)
+                .build();
+    }
+
+    public static OrdererRequest createOrdererRequest(String ordererName, String ordererEmail) {
+        return OrdererRequest.builder()
+                .ordererName(ordererName)
+                .ordererEmail(ordererEmail)
+                .build();
+    }
+
+    public static OrderLineRequest createOrderLineRequest(Long productId, Integer quantity, Long price) {
+        return OrderLineRequest.builder()
+                .productId(productId)
+                .quantity(quantity)
+                .price(price)
+                .build();
+    }
+}

@@ -9,6 +9,8 @@ import perf.shop.domain.delivery.dto.request.AddressBookSaveRequest;
 import perf.shop.domain.delivery.dto.response.AddressBookResponse;
 import perf.shop.domain.delivery.repository.AddressBookRepository;
 import perf.shop.domain.model.ShippingInfo;
+import perf.shop.global.error.exception.EntityNotFoundException;
+import perf.shop.global.error.exception.ErrorCode;
 
 @Transactional
 @Service
@@ -17,6 +19,7 @@ public class AddressBookService {
 
     private final AddressBookRepository addressBookRepository;
 
+    @Transactional(readOnly = true)
     public List<AddressBookResponse> findAllByUserId(Long userId) {
         List<AddressBook> addresses = addressBookRepository.findAllByUserId(userId);
         return addresses.stream()
@@ -24,8 +27,19 @@ public class AddressBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public AddressBook findByIdAndUserId(Long addressBookId, Long userId) {
+        return addressBookRepository.findByIdAndUserId(addressBookId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
+    }
+
     public void saveAddressBook(AddressBookSaveRequest addressBookSaveRequest, Long userId) {
         ShippingInfo shippingInfo = ShippingInfo.from(addressBookSaveRequest.getShippingInfo());
         addressBookRepository.save(AddressBook.of(userId, shippingInfo));
+    }
+
+    public void updateAddressBook(Long addressBookId, AddressBookSaveRequest addressBookSaveRequest, Long userId) {
+        AddressBook addressBook = findByIdAndUserId(addressBookId, userId);
+        addressBook.updateShippingInfo(ShippingInfo.from(addressBookSaveRequest.getShippingInfo()));
     }
 }

@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +34,13 @@ public class AddressBookApi {
                                              @UserId Long userId) {
         addressBookService.saveAddressBook(addressBookSaveRequest, userId);
         return ApiResponse.of(ResponseCode.CREATED);
+    }
+
+    @PutMapping("/{addressBookId}")
+    public ApiResponse<Void> updateAddressBook(@PathVariable("addressBookId") Long addressBookId,
+                                               @RequestBody @Valid AddressBookSaveRequest addressBookSaveRequest,
+                                               @UserId Long userId) {
+        addressBookService.updateAddressBook(addressBookId, addressBookSaveRequest, userId);
+        return ApiResponse.of(ResponseCode.UPDATED);
     }
 }

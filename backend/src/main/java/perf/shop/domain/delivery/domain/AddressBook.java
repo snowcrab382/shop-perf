@@ -44,4 +44,8 @@ public class AddressBook extends BaseEntity {
                 .build();
     }
 
+    public void updateShippingInfo(ShippingInfo shippingInfo) {
+        this.shippingInfo = shippingInfo;
+    }
+
 }

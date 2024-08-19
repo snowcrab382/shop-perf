@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static perf.shop.mock.fixtures.product.SearchFixture.createSearchCondition;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,14 +29,6 @@ class SearchServiceTest {
 
     @Mock
     ProductSearchRepository productSearchRepository;
-
-    private SearchCondition createSearchCondition(Long categoryId, String keyword, String sorter) {
-        return SearchCondition.builder()
-                .categoryId(categoryId)
-                .keyword(keyword)
-                .sorter(sorter)
-                .build();
-    }
 
     @Nested
     @DisplayName("상품 검색 테스트")

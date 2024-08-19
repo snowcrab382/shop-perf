@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static perf.shop.mock.fixtures.product.SearchFixture.createProductSearchResponse;
+import static perf.shop.mock.fixtures.product.SearchFixture.createSearchCondition;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -54,23 +56,6 @@ class SearchApiTest {
                     .param("page", String.valueOf(pageable.getPageNumber()))
                     .param("size", String.valueOf(pageable.getPageSize()))
                     .accept(MediaType.APPLICATION_JSON));
-        }
-
-        ProductSearchResponse createProductSearchResponse(Long id, String name, Long price, String image) {
-            return ProductSearchResponse.builder()
-                    .id(id)
-                    .name(name)
-                    .price(price)
-                    .image(image)
-                    .build();
-        }
-
-        SearchCondition createSearchCondition(Long categoryId, String keyword, String sorter) {
-            return SearchCondition.builder()
-                    .categoryId(categoryId)
-                    .keyword(keyword)
-                    .sorter(sorter)
-                    .build();
         }
 
         @Test

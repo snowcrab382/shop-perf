@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -283,6 +284,53 @@ class AddressBookApiTest {
 
             // when
             ResultActions resultActions = updateAddressBook(addressBookId, dto);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("주소록 삭제 API 테스트")
+    class DeleteAddressBook {
+
+        ResultActions deleteAddressBook(Long addressBookId) throws Exception {
+            return mockMvc.perform(delete("/address-book/{addressBookId}", addressBookId)
+                    .with(csrf()));
+        }
+
+        @Test
+        @DisplayName("성공")
+        void deleteAddressBook_success() throws Exception {
+            // given
+            Long addressBookId = 1L;
+
+            // when
+            ResultActions resultActions = deleteAddressBook(addressBookId);
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status", equalTo(ResponseCode.DELETED.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(ResponseCode.DELETED.getMessage())))
+                    .andExpect(jsonPath("$.data", equalTo(null)));
+        }
+
+        @Test
+        @DisplayName("실패 - 주소록이 존재하지 않는 경우 예외 발생")
+        void deleteAddressBook_throwException_IfAddressBookNotExists() throws Exception {
+            // given
+            Long addressBookId = 1L;
+            doThrow(new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND))
+                    .when(addressBookService).deleteAddressBook(anyLong(), anyLong());
+
+            // when
+            ResultActions resultActions = deleteAddressBook(addressBookId);
 
             // then
             resultActions

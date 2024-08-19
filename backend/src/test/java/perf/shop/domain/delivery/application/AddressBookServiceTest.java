@@ -190,4 +190,41 @@ class AddressBookServiceTest {
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ADDRESS_BOOK_NOT_FOUND);
         }
     }
+
+    @Nested
+    @DisplayName("주소록 삭제 테스트")
+    class DeleteAddressBook {
+
+        @Test
+        @DisplayName("성공")
+        void deleteAddressBook_success() {
+            // given
+            Long userId = 1L;
+            Long addressBookId = 1L;
+            AddressBook addressBook = createAddressBook(userId, null);
+            given(addressBookRepository.findByIdAndUserId(addressBookId, userId)).willReturn(
+                    Optional.ofNullable(addressBook));
+
+            // when
+            addressBookService.deleteAddressBook(addressBookId, userId);
+
+            // then
+            then(addressBookRepository).should().delete(any(AddressBook.class));
+        }
+
+        @Test
+        @DisplayName("실패 - 주소록이 존재하지 않으면 예외 발생")
+        void deleteAddressBook_throwException_IfAddressBookNotExists() {
+            // given
+            Long userId = 1L;
+            Long addressBookId = 1L;
+            given(addressBookRepository.findByIdAndUserId(addressBookId, userId)).willReturn(
+                    Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> addressBookService.deleteAddressBook(addressBookId, userId))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ADDRESS_BOOK_NOT_FOUND);
+        }
+    }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.tuple;
 import static org.mockito.BDDMockito.given;
+import static perf.shop.mock.fixtures.product.CategoryFixture.createCategory;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +28,6 @@ class CategoryServiceTest {
 
     @Mock
     private CategoryRepository categoryRepository;
-
-    private Category createCategory(Long id, String name) {
-        return Category.builder().id(id).name(name).build();
-    }
 
     @Nested
     @DisplayName("카테고리 검증 테스트")

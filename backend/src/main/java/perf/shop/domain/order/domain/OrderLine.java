@@ -43,17 +43,15 @@ public class OrderLine extends BaseEntity {
     private Long amounts;
 
     @Builder
-    private OrderLine(Order order, Long productId, Integer quantity, Long price) {
-        this.order = order;
+    private OrderLine(Long productId, Integer quantity, Long price) {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
         this.amounts = calculateAmounts();
     }
 
-    public static OrderLine of(Order order, OrderLineRequest request) {
+    public static OrderLine from(OrderLineRequest request) {
         return OrderLine.builder()
-                .order(order)
                 .productId(request.getProductId())
                 .quantity(request.getQuantity())
                 .price(request.getPrice())
@@ -62,5 +60,9 @@ public class OrderLine extends BaseEntity {
 
     private Long calculateAmounts() {
         return price * quantity;
+    }
+
+    void setOrder(Order order) {
+        this.order = order;
     }
 }

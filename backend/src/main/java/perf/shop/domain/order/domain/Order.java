@@ -48,14 +48,19 @@ public class Order extends BaseEntity {
         this.state = OrderState.CREATED;
     }
 
-    public static Order of(Orderer orderer, ShippingInfo shippingInfo) {
-        return Order.builder()
+    public static Order of(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+        Order newOrder = Order.builder()
                 .orderer(orderer)
                 .shippingInfo(shippingInfo)
                 .build();
+
+        orderLines.forEach(newOrder::addOrderLine);
+        return newOrder;
     }
 
     public void addOrderLine(OrderLine orderLine) {
+    private void addOrderLine(OrderLine orderLine) {
+        orderLine.setOrder(this);
         orderLines.add(orderLine);
     }
 

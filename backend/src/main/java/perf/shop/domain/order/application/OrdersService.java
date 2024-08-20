@@ -1,5 +1,6 @@
 package perf.shop.domain.order.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +21,10 @@ public class OrdersService {
     public void createOrder(Long userId, OrderCreateRequest request) {
         Orderer orderer = Orderer.from(userId, request.getOrderer());
         ShippingInfo shippingInfo = ShippingInfo.from(request.getShippingInfo());
-        Order newOrder = Order.of(orderer, shippingInfo);
-
-        request.getOrderLines().forEach(orderLineRequest -> {
-            OrderLine orderLine = OrderLine.of(newOrder, orderLineRequest);
-            newOrder.addOrderLine(orderLine);
-        });
+        List<OrderLine> orderLines = request.getOrderLines().stream()
+                .map(OrderLine::from)
+                .toList();
+        Order newOrder = Order.of(orderer, shippingInfo, orderLines);
 
         ordersRepository.save(newOrder);
     }

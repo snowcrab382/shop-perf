@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum PaymentType {
-    TOSS("toss");
+public enum PaymentMethod {
+    CARD("card");
 
     private final String value;
 }

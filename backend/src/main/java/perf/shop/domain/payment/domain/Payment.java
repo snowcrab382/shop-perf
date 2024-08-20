@@ -1,6 +1,7 @@
 package perf.shop.domain.payment.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,9 +34,8 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private Long amount;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PaymentType type;
+    @Embedded
+    private PaymentInfo paymentInfo;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

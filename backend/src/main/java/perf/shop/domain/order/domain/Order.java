@@ -18,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.common.domain.BaseEntity;
+import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.InvalidValueException;
 
 @Entity
 @Getter
@@ -54,11 +56,17 @@ public class Order extends BaseEntity {
                 .shippingInfo(shippingInfo)
                 .build();
 
+        verifyOrderLines(orderLines);
         orderLines.forEach(newOrder::addOrderLine);
         return newOrder;
     }
 
-    public void addOrderLine(OrderLine orderLine) {
+    private static void verifyOrderLines(List<OrderLine> orderLines) {
+        if (orderLines == null || orderLines.isEmpty()) {
+            throw new InvalidValueException(ErrorCode.ORDER_LINE_NOT_EXIST);
+        }
+    }
+
     private void addOrderLine(OrderLine orderLine) {
         orderLine.setOrder(this);
         orderLines.add(orderLine);
@@ -69,6 +77,4 @@ public class Order extends BaseEntity {
                 .mapToLong(OrderLine::getAmounts)
                 .sum();
     }
-
-
 }

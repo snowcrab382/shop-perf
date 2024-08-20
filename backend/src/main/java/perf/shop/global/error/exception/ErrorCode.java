@@ -22,11 +22,20 @@ public enum ErrorCode {
     /**
      * Business Error
      */
+
+    /**
+     * EntityNotFoundException
+     */
     CATEGORY_NOT_FOUND(400, "카테고리를 찾을 수 없습니다."),
     USER_NOT_FOUND(400, "사용자를 찾을 수 없습니다."),
     PRODUCT_NOT_FOUND(400, "상품을 찾을 수 없습니다."),
     CART_PRODUCT_NOT_FOUND(400, "장바구니 상품을 찾을 수 없습니다."),
     ADDRESS_BOOK_NOT_FOUND(400, "주소록을 찾을 수 없습니다."),
+
+    /**
+     * InvalidValueException
+     */
+    ORDER_LINE_NOT_EXIST(400, "주문 상품은 최소 1개 이상이어야 합니다."),
     ;
 
     private final int status;

@@ -24,10 +24,20 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductFindByIdResponse findProductById(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+    public ProductFindByIdResponse findProductById(Long id) {
+        Product product = getProduct(id);
         return ProductFindByIdResponse.of(product);
+    }
+
+    @Transactional(readOnly = true)
+    public void checkProductQuantity(Long id, Integer quantity) {
+        Product product = getProduct(id);
+        product.checkProductStock(quantity);
+    }
+
+    private Product getProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
     }
 
 }

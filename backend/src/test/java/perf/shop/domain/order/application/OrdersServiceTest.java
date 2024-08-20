@@ -11,6 +11,7 @@ import static perf.shop.mock.fixtures.order.OrderFixture.createOrder;
 import static perf.shop.mock.fixtures.order.OrderFixture.createOrderCreateRequest;
 import static perf.shop.mock.fixtures.order.OrderFixture.createOrderLineRequest;
 import static perf.shop.mock.fixtures.order.OrderFixture.createOrdererRequest;
+import static perf.shop.mock.fixtures.order.OrderFixture.createPaymentInfoRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,14 +22,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import perf.shop.domain.model.dto.request.AddressRequest;
 import perf.shop.domain.model.dto.request.ReceiverRequest;
 import perf.shop.domain.model.dto.request.ShippingInfoRequest;
+import perf.shop.domain.order.application.event.OrderCreateEvent;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.domain.OrderLine;
 import perf.shop.domain.order.dto.request.OrderCreateRequest;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.order.dto.request.OrdererRequest;
+import perf.shop.domain.order.dto.request.PaymentInfoRequest;
 import perf.shop.domain.order.repository.OrdersRepository;
 import perf.shop.domain.product.exception.OutOfStockException;
 import perf.shop.global.error.exception.EntityNotFoundException;
@@ -48,6 +52,9 @@ class OrdersServiceTest {
     @Mock
     OrderLineFactory orderLineFactory;
 
+    @Mock
+    ApplicationEventPublisher eventPublisher;
+
     @Nested
     @DisplayName("주문 생성 테스트")
     class CreateOrder {
@@ -63,8 +70,9 @@ class OrdersServiceTest {
             ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(addressRequest,
                     receiverRequest);
             OrderLineRequest orderLineRequest = createOrderLineRequest(1L, 1, 1000L);
+            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
             OrderCreateRequest request = createOrderCreateRequest(ordererRequest, shippingInfoRequest,
-                    List.of(orderLineRequest));
+                    List.of(orderLineRequest), paymentInfo);
             given(orderLineFactory.createOrderLine(any())).willReturn(OrderLine.from(orderLineRequest));
 
             Order newOrder = createOrder();
@@ -75,6 +83,7 @@ class OrdersServiceTest {
 
             // then
             then(ordersRepository).should().save(any(Order.class));
+            then(eventPublisher).should().publishEvent(any(OrderCreateEvent.class));
         }
 
         @Test
@@ -87,13 +96,15 @@ class OrdersServiceTest {
             ReceiverRequest receiverRequest = createReceiverRequest("수령자명", "010-1234-5678", null);
             ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(addressRequest,
                     receiverRequest);
+            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
             OrderCreateRequest request = createOrderCreateRequest(ordererRequest, shippingInfoRequest,
-                    Collections.emptyList());
+                    Collections.emptyList(), paymentInfo);
 
             // when & then
             assertThatThrownBy(() -> ordersService.createOrder(userId, request))
                     .isInstanceOf(InvalidValueException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_LINE_NOT_EXIST);
+            then(eventPublisher).shouldHaveNoInteractions();
         }
 
         @Test
@@ -107,8 +118,9 @@ class OrdersServiceTest {
             ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(addressRequest,
                     receiverRequest);
             OrderLineRequest orderLineRequest = createOrderLineRequest(1L, 1, 1000L);
+            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
             OrderCreateRequest request = createOrderCreateRequest(ordererRequest, shippingInfoRequest,
-                    List.of(orderLineRequest));
+                    List.of(orderLineRequest), paymentInfo);
             given(orderLineFactory.createOrderLine(any())).willThrow(
                     new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 
@@ -116,6 +128,7 @@ class OrdersServiceTest {
             assertThatThrownBy(() -> ordersService.createOrder(userId, request))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+            then(eventPublisher).shouldHaveNoInteractions();
         }
 
         @Test
@@ -129,8 +142,9 @@ class OrdersServiceTest {
             ShippingInfoRequest shippingInfoRequest = createShippingInfoRequest(addressRequest,
                     receiverRequest);
             OrderLineRequest orderLineRequest = createOrderLineRequest(1L, 1, 1000L);
+            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
             OrderCreateRequest request = createOrderCreateRequest(ordererRequest, shippingInfoRequest,
-                    List.of(orderLineRequest));
+                    List.of(orderLineRequest), paymentInfo);
             given(orderLineFactory.createOrderLine(any())).willThrow(
                     new OutOfStockException(ErrorCode.PRODUCT_OUT_OF_STOCK));
 
@@ -138,6 +152,7 @@ class OrdersServiceTest {
             assertThatThrownBy(() -> ordersService.createOrder(userId, request))
                     .isInstanceOf(OutOfStockException.class)
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_OUT_OF_STOCK);
+            then(eventPublisher).shouldHaveNoInteractions();
         }
     }
 }

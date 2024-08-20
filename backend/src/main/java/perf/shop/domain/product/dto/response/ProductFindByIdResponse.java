@@ -7,11 +7,11 @@ import perf.shop.domain.product.domain.Product;
 @Getter
 public class ProductFindByIdResponse {
 
-    private String name;
-    private Long price;
-    private String image;
-    private String description;
-    private Long stock;
+    private final String name;
+    private final Long price;
+    private final String image;
+    private final String description;
+    private final Long stock;
 
     @Builder
     private ProductFindByIdResponse(String name, Long price, String image, String description, Long stock) {

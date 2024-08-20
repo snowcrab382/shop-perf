@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public class ProductSearchResponse {
 
-    private Long id;
-    private String name;
-    private Long price;
-    private String image;
+    private final Long id;
+    private final String name;
+    private final Long price;
+    private final String image;
 
     @QueryProjection
     @Builder

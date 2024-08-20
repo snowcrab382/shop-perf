@@ -7,12 +7,12 @@ import perf.shop.domain.cart.domain.CartProduct;
 @Getter
 public class CartProductResponse {
 
-    private Long cartProductId;
-    private Long productId;
-    private String productName;
-    private String image;
-    private Long price;
-    private Integer quantity;
+    private final Long cartProductId;
+    private final Long productId;
+    private final String productName;
+    private final String image;
+    private final Long price;
+    private final Integer quantity;
 
     @Builder
     private CartProductResponse(Long cartProductId, Long productId, String productName, String image, Long price,

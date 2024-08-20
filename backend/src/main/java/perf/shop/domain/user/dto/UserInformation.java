@@ -8,12 +8,12 @@ import perf.shop.domain.auth.dto.OAuth2Response;
 @Getter
 public class UserInformation {
 
-    private String role;
+    private final String role;
+    private final String username;
     private String email;
     private String name;
     @Setter
     private Long userId;
-    private String username;
     private String provider;
 
     @Builder

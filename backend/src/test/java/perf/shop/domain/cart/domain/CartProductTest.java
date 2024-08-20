@@ -15,7 +15,7 @@ class CartProductTest {
 
         @Test
         @DisplayName("성공 - 장바구니 상품 수량 증가")
-        void addQuantity_success() throws Exception {
+        void addQuantity_success() {
             // given
             CartProduct cartProduct = CartFixture.createCartProduct(null, null, 0);
 

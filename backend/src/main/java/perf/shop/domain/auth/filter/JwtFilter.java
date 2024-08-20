@@ -3,10 +3,8 @@ package perf.shop.domain.auth.filter;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,10 +28,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RequestMatcher publicEndpoints;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         try {
-            //필터 로직을 수행 할 필요 없는 uri인 경우 곧바로 통과
+            //필터 로직을 수행 할 필요 없는 uri 인 경우 곧바로 통과
             if (publicEndpoints.matches(request)) {
                 filterChain.doFilter(request, response);
                 return;
@@ -56,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             //회원 정보 객체 생성
             UserInformation userInformation = UserInformation.of(role, username, userId);
 
-            //UserDetails에 회원 정보 객체 담기
+            //UserDetails 에 회원 정보 객체 담기
             CustomOAuth2User customOAuth2User = new CustomOAuth2User(userInformation);
 
             //스프링 시큐리티 인증 토큰 생성

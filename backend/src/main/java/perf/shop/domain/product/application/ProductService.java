@@ -30,7 +30,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public void checkProductQuantity(Long id, Integer quantity) {
+    public void checkProductStock(Long id, Integer quantity) {
         Product product = getProduct(id);
         product.checkProductStock(quantity);
     }

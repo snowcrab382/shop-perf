@@ -17,13 +17,15 @@ import perf.shop.domain.order.repository.OrdersRepository;
 public class OrdersService {
 
     private final OrdersRepository ordersRepository;
+    private final OrderLineFactory orderLineFactory;
 
     public void createOrder(Long userId, OrderCreateRequest request) {
         Orderer orderer = Orderer.from(userId, request.getOrderer());
         ShippingInfo shippingInfo = ShippingInfo.from(request.getShippingInfo());
         List<OrderLine> orderLines = request.getOrderLines().stream()
-                .map(OrderLine::from)
+                .map(orderLineFactory::createOrderLine)
                 .toList();
+
         Order newOrder = Order.of(orderer, shippingInfo, orderLines);
 
         ordersRepository.save(newOrder);

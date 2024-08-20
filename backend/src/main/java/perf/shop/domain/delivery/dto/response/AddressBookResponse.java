@@ -8,8 +8,8 @@ import perf.shop.domain.model.ShippingInfo;
 @Getter
 public class AddressBookResponse {
 
-    private Long addressBookId;
-    private ShippingInfo shippingInfo;
+    private final Long addressBookId;
+    private final ShippingInfo shippingInfo;
 
     @Builder
     private AddressBookResponse(Long addressBookId, ShippingInfo shippingInfo) {

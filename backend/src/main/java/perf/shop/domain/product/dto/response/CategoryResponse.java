@@ -7,8 +7,8 @@ import perf.shop.domain.product.domain.Category;
 @Getter
 public class CategoryResponse {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     @Builder
     private CategoryResponse(Long id, String name) {

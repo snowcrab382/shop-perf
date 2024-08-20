@@ -14,6 +14,7 @@ public class OrderCreateEventListener {
 
     private final PaymentService paymentService;
 
+    //TODO : 이벤트 처리 실패 시 재시도 로직 구현 필요
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void createPayment(OrderCreateEvent event) {

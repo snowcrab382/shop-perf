@@ -17,9 +17,8 @@ public class ErrorResponse {
     private List<FieldError> errors;
 
     /**
-     * 일반적인 예외 처리 error에 대한 내용이 없는 경우 사용. errors 필드에는 null이 아닌 빈 리스트를 반환
+     * 일반적인 예외 처리 error 에 대한 내용이 없는 경우 사용. errors 필드에는 null 이 아닌 빈 리스트를 반환
      *
-     * @param errorCode
      * @return ErrorResponse
      */
     public static ErrorResponse of(ErrorCode errorCode) {
@@ -33,8 +32,6 @@ public class ErrorResponse {
     /**
      * MethodArgumentNotValidException 예외 처리
      *
-     * @param errorCode
-     * @param errors
      * @return ErrorResponse
      */
     public static ErrorResponse of(ErrorCode errorCode, List<FieldError> errors) {
@@ -54,9 +51,9 @@ public class ErrorResponse {
         private String message;
 
         /**
-         * BindingResult의 FieldError 정보를 커스텀 FieldError로 변환
+         * BindingResult 의 FieldError 정보를 커스텀 FieldError 로 변환
          *
-         * @param bindingResult MethodArgumentNotValidException에서 전달받은 BindingResult
+         * @param bindingResult MethodArgumentNotValidException 에서 전달받은 BindingResult
          * @return List<FieldError>
          */
         public static List<FieldError> of(BindingResult bindingResult) {

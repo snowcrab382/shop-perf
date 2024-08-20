@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     /**
      * 유효성 검사에 통과하지 못한 경우 발생하는 예외 처리
      *
-     * @param e @Valid로 binding error 발생 시 예외 발생
+     * @param e valid 애노테이션으로 인해 binding error 발생 시 예외 발생
      * @return ErrorResponse
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     /**
      * 허용되지 않은 HTTP 메서드 요청에 대한 예외 처리
      *
-     * @param e @XXXMapping에 포함되지 않은 HTTP 메서드 요청이 들어왔을 때 예외 발생
+     * @param e @XXXMapping 에 포함되지 않은 HTTP 메서드 요청이 들어왔을 때 예외 발생
      * @return ErrorResponse
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

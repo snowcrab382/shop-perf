@@ -116,7 +116,7 @@ class AddressBookServiceTest {
 
         @Test
         @DisplayName("실패 - 주소록이 존재하지 않으면 예외 발생")
-        void updateAddressBook_throwException_IfAddressBoookNotExists() {
+        void updateAddressBook_throwException_IfAddressBookNotExists() {
             // given
             Long addressBookId = 1L;
             Long userId = 1L;

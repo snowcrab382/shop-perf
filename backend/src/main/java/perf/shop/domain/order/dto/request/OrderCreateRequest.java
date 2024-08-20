@@ -1,6 +1,7 @@
 package perf.shop.domain.order.dto.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,12 +14,15 @@ import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 public class OrderCreateRequest {
 
     @Valid
+    @NotNull
     private OrdererRequest orderer;
 
     @Valid
+    @NotNull
     private ShippingInfoRequest shippingInfo;
 
     @Valid
+    @NotNull
     private List<OrderLineRequest> orderLines;
 
     @Builder

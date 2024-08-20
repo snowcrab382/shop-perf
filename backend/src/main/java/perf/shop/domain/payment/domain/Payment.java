@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import perf.shop.domain.order.domain.Order;
@@ -40,4 +41,20 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+
+    @Builder
+    private Payment(Order order, PaymentInfo paymentInfo) {
+        this.order = order;
+        this.amount = order.calculateTotalAmounts();
+        this.paymentInfo = paymentInfo;
+        this.status = PaymentStatus.PENDING;
+    }
+
+    public static Payment of(Order order, PaymentInfo paymentInfo) {
+        return Payment.builder()
+                .order(order)
+                .paymentInfo(paymentInfo)
+                .build();
+    }
+
 }

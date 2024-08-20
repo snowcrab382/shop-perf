@@ -2,6 +2,7 @@ package perf.shop.mock.fixtures.order;
 
 import java.util.List;
 import perf.shop.domain.model.dto.request.ShippingInfoRequest;
+import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderCreateRequest;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.order.dto.request.OrdererRequest;
@@ -29,6 +30,11 @@ public class OrderFixture {
                 .productId(productId)
                 .quantity(quantity)
                 .price(price)
+                .build();
+    }
+
+    public static Order createOrder() {
+        return Order.builder()
                 .build();
     }
 }

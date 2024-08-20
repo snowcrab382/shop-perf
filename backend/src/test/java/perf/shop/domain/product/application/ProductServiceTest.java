@@ -20,6 +20,7 @@ import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
+import perf.shop.domain.product.exception.OutOfStockException;
 import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.ErrorCode;
 import perf.shop.mock.fixtures.product.ProductFixture;
@@ -113,6 +114,60 @@ class ProductServiceTest {
                     .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
 
         }
+    }
+
+    @Nested
+    @DisplayName("상품 재고 확인 테스트")
+    class CheckProductStock {
+
+        @Test
+        @DisplayName("성공")
+        void checkProductStock_success_ifProductStockIsEnough() {
+            // given
+            Long productId = 1L;
+            Integer quantity = 10;
+            Product product = createProduct(1L, 10000L, "상품명", "상품 설명", 1L, 10L);
+            given(productRepository.findById(productId)).willReturn(Optional.ofNullable(product));
+
+            // when
+            productService.checkProductStock(productId, quantity);
+
+            // then
+            then(productRepository).should().findById(productId);
+        }
+
+        @Test
+        @DisplayName("실패 - 상품이 존재하지 않는 경우 예외 발생")
+        void checkProductStock_throwException_ifProductNotExists() {
+            // given
+            Long productId = 1L;
+            Integer quantity = 10;
+            Product product = createProduct(1L, 10000L, "상품명", "상품 설명", 1L, 10L);
+            given(productRepository.findById(productId)).willThrow(
+                    new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+
+            // when & then
+            assertThatThrownBy(() -> productService.checkProductStock(productId, quantity))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+        }
+
+        @Test
+        @DisplayName("실패 - 상품 재고가 부족하면 예외 발생")
+        void checkProductStock_throwException_ifProductStockIsNotEnough() {
+            // given
+            Long productId = 1L;
+            Integer quantity = 20;
+            Product product = createProduct(1L, 10000L, "상품명", "상품 설명", 1L, 10L);
+            given(productRepository.findById(productId)).willReturn(Optional.ofNullable(product));
+
+            // when & then
+            assertThatThrownBy(() -> productService.checkProductStock(productId, quantity))
+                    .isInstanceOf(OutOfStockException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_OUT_OF_STOCK);
+        }
+
+
     }
 
 }

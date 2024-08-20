@@ -48,7 +48,7 @@ public class OrderLine extends BaseEntity {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
-        this.amounts = price * quantity;
+        this.amounts = calculateAmounts();
     }
 
     public static OrderLine of(Order order, OrderLineRequest request) {
@@ -58,5 +58,9 @@ public class OrderLine extends BaseEntity {
                 .quantity(request.getQuantity())
                 .price(request.getPrice())
                 .build();
+    }
+
+    private Long calculateAmounts() {
+        return price * quantity;
     }
 }

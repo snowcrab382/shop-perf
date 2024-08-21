@@ -36,7 +36,7 @@ import perf.shop.domain.order.dto.request.PaymentInfoRequest;
 import perf.shop.domain.order.repository.OrdersRepository;
 import perf.shop.domain.product.exception.OutOfStockException;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.global.error.exception.InvalidValueException;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,7 +103,7 @@ class OrdersServiceTest {
             // when & then
             assertThatThrownBy(() -> ordersService.createOrder(userId, request))
                     .isInstanceOf(InvalidValueException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_LINE_NOT_EXIST);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.ORDER_LINE_NOT_EXIST);
             then(eventPublisher).shouldHaveNoInteractions();
         }
 
@@ -122,12 +122,12 @@ class OrdersServiceTest {
             OrderCreateRequest request = createOrderCreateRequest(ordererRequest, shippingInfoRequest,
                     List.of(orderLineRequest), paymentInfo);
             given(orderLineFactory.createOrderLine(any())).willThrow(
-                    new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+                    new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
 
             // when & then
             assertThatThrownBy(() -> ordersService.createOrder(userId, request))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_NOT_FOUND);
             then(eventPublisher).shouldHaveNoInteractions();
         }
 
@@ -146,12 +146,12 @@ class OrdersServiceTest {
             OrderCreateRequest request = createOrderCreateRequest(ordererRequest, shippingInfoRequest,
                     List.of(orderLineRequest), paymentInfo);
             given(orderLineFactory.createOrderLine(any())).willThrow(
-                    new OutOfStockException(ErrorCode.PRODUCT_OUT_OF_STOCK));
+                    new OutOfStockException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK));
 
             // when & then
             assertThatThrownBy(() -> ordersService.createOrder(userId, request))
                     .isInstanceOf(OutOfStockException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_OUT_OF_STOCK);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
             then(eventPublisher).shouldHaveNoInteractions();
         }
     }

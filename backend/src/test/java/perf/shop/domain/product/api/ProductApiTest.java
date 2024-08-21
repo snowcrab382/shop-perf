@@ -29,7 +29,7 @@ import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.mock.InjectMockUser;
 
 @InjectMockUser
@@ -87,8 +87,8 @@ class ProductApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
                             jsonPath("$.errors[0].field", equalTo("name")),
@@ -102,7 +102,7 @@ class ProductApiTest {
         void saveProduct_throwException_ifCategoryInvalid() throws Exception {
             // given
             ProductSaveRequest productSaveRequest = createProductSaveRequest("상품명", "상품 설명", 10000L, 100L, 1L);
-            doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.CATEGORY_NOT_FOUND))
                     .when(productService).saveProduct(any(ProductSaveRequest.class), anyLong());
 
             // when
@@ -111,8 +111,8 @@ class ProductApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.CATEGORY_NOT_FOUND.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.CATEGORY_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.CATEGORY_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.CATEGORY_NOT_FOUND.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
 
@@ -159,7 +159,7 @@ class ProductApiTest {
             // given
             Long productId = 1L;
             given(productService.findProductById(productId)).willThrow(
-                    new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+                    new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
 
             // when
             ResultActions resultActions = findById(productId);
@@ -167,8 +167,8 @@ class ProductApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.PRODUCT_NOT_FOUND.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.PRODUCT_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.PRODUCT_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.PRODUCT_NOT_FOUND.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(List.of())));
         }
     }

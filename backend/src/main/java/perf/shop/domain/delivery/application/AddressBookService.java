@@ -10,7 +10,7 @@ import perf.shop.domain.delivery.dto.response.AddressBookResponse;
 import perf.shop.domain.delivery.repository.AddressBookRepository;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @Transactional
 @Service
@@ -30,7 +30,7 @@ public class AddressBookService {
     @Transactional(readOnly = true)
     public AddressBook findByIdAndUserId(Long addressBookId, Long userId) {
         return addressBookRepository.findByIdAndUserId(addressBookId, userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND));
     }
 
     public void saveAddressBook(AddressBookRequest addressBookRequest, Long userId) {

@@ -22,7 +22,7 @@ import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
 import perf.shop.domain.product.exception.OutOfStockException;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.mock.fixtures.product.ProductFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,13 +67,13 @@ class ProductServiceTest {
             Long sellerId = 1L;
             ProductSaveRequest productSaveRequest = ProductFixture.createProductSaveRequest("상품명", "상품 설명", 10000L, 10L,
                     1L);
-            doThrow(new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.CATEGORY_NOT_FOUND))
                     .when(categoryService).validateCategoryExistsById(any(Long.class));
 
             // when & then
             assertThatThrownBy(() -> productService.saveProduct(productSaveRequest, sellerId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.CATEGORY_NOT_FOUND);
         }
     }
 
@@ -111,7 +111,7 @@ class ProductServiceTest {
             // when & then
             assertThatThrownBy(() -> productService.findProductById(productId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_NOT_FOUND);
 
         }
     }
@@ -144,12 +144,12 @@ class ProductServiceTest {
             Integer quantity = 10;
             Product product = createProduct(1L, 10000L, "상품명", "상품 설명", 1L, 10L);
             given(productRepository.findById(productId)).willThrow(
-                    new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+                    new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
 
             // when & then
             assertThatThrownBy(() -> productService.checkProductStock(productId, quantity))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_NOT_FOUND);
         }
 
         @Test
@@ -164,7 +164,7 @@ class ProductServiceTest {
             // when & then
             assertThatThrownBy(() -> productService.checkProductStock(productId, quantity))
                     .isInstanceOf(OutOfStockException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_OUT_OF_STOCK);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
         }
 
 

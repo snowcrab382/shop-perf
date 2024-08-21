@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import perf.shop.domain.product.dao.CategoryRepository;
 import perf.shop.domain.product.domain.Category;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[단위 테스트] CategoryService")
@@ -57,7 +57,7 @@ class CategoryServiceTest {
             // when & then
             assertThatThrownBy(() -> categoryService.validateCategoryExistsById(categoryId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.CATEGORY_NOT_FOUND);
         }
     }
 

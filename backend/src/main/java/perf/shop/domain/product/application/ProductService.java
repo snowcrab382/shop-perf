@@ -8,7 +8,7 @@ import perf.shop.domain.product.domain.Product;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.dto.response.ProductFindByIdResponse;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @Transactional
 @Service
@@ -37,7 +37,7 @@ public class ProductService {
 
     private Product getProduct(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
     }
 
 }

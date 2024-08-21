@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import perf.shop.global.error.ErrorResponse.FieldError;
 import perf.shop.global.error.exception.BusinessException;
 import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @Slf4j
 @RestControllerAdvice
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = FieldError.of(e.getBindingResult());
-        return ErrorResponse.of(ErrorCode.METHOD_ARGUMENT_NOT_VALID, fieldErrors);
+        return ErrorResponse.of(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID, fieldErrors);
     }
 
     /**
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ErrorResponse handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        return ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
+        return ErrorResponse.of(GlobalErrorCode.METHOD_NOT_ALLOWED);
     }
 
     /**
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AccessDeniedException.class)
     protected ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
-        return ErrorResponse.of(ErrorCode.ACCESS_DENIED);
+        return ErrorResponse.of(GlobalErrorCode.ACCESS_DENIED);
     }
 
     /**
@@ -71,6 +72,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ErrorResponse handleException(Exception e) {
         log.error("handleEntityNotFoundException", e);
-        return ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
+        return ErrorResponse.of(GlobalErrorCode.INTERNAL_SERVER_ERROR);
     }
 }

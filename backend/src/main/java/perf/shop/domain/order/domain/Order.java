@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.common.domain.BaseEntity;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.global.error.exception.InvalidValueException;
 
 @Entity
@@ -63,7 +63,7 @@ public class Order extends BaseEntity {
 
     private static void verifyOrderLines(List<OrderLine> orderLines) {
         if (orderLines == null || orderLines.isEmpty()) {
-            throw new InvalidValueException(ErrorCode.ORDER_LINE_NOT_EXIST);
+            throw new InvalidValueException(GlobalErrorCode.ORDER_LINE_NOT_EXIST);
         }
     }
 

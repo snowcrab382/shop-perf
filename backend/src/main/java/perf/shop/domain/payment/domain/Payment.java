@@ -1,7 +1,6 @@
 package perf.shop.domain.payment.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,25 +34,28 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private Long amount;
 
-    @Embedded
-    private PaymentInfo paymentInfo;
+    private String paymentKey;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentType type;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
     @Builder
-    private Payment(Order order, PaymentInfo paymentInfo) {
+    private Payment(Order order, Long amount, String paymentKey) {
         this.order = order;
-        this.amount = order.calculateTotalAmounts();
-        this.paymentInfo = paymentInfo;
+        this.amount = amount;
+        this.paymentKey = paymentKey;
         this.status = PaymentStatus.PENDING;
     }
 
-    public static Payment of(Order order, PaymentInfo paymentInfo) {
+    public static Payment of(Order order, Long amount, String paymentKey) {
         return Payment.builder()
                 .order(order)
-                .paymentInfo(paymentInfo)
+                .amount(amount)
+                .paymentKey(paymentKey)
                 .build();
     }
 

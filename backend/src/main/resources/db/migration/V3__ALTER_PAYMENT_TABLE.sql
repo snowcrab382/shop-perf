@@ -1,2 +1,0 @@
-ALTER TABLE payment
-    ADD COLUMN method VARCHAR(20);

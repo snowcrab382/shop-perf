@@ -15,5 +15,8 @@ public class PaymentProperties {
     private String baseUrl;
     private String confirmEndpoint;
 
+    public String getConfirmUrl() {
+        return baseUrl + confirmEndpoint;
+    }
 
 }

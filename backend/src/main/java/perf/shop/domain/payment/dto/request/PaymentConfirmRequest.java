@@ -1,19 +1,29 @@
 package perf.shop.domain.payment.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PaymentConfirmRequest {
 
-    private final String paymentKey;
-    private final String orderNumber;
-    private final Long amount;
+    @NotEmpty
+    private String paymentKey;
+
+    @NotEmpty
+    private String orderId;
+
+    @NotNull
+    private Long amount;
 
     @Builder
-    private PaymentConfirmRequest(String paymentKey, String orderNumber, Long amount) {
+    private PaymentConfirmRequest(String paymentKey, String orderId, Long amount) {
         this.paymentKey = paymentKey;
-        this.orderNumber = orderNumber;
+        this.orderId = orderId;
         this.amount = amount;
     }
 }

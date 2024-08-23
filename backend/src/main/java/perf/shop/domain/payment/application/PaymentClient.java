@@ -48,7 +48,7 @@ public class PaymentClient {
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest paymentConfirmRequest) {
         return restClient
                 .post()
-                .uri(paymentProperties.getBaseUrl())
+                .uri(paymentProperties.getConfirmUrl())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(paymentConfirmRequest)
                 .retrieve()

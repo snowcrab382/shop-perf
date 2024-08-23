@@ -104,14 +104,17 @@ DROP TABLE IF EXISTS `payment`;
 
 CREATE TABLE `payment`
 (
-    `id`          bigint       NOT NULL AUTO_INCREMENT,
-    `order_id`    varchar(255) NOT NULL,
-    `amount`      bigint       NOT NULL,
-    `payment_key` varchar(255) NOT NULL,
-    `type`        varchar(20)  NOT NULL,
-    `status`      varchar(20)  NOT NULL,
-    `created_at`  datetime     NULL,
-    `modified_at` datetime     NULL,
+    `id`           bigint       NOT NULL AUTO_INCREMENT,
+    `order_id`     varchar(255) NOT NULL,
+    `order_name`   varchar(50)  NOT NULL,
+    `total_amount` bigint       NOT NULL,
+    `payment_key`  varchar(255) NOT NULL,
+    `type`         varchar(20)  NULL,
+    `status`       varchar(20)  NOT NULL,
+    `requested_at` datetime     NOT NULL,
+    `approved_at`  datetime     NOT NULL,
+    `created_at`   datetime     NULL,
+    `modified_at`  datetime     NULL,
     PRIMARY KEY (`id`)
 );
 

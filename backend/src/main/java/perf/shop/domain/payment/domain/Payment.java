@@ -7,14 +7,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.order.domain.Order;
+import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.global.common.domain.BaseEntity;
 
 @Entity
@@ -27,13 +26,16 @@ public class Payment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column(nullable = false)
+    private String orderId;
 
     @Column(nullable = false)
-    private Long amount;
+    private String orderName;
 
+    @Column(nullable = false)
+    private Long totalAmount;
+
+    @Column(nullable = false)
     private String paymentKey;
 
     @Enumerated(EnumType.STRING)
@@ -43,19 +45,35 @@ public class Payment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
+    @Column(nullable = false)
+    private ZonedDateTime requestedAt;
+
+    @Column(nullable = false)
+    private ZonedDateTime approvedAt;
+
     @Builder
-    private Payment(Order order, Long amount, String paymentKey) {
-        this.order = order;
-        this.amount = amount;
+    private Payment(String orderId, String orderName, Long totalAmount, String paymentKey, PaymentType type,
+                    PaymentStatus status, ZonedDateTime requestedAt, ZonedDateTime approvedAt) {
+        this.orderId = orderId;
+        this.orderName = orderName;
+        this.totalAmount = totalAmount;
         this.paymentKey = paymentKey;
-        this.status = PaymentStatus.PENDING;
+        this.type = type;
+        this.status = status;
+        this.requestedAt = requestedAt;
+        this.approvedAt = approvedAt;
     }
 
-    public static Payment of(Order order, Long amount, String paymentKey) {
+    public static Payment from(PaymentConfirmResponse response) {
         return Payment.builder()
-                .order(order)
-                .amount(amount)
-                .paymentKey(paymentKey)
+                .orderId(response.getOrderId())
+                .orderName(response.getOrderName())
+                .totalAmount(response.getTotalAmount())
+                .paymentKey(response.getPaymentKey())
+                .type(response.getType())
+                .status(response.getStatus())
+                .requestedAt(response.getRequestedAt())
+                .approvedAt(response.getApprovedAt())
                 .build();
     }
 

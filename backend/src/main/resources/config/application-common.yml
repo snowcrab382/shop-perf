@@ -13,6 +13,6 @@ spring:
         max-page-size: 100
 
 payment:
-  secret-key: test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
+  secret-key: ENC(/zMxUzBbhivsJUrW6PBujFT0Pc+cYkMtduC+d3rE89S9R4yswd0LItNyrqQHKGBs)
   base-url: https://api.tosspayments.com/v1/payments
   confirm-endpoint: /confirm

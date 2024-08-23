@@ -5,20 +5,19 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.common.domain.BaseEntity;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.global.error.exception.InvalidValueException;
 
 @Entity
@@ -28,8 +27,7 @@ import perf.shop.global.error.exception.InvalidValueException;
 public class Order extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Embedded
     private Orderer orderer;
@@ -45,6 +43,7 @@ public class Order extends BaseEntity {
 
     @Builder
     private Order(Orderer orderer, ShippingInfo shippingInfo) {
+        this.id = generateOrderId();
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
         this.state = OrderState.CREATED;
@@ -63,13 +62,8 @@ public class Order extends BaseEntity {
 
     private static void verifyOrderLines(List<OrderLine> orderLines) {
         if (orderLines == null || orderLines.isEmpty()) {
-            throw new InvalidValueException(ErrorCode.ORDER_LINE_NOT_EXIST);
+            throw new InvalidValueException(GlobalErrorCode.ORDER_LINE_NOT_EXIST);
         }
-    }
-
-    private void addOrderLine(OrderLine orderLine) {
-        orderLine.setOrder(this);
-        orderLines.add(orderLine);
     }
 
     public Long calculateTotalAmounts() {
@@ -77,4 +71,14 @@ public class Order extends BaseEntity {
                 .mapToLong(OrderLine::getAmounts)
                 .sum();
     }
+
+    private void addOrderLine(OrderLine orderLine) {
+        orderLine.setOrder(this);
+        orderLines.add(orderLine);
+    }
+
+    private String generateOrderId() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
 }

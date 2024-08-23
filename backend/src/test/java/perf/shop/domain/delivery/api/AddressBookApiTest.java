@@ -44,7 +44,7 @@ import perf.shop.domain.model.dto.request.ReceiverRequest;
 import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.mock.InjectMockUser;
 
 @InjectMockUser
@@ -149,8 +149,8 @@ class AddressBookApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
                             jsonPath("$.errors[0].field", equalTo("shippingInfo.address.roadAddress")),
@@ -209,8 +209,8 @@ class AddressBookApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
                             jsonPath("$.errors[0].field", equalTo("shippingInfo.address.roadAddress")),
@@ -228,7 +228,7 @@ class AddressBookApiTest {
             ReceiverRequest receiver = createReceiverRequest("받는사람", "010-1234-5678", "부재시 연락주세요");
             ShippingInfoRequest shippingInfo = createShippingInfoRequest(address, receiver);
             AddressBookRequest addressBookRequest = createAddressBookRequest(shippingInfo);
-            doThrow(new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND))
                     .when(addressBookService).updateAddressBook(anyLong(), any(AddressBookRequest.class), anyLong());
 
             // when
@@ -237,8 +237,8 @@ class AddressBookApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
 
@@ -275,7 +275,7 @@ class AddressBookApiTest {
         void deleteAddressBook_throwException_IfAddressBookNotExists() throws Exception {
             // given
             Long addressBookId = 1L;
-            doThrow(new EntityNotFoundException(ErrorCode.ADDRESS_BOOK_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND))
                     .when(addressBookService).deleteAddressBook(anyLong(), anyLong());
 
             // when
@@ -284,8 +284,8 @@ class AddressBookApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
 

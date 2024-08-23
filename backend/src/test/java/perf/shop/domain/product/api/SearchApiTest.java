@@ -27,7 +27,7 @@ import perf.shop.domain.product.application.SearchService;
 import perf.shop.domain.product.dto.request.SearchCondition;
 import perf.shop.domain.product.dto.response.ProductSearchResponse;
 import perf.shop.global.common.response.ResponseCode;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.mock.InjectMockUser;
 
 @InjectMockUser
@@ -110,8 +110,8 @@ class SearchApiTest {
 
             // then
             resultActions.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
                             jsonPath("$.errors[0].field", equalTo("sorter")),

@@ -25,17 +25,12 @@ public class OrderCreateRequest {
     @NotNull
     private List<OrderLineRequest> orderLines;
 
-    @Valid
-    @NotNull
-    private PaymentInfoRequest paymentInfo;
-
     @Builder
     private OrderCreateRequest(OrdererRequest orderer, ShippingInfoRequest shippingInfo,
-                               List<OrderLineRequest> orderLines, PaymentInfoRequest paymentInfo) {
+                               List<OrderLineRequest> orderLines) {
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
         this.orderLines = orderLines;
-        this.paymentInfo = paymentInfo;
     }
 }
 

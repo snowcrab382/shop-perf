@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
 import perf.shop.domain.product.exception.OutOfStockException;
 import perf.shop.global.common.domain.BaseEntity;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @Entity
 @Getter
@@ -69,7 +69,7 @@ public class Product extends BaseEntity {
 
     public void checkProductStock(Integer quantity) {
         if (stock < quantity) {
-            throw new OutOfStockException(ErrorCode.PRODUCT_OUT_OF_STOCK);
+            throw new OutOfStockException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
         }
     }
 }

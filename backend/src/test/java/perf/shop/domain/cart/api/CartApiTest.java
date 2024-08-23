@@ -31,7 +31,7 @@ import perf.shop.domain.cart.dto.response.CartProductResponse;
 import perf.shop.domain.cart.service.CartService;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.mock.InjectMockUser;
 
 @InjectMockUser
@@ -134,8 +134,8 @@ class CartApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
                             jsonPath("$.errors[0].field", equalTo("productId")),
@@ -181,7 +181,7 @@ class CartApiTest {
             // given
             Long cartProductId = 1L;
             UpdateProductRequest updateProductRequest = createUpdateProductRequest(cartProductId, 3);
-            doThrow(new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.CART_PRODUCT_NOT_FOUND))
                     .when(cartService).updateProduct(anyLong(), any(UpdateProductRequest.class));
 
             // when
@@ -190,8 +190,8 @@ class CartApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.CART_PRODUCT_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.CART_PRODUCT_NOT_FOUND.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
 
         }
@@ -209,8 +209,8 @@ class CartApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpect(jsonPath("$.errors").exists())
                     .andExpect(jsonPath("$.errors[0].field", equalTo("cartProductId")))
                     .andExpect(jsonPath("$.errors[0].value", equalTo(null)))
@@ -252,7 +252,7 @@ class CartApiTest {
             // given
             Long cartProductId = 1L;
             Long userId = 1L;
-            doThrow(new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.CART_PRODUCT_NOT_FOUND))
                     .when(cartService).deleteProduct(anyLong(), anyLong());
 
             // when
@@ -261,8 +261,8 @@ class CartApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.CART_PRODUCT_NOT_FOUND.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.CART_PRODUCT_NOT_FOUND.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.CART_PRODUCT_NOT_FOUND.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
     }

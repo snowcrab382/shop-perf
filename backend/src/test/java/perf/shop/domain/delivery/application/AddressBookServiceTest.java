@@ -25,7 +25,7 @@ import perf.shop.domain.model.dto.request.AddressRequest;
 import perf.shop.domain.model.dto.request.ReceiverRequest;
 import perf.shop.domain.model.dto.request.ShippingInfoRequest;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.mock.fixtures.common.CommonFixture;
 import perf.shop.mock.fixtures.delivery.AddressBookFixture;
 
@@ -132,7 +132,7 @@ class AddressBookServiceTest {
             // when & then
             assertThatThrownBy(() -> addressBookService.updateAddressBook(addressBookId, addressBookRequest, userId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ADDRESS_BOOK_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND);
         }
     }
 
@@ -172,7 +172,7 @@ class AddressBookServiceTest {
             // when & then
             assertThatThrownBy(() -> addressBookService.deleteAddressBook(addressBookId, userId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ADDRESS_BOOK_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.ADDRESS_BOOK_NOT_FOUND);
         }
     }
 }

@@ -13,7 +13,6 @@ import static perf.shop.mock.fixtures.common.CommonFixture.createShippingInfoReq
 import static perf.shop.mock.fixtures.order.OrderFixture.createOrderCreateRequest;
 import static perf.shop.mock.fixtures.order.OrderFixture.createOrderLineRequest;
 import static perf.shop.mock.fixtures.order.OrderFixture.createOrdererRequest;
-import static perf.shop.mock.fixtures.order.OrderFixture.createPaymentInfoRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
@@ -35,9 +34,8 @@ import perf.shop.domain.order.application.OrdersService;
 import perf.shop.domain.order.dto.request.OrderCreateRequest;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.order.dto.request.OrdererRequest;
-import perf.shop.domain.order.dto.request.PaymentInfoRequest;
 import perf.shop.global.common.response.ResponseCode;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 import perf.shop.global.error.exception.InvalidValueException;
 import perf.shop.mock.InjectMockUser;
 
@@ -79,9 +77,7 @@ class OrdersApiTest {
                     createOrderLineRequest(1L, 2, 10000L),
                     createOrderLineRequest(2L, 1, 20000L)
             );
-            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
-            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines,
-                    paymentInfo);
+            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines);
 
             // when
             ResultActions resultActions = createOrder(orderCreateRequest);
@@ -107,9 +103,7 @@ class OrdersApiTest {
                     createOrderLineRequest(1L, 2, 10000L),
                     createOrderLineRequest(2L, 1, 20000L)
             );
-            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
-            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines,
-                    paymentInfo);
+            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines);
 
             // when
             ResultActions resultActions = createOrder(orderCreateRequest);
@@ -117,8 +111,8 @@ class OrdersApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.METHOD_ARGUMENT_NOT_VALID.getMessage())))
                     .andExpectAll(
                             jsonPath("$.errors").exists(),
                             jsonPath("$.errors.[*].field",
@@ -141,10 +135,8 @@ class OrdersApiTest {
                     createOrderLineRequest(1L, 2, 10000L),
                     createOrderLineRequest(2L, 1, 20000L)
             );
-            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
-            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines,
-                    paymentInfo);
-            doThrow(new InvalidValueException(ErrorCode.ORDER_LINE_NOT_EXIST))
+            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines);
+            doThrow(new InvalidValueException(GlobalErrorCode.ORDER_LINE_NOT_EXIST))
                     .when(ordersService).createOrder(any(), any());
 
             // when
@@ -153,8 +145,8 @@ class OrdersApiTest {
             // then
             resultActions
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.ORDER_LINE_NOT_EXIST.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.ORDER_LINE_NOT_EXIST.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.ORDER_LINE_NOT_EXIST.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.ORDER_LINE_NOT_EXIST.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
 
@@ -170,10 +162,8 @@ class OrdersApiTest {
                     createOrderLineRequest(1L, 2, 10000L),
                     createOrderLineRequest(2L, 1, 20000L)
             );
-            PaymentInfoRequest paymentInfo = createPaymentInfoRequest("CARD", "TOSS");
-            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines,
-                    paymentInfo);
-            doThrow(new InvalidValueException(ErrorCode.PRODUCT_OUT_OF_STOCK))
+            OrderCreateRequest orderCreateRequest = createOrderCreateRequest(orderer, shippingInfo, orderLines);
+            doThrow(new InvalidValueException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK))
                     .when(ordersService).createOrder(any(), any());
 
             // when
@@ -181,8 +171,8 @@ class OrdersApiTest {
 
             // then
             resultActions.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status", equalTo(ErrorCode.PRODUCT_OUT_OF_STOCK.getStatus())))
-                    .andExpect(jsonPath("$.message", equalTo(ErrorCode.PRODUCT_OUT_OF_STOCK.getMessage())))
+                    .andExpect(jsonPath("$.status", equalTo(GlobalErrorCode.PRODUCT_OUT_OF_STOCK.getStatus())))
+                    .andExpect(jsonPath("$.message", equalTo(GlobalErrorCode.PRODUCT_OUT_OF_STOCK.getMessage())))
                     .andExpect(jsonPath("$.errors", equalTo(Collections.emptyList())));
         }
     }

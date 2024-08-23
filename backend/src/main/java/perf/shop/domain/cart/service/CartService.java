@@ -14,7 +14,7 @@ import perf.shop.domain.cart.repository.CartRepository;
 import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @Transactional
 @Service
@@ -43,7 +43,7 @@ public class CartService {
 
     public void addProduct(AddProductRequest addProductRequest, Long userId) {
         Product product = productRepository.findById(addProductRequest.getProductId())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
 
         Cart cart = getCart(userId);
         addProductToCartByRequest(addProductRequest, cart, product);
@@ -51,7 +51,7 @@ public class CartService {
 
     public void updateProduct(Long cartProductId, UpdateProductRequest updateProductRequest) {
         CartProduct cartProduct = cartProductRepository.findById(cartProductId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.CART_PRODUCT_NOT_FOUND));
 
         cartProduct.updateQuantity(updateProductRequest.getQuantity());
     }
@@ -59,7 +59,7 @@ public class CartService {
     public void deleteProduct(Long cartProductId, Long userId) {
         Cart cart = getCart(userId);
         CartProduct cartProduct = cartProductRepository.findByIdAndCartId(cartProductId, cart.getId())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.CART_PRODUCT_NOT_FOUND));
 
         cartProductRepository.delete(cartProduct);
     }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import perf.shop.domain.auth.exception.JwtNotFoundException;
 import perf.shop.global.error.ErrorResponse;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @RestControllerAdvice
 public class JwtExceptionHandler {
@@ -19,17 +19,17 @@ public class JwtExceptionHandler {
 
     @ExceptionHandler(ExpiredJwtException.class)
     protected ErrorResponse handleExpiredJwtException(ExpiredJwtException e) {
-        return ErrorResponse.of(ErrorCode.JWT_EXPIRED);
+        return ErrorResponse.of(GlobalErrorCode.JWT_EXPIRED);
     }
 
     @ExceptionHandler(MalformedJwtException.class)
     protected ErrorResponse handleMalformedJwtException(MalformedJwtException e) {
-        return ErrorResponse.of(ErrorCode.JWT_MALFORMED);
+        return ErrorResponse.of(GlobalErrorCode.JWT_MALFORMED);
     }
 
     @ExceptionHandler(SignatureException.class)
     protected ErrorResponse handleSignatureException(SignatureException e) {
-        return ErrorResponse.of(ErrorCode.JWT_SIGNATURE_INVALID);
+        return ErrorResponse.of(GlobalErrorCode.JWT_SIGNATURE_INVALID);
     }
 
 }

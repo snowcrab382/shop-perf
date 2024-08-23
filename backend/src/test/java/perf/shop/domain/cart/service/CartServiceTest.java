@@ -30,7 +30,7 @@ import perf.shop.domain.cart.repository.CartRepository;
 import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[단위 테스트] CartService")
@@ -119,12 +119,12 @@ class CartServiceTest {
             Long userId = 1L;
             AddProductRequest addProductRequest = createAddProductRequest(1L, 10);
             given(productRepository.findById(any())).willThrow(
-                    new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
+                    new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
 
             // when & then
             assertThatThrownBy(() -> cartService.addProduct(addProductRequest, userId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_NOT_FOUND);
         }
     }
 
@@ -160,12 +160,12 @@ class CartServiceTest {
             Long cartProductId = 1L;
             UpdateProductRequest updateProductRequest = createUpdateProductRequest(1L, 10);
             given(cartProductRepository.findById(any())).willThrow(
-                    new EntityNotFoundException(ErrorCode.CART_PRODUCT_NOT_FOUND));
+                    new EntityNotFoundException(GlobalErrorCode.CART_PRODUCT_NOT_FOUND));
 
             // when & then
             assertThatThrownBy(() -> cartService.updateProduct(cartProductId, updateProductRequest))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.CART_PRODUCT_NOT_FOUND);
         }
     }
 
@@ -206,7 +206,7 @@ class CartServiceTest {
             // when & then
             assertThatThrownBy(() -> cartService.deleteProduct(cartProductId, userId))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.CART_PRODUCT_NOT_FOUND);
         }
     }
 

@@ -19,7 +19,7 @@ import perf.shop.domain.order.domain.OrderLine;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.product.application.ProductService;
 import perf.shop.global.error.exception.EntityNotFoundException;
-import perf.shop.global.error.exception.ErrorCode;
+import perf.shop.global.error.exception.GlobalErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[단위 테스트] OrderLineFactory")
@@ -54,13 +54,13 @@ class OrderLineFactoryTest {
         void createOrderLine_throwException_IfOrderProductNotExists() {
             // given
             OrderLineRequest orderLineRequest = createOrderLineRequest(1L, 100, 1000L);
-            doThrow(new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND))
                     .when(productService).checkProductStock(anyLong(), anyInt());
 
             // when & then
             assertThatThrownBy(() -> orderLineFactory.createOrderLine(orderLineRequest))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_NOT_FOUND);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_NOT_FOUND);
         }
 
         @Test
@@ -68,13 +68,13 @@ class OrderLineFactoryTest {
         void createOrderLine_throwException_IfProductOutOfStock() {
             // given
             OrderLineRequest orderLineRequest = createOrderLineRequest(1L, 100, 1000L);
-            doThrow(new EntityNotFoundException(ErrorCode.PRODUCT_OUT_OF_STOCK))
+            doThrow(new EntityNotFoundException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK))
                     .when(productService).checkProductStock(anyLong(), anyInt());
 
             // when & then
             assertThatThrownBy(() -> orderLineFactory.createOrderLine(orderLineRequest))
                     .isInstanceOf(EntityNotFoundException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PRODUCT_OUT_OF_STOCK);
+                    .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
         }
     }
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>토스페이먼츠 결제 테스트</title>
+    <script src="https://js.tosspayments.com/v1"></script>
+</head>
+<body>
+<h1>상품: 테스트 상품</h1>
+<p>가격: 1,000원</p>
+<button id="payment-button">결제하기</button>
+
+<script>
+    var clientKey = 'test_ck_GePWvyJnrKjkDLyaZGYOVgLzN97E';
+    var tossPayments = TossPayments(clientKey);
+
+    var button = document.getElementById('payment-button');
+
+    button.addEventListener('click', function () {
+        tossPayments.requestPayment('카드', {
+            amount: 1000,
+            orderId: 'ORDER_ID_' + new Date().getTime(),
+            orderName: '테스트 상품',
+            customerName: '홍길동',
+            successUrl: window.location.origin + '/success',
+            failUrl: window.location.origin + '/fail',
+        })
+                .catch(function (error) {
+                    if (error.code === 'USER_CANCEL') {
+                        // 결제 고객이 결제창을 닫았을 때 에러 처리
+                        console.log("사용자가 결제를 취소하였습니다.");
+                    } else if (error.code === 'INVALID_CARD_COMPANY') {
+                        // 유효하지 않은 카드 코드에 대한 에러 처리
+                        console.log("유효하지 않은 카드입니다.");
+                    }
+                });
+    });
+</script>
+</body>
+</html>

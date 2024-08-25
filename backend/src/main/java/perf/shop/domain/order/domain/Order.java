@@ -10,7 +10,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,15 +41,16 @@ public class Order extends BaseEntity {
     private OrderState state;
 
     @Builder
-    private Order(Orderer orderer, ShippingInfo shippingInfo) {
-        this.id = generateOrderId();
+    private Order(String id, Orderer orderer, ShippingInfo shippingInfo) {
+        this.id = id;
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
         this.state = OrderState.CREATED;
     }
 
-    public static Order of(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+    public static Order of(String id, Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
         Order newOrder = Order.builder()
+                .id(id)
                 .orderer(orderer)
                 .shippingInfo(shippingInfo)
                 .build();
@@ -72,13 +72,28 @@ public class Order extends BaseEntity {
                 .sum();
     }
 
+    public void verifyAmount(Long amount) {
+        if (!amount.equals(calculateTotalAmounts())) {
+            throw new InvalidValueException(GlobalErrorCode.INVALID_PAYMENT_AMOUNT);
+        }
+    }
+
+    public void updateOrderStateToPending() {
+        if (state != OrderState.CREATED) {
+            throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
+        }
+        state = OrderState.PENDING;
+    }
+
+    public void updateOrderStateToPaymentApproved() {
+        if (state != OrderState.PENDING) {
+            throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
+        }
+        state = OrderState.PAYMENT_APPROVED;
+    }
+
     private void addOrderLine(OrderLine orderLine) {
         orderLine.setOrder(this);
         orderLines.add(orderLine);
     }
-
-    private String generateOrderId() {
-        return UUID.randomUUID().toString().replace("-", "");
-    }
-
 }

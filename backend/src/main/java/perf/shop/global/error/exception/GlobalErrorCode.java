@@ -32,6 +32,8 @@ public enum GlobalErrorCode implements ErrorCode {
      * InvalidValueException
      */
     ORDER_LINE_NOT_EXIST(400, "주문 상품은 최소 1개 이상이어야 합니다."),
+    INVALID_ORDER_STATE(400, "주문 상태가 유효하지 않습니다."),
+    INVALID_PAYMENT_AMOUNT(400, "결제 금액이 유효하지 않습니다."),
 
     /**
      * OutOfStockException

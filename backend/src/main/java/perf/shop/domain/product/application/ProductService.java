@@ -3,6 +3,7 @@ package perf.shop.domain.product.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.product.dao.ProductRepository;
 import perf.shop.domain.product.domain.Product;
 import perf.shop.domain.product.dto.request.ProductSaveRequest;
@@ -18,6 +19,20 @@ public class ProductService {
     private final CategoryService categoryService;
     private final ProductRepository productRepository;
 
+    @Transactional(readOnly = true)
+    public void validateProductExistsById(Long productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND);
+        }
+    }
+
+    public void deductStocks(Order order) {
+        order.getOrderLines().forEach(orderLine -> {
+            Product product = getProductForUpdate(orderLine.getProductId());
+            product.deductStock(orderLine.getQuantity());
+        });
+    }
+
     public void saveProduct(ProductSaveRequest productSaveRequest, Long sellerId) {
         categoryService.validateCategoryExistsById(productSaveRequest.getCategoryId());
         productRepository.save(Product.of(productSaveRequest, sellerId));
@@ -29,10 +44,10 @@ public class ProductService {
         return ProductFindByIdResponse.of(product);
     }
 
-    @Transactional(readOnly = true)
-    public void checkProductStock(Long id, Integer quantity) {
-        Product product = getProduct(id);
-        product.checkProductStock(quantity);
+    //TODO: 비관적 락, 동시성 문제 해결 테스트에 사용
+    private Product getProductForUpdate(Long id) {
+        return productRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));
     }
 
     private Product getProduct(Long id) {

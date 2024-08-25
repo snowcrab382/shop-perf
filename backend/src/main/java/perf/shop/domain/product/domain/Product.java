@@ -72,4 +72,9 @@ public class Product extends BaseEntity {
             throw new OutOfStockException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
         }
     }
+
+    public void deductStock(Integer quantity) {
+        checkProductStock(quantity);
+        stock -= quantity;
+    }
 }

@@ -15,7 +15,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import perf.shop.domain.payment.dto.request.PaymentConfirmRequest;
+import perf.shop.domain.payment.dto.request.PaymentRequest;
 import perf.shop.domain.payment.dto.response.PaymentConfirmFailedResponse;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.domain.payment.error.exception.PaymentConfirmErrorCode;
@@ -45,12 +45,12 @@ public class PaymentClient {
                 .build();
     }
 
-    public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest paymentConfirmRequest) {
+    public PaymentConfirmResponse confirmPayment(PaymentRequest paymentRequest) {
         return restClient
                 .post()
                 .uri(paymentProperties.getConfirmUrl())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(paymentConfirmRequest)
+                .body(paymentRequest)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (request, response) -> {
                     throw new PaymentConfirmFailedException(getPaymentConfirmErrorCode(response));

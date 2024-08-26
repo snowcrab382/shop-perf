@@ -29,7 +29,7 @@ public class ProductSaveRequest {
 
     @NotNull
     @Min(1)
-    @Max(100000)
+//    @Max(100000)
     private Long stock;
 
     @Builder

@@ -5,8 +5,9 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      minimum-idle: 20
-      maximum-pool-size: 20
+      minimum-idle: 20 # 최소 커넥션 개수, default: maximum-pool-size, 해당 값을 HikariCP에서 통제하도록 두는 것이 적절.
+      maximum-pool-size: 20 # 최대 커넥션 개수, default: 10, DB의 실제 커넥션에 대한 최대 개수
+      max-lifetime: 150000 # 커넥션 최대 생존 시간, default: 30분, DB 커넥션 유지 시간을 180초로 설정했으므로 이보다 작은 값으로 설정
 
 decorator:
   datasource:

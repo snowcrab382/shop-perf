@@ -36,7 +36,7 @@ public class OrderFacadeService {
     public void order(Long userId, OrderRequest request) {
         Order newOrder = orderService.createOrder(userId, request);
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
-        productService.deductStocks(newOrder);
+        productService.deductStocksWithOutLock(newOrder);
         Payment newPayment = paymentService.approvePayment(request.getPaymentInfo());
 
     }

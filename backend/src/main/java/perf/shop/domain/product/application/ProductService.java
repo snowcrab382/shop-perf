@@ -33,6 +33,15 @@ public class ProductService {
         });
     }
 
+    public void deductStocksWithOutLock(Order order) {
+        order.getOrderLines().forEach(orderLine -> {
+            int count = productRepository.deductStock(orderLine.getProductId(), orderLine.getQuantity());
+            if (count == 0) {
+                throw new EntityNotFoundException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
+            }
+        });
+    }
+
     public void saveProduct(ProductSaveRequest productSaveRequest, Long sellerId) {
         categoryService.validateCategoryExistsById(productSaveRequest.getCategoryId());
         productRepository.save(Product.of(productSaveRequest, sellerId));

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.Base64;
+import java.util.Random;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +17,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import perf.shop.domain.payment.domain.PaymentStatus;
+import perf.shop.domain.payment.domain.PaymentType;
 import perf.shop.domain.payment.dto.request.PaymentRequest;
 import perf.shop.domain.payment.dto.response.PaymentConfirmFailedResponse;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
@@ -56,6 +60,32 @@ public class PaymentClient {
                     throw new PaymentConfirmFailedException(getPaymentConfirmErrorCode(response));
                 })
                 .body(PaymentConfirmResponse.class);
+    }
+
+    public PaymentConfirmResponse fakeConfirmPayment(PaymentRequest paymentRequest) {
+        ZonedDateTime requestAt = ZonedDateTime.now();
+        try {
+            restClient
+                    .get()
+                    .uri("http://www.google.com")
+                    .retrieve()
+                    .toBodilessEntity();
+            long delay = 1000 + new Random().nextInt(1001);
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+        }
+        return PaymentConfirmResponse.builder()
+                .paymentKey(paymentRequest.getPaymentKey())
+                .orderId(paymentRequest.getOrderId())
+                .orderName("testOrderName")
+                .totalAmount(paymentRequest.getAmount())
+                .requestedAt(requestAt)
+                .approvedAt(ZonedDateTime.now())
+                .type(PaymentType.CARD)
+                .status(PaymentStatus.DONE)
+                .build();
     }
 
     private ClientHttpRequestFactory createPaymentRequestFactory() {

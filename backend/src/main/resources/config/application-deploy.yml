@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       minimum-idle: 20
-      maximum-pool-size: 150
+      maximum-pool-size: 20
 
 decorator:
   datasource:

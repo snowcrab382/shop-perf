@@ -2,12 +2,13 @@ package perf.shop.domain.order.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import perf.shop.domain.order.application.event.OrderCreatedEvent;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.domain.payment.application.PaymentService;
-import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.product.application.ProductService;
 
 @Slf4j
@@ -19,6 +20,7 @@ public class OrderFacadeService {
     private final OrderService orderService;
     private final ProductService productService;
     private final PaymentService paymentService;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 주문 로직
@@ -37,7 +39,7 @@ public class OrderFacadeService {
         Order newOrder = orderService.createOrder(userId, request);
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
         productService.deductStocksWithOutLock(newOrder);
-        Payment newPayment = paymentService.approvePayment(request.getPaymentInfo());
-
+        eventPublisher.publishEvent(OrderCreatedEvent.from(request.getPaymentInfo()));
+//        Payment newPayment = paymentService.approvePayment(request.getPaymentInfo());
     }
 }

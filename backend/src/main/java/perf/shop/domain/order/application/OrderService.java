@@ -33,7 +33,7 @@ public class OrderService {
         Order newOrder = ordersRepository.save(Order.of(orderId, orderer, shippingInfo, orderLines));
 
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
-        productService.deductStocksWithOutLock(newOrder);
+        productService.decreaseStocksWithImplicitLock(newOrder);
         return newOrder;
     }
 
@@ -41,6 +41,7 @@ public class OrderService {
         Order order = getOrder(id);
         productService.cancelDeductStocksWithOutLock(order);
         order.cancel();
+        productService.increaseStocksWithImplicitLock(order);
         ordersRepository.save(order);
     }
 

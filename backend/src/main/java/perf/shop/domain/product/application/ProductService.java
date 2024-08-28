@@ -26,25 +26,18 @@ public class ProductService {
         }
     }
 
-    public void deductStocks(Order order) {
+    public void decreaseStocksWithImplicitLock(Order order) {
         order.getOrderLines().forEach(orderLine -> {
-            Product product = getProductForUpdate(orderLine.getProductId());
-            product.deductStock(orderLine.getQuantity());
-        });
-    }
-
-    public void deductStocksWithOutLock(Order order) {
-        order.getOrderLines().forEach(orderLine -> {
-            int count = productRepository.deductStock(orderLine.getProductId(), orderLine.getQuantity());
+            int count = productRepository.decreaseStock(orderLine.getProductId(), orderLine.getQuantity());
             if (count == 0) {
                 throw new EntityNotFoundException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
             }
         });
     }
 
-    public void cancelDeductStocksWithOutLock(Order order) {
+    public void increaseStocksWithImplicitLock(Order order) {
         order.getOrderLines().forEach(orderLine -> {
-            productRepository.cancelDeductStock(orderLine.getProductId(), orderLine.getQuantity());
+            productRepository.increaseStock(orderLine.getProductId(), orderLine.getQuantity());
         });
     }
 

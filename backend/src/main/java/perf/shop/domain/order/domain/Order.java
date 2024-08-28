@@ -7,13 +7,17 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Persistable;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.common.domain.BaseEntity;
 import perf.shop.global.error.exception.GlobalErrorCode;
@@ -23,7 +27,7 @@ import perf.shop.global.error.exception.InvalidValueException;
 @Getter
 @Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseEntity {
+public class Order extends BaseEntity implements Persistable<String> {
 
     @Id
     private String id;
@@ -39,6 +43,9 @@ public class Order extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private OrderState state;
+
+    @Transient
+    private boolean isNew = true;
 
     @Builder
     private Order(String id, Orderer orderer, ShippingInfo shippingInfo) {
@@ -96,5 +103,16 @@ public class Order extends BaseEntity {
     private void addOrderLine(OrderLine orderLine) {
         orderLine.setOrder(this);
         orderLines.add(orderLine);
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNew = false;
     }
 }

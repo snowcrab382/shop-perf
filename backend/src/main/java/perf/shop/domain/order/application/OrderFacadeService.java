@@ -2,25 +2,23 @@ package perf.shop.domain.order.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import perf.shop.domain.order.application.event.OrderCreatedEvent;
+import org.springframework.stereotype.Component;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
+import perf.shop.domain.payment.application.PaymentClient;
 import perf.shop.domain.payment.application.PaymentService;
-import perf.shop.domain.product.application.ProductService;
+import perf.shop.domain.payment.domain.Payment;
+import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
+import reactor.core.publisher.Mono;
 
 @Slf4j
-@Transactional
-@Service
+@Component
 @RequiredArgsConstructor
 public class OrderFacadeService {
 
     private final OrderService orderService;
-    private final ProductService productService;
     private final PaymentService paymentService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final PaymentClient paymentClient;
 
     /**
      * 주문 로직
@@ -36,10 +34,21 @@ public class OrderFacadeService {
      * 5. 결제 정보 저장
      */
     public void order(Long userId, OrderRequest request) {
+        //트랜잭션 1
         Order newOrder = orderService.createOrder(userId, request);
-        newOrder.verifyAmount(request.getPaymentInfo().getAmount());
-        productService.deductStocksWithOutLock(newOrder);
-        eventPublisher.publishEvent(OrderCreatedEvent.from(request.getPaymentInfo()));
-//        Payment newPayment = paymentService.approvePayment(request.getPaymentInfo());
+
+        //트랜잭션 X, 비동기 처리
+        Mono<PaymentConfirmResponse> response = paymentClient.confirmPayment(request.getPaymentInfo());
+        response.subscribe(
+                result -> {
+                    //결제 성공 : 결제 정보 저장, 장바구니 삭제, 주문 상태 변경
+                    paymentService.savePayment(Payment.from(result));
+                },
+                error -> {
+                    //결제 실패 처리
+                    log.error("결제 실패 보상 트랜잭션 실시: {}", newOrder.getId());
+                    orderService.cancelOrder(newOrder.getId());
+                }
+        );
     }
 }

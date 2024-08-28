@@ -1,99 +1,75 @@
 package perf.shop.domain.payment.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Random;
-import org.springframework.boot.web.client.ClientHttpRequestFactories;
-import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import perf.shop.domain.payment.domain.PaymentStatus;
 import perf.shop.domain.payment.domain.PaymentType;
 import perf.shop.domain.payment.dto.request.PaymentRequest;
-import perf.shop.domain.payment.dto.response.PaymentConfirmFailedResponse;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.domain.payment.error.exception.PaymentConfirmErrorCode;
 import perf.shop.domain.payment.error.exception.PaymentConfirmFailedException;
 import perf.shop.global.config.properties.PaymentProperties;
+import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class PaymentClient {
 
     private static final String BASIC_DELIMITER = ":";
     private static final String AUTH_HEADER_PREFIX = "Basic ";
-    private static final int CONNECT_TIMEOUT_SECONDS = 1;
-    private static final int READ_TIMEOUT_SECONDS = 30;
+    private static final int REQUEST_TIMEOUT = 3;
 
-    private final ObjectMapper objectMapper;
     private final PaymentProperties paymentProperties;
-    private final RestClient restClient;
+    private final WebClient webClient;
 
-    public PaymentClient(PaymentProperties paymentProperties,
-                         ObjectMapper objectMapper) {
-        this.paymentProperties = paymentProperties;
-        this.objectMapper = objectMapper;
-        this.restClient = RestClient.builder()
-                .requestFactory(createPaymentRequestFactory())
-                .requestInterceptor(new PaymentExceptionInterceptor())
-                .defaultHeader(HttpHeaders.AUTHORIZATION, createPaymentAuthHeader(paymentProperties))
-                .build();
-    }
 
-    public PaymentConfirmResponse confirmPayment(PaymentRequest paymentRequest) {
-        return restClient
+    public Mono<PaymentConfirmResponse> confirmPayment(PaymentRequest paymentRequest) {
+        return webClient
                 .post()
                 .uri(paymentProperties.getConfirmUrl())
+                .header(HttpHeaders.AUTHORIZATION, createPaymentAuthHeader(paymentProperties))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(paymentRequest)
+                .bodyValue(paymentRequest)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new PaymentConfirmFailedException(getPaymentConfirmErrorCode(response));
-                })
-                .body(PaymentConfirmResponse.class);
+                .bodyToMono(PaymentConfirmResponse.class)
+                .timeout(Duration.ofSeconds(REQUEST_TIMEOUT))
+                .doOnError(throwable -> {
+                    WebClientResponseException exception = (WebClientResponseException) throwable;
+                    log.error("주문 번호 {} 에 대한 결제 승인 요청 중 오류 발생 : {}", paymentRequest.getOrderId(),
+                            exception.getResponseBodyAsString());
+                    throw new PaymentConfirmFailedException(PaymentConfirmErrorCode.findByName(exception.getMessage()));
+                });
+
     }
 
-    public PaymentConfirmResponse fakeConfirmPayment(PaymentRequest paymentRequest) {
-        ZonedDateTime requestAt = ZonedDateTime.now();
-        try {
-            restClient
-                    .get()
-                    .uri("http://www.google.com")
-                    .retrieve()
-                    .toBodilessEntity();
-            long delay = 1000 + new Random().nextInt(1001);
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-
-        }
-        return PaymentConfirmResponse.builder()
+    public Mono<PaymentConfirmResponse> fakeConfirmPayment(PaymentRequest paymentRequest) {
+        PaymentConfirmResponse fakeResponse = PaymentConfirmResponse.builder()
                 .paymentKey(paymentRequest.getPaymentKey())
                 .orderId(paymentRequest.getOrderId())
                 .orderName("testOrderName")
                 .totalAmount(paymentRequest.getAmount())
-                .requestedAt(requestAt)
+                .requestedAt(ZonedDateTime.now())
                 .approvedAt(ZonedDateTime.now())
                 .type(PaymentType.CARD)
                 .status(PaymentStatus.DONE)
                 .build();
-    }
+        Random random = new Random();
+        int delay = 1000 + random.nextInt(1000);
 
-    private ClientHttpRequestFactory createPaymentRequestFactory() {
-        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
-                .withConnectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
-                .withReadTimeout(Duration.ofSeconds(READ_TIMEOUT_SECONDS));
-
-        return ClientHttpRequestFactories.get(SimpleClientHttpRequestFactory.class, settings);
+        return Mono.delay(Duration.ofMillis(delay))
+                .flatMap(aLong -> Mono.error(
+                        new PaymentConfirmFailedException(PaymentConfirmErrorCode.PAYMENT_REQUEST_TIMEOUT)));
     }
 
     private String createPaymentAuthHeader(PaymentProperties paymentProperties) {
@@ -102,9 +78,4 @@ public class PaymentClient {
         return AUTH_HEADER_PREFIX + new String(encodedBytes);
     }
 
-    private PaymentConfirmErrorCode getPaymentConfirmErrorCode(ClientHttpResponse response) throws IOException {
-        PaymentConfirmFailedResponse failedResponse = objectMapper.readValue(
-                response.getBody(), PaymentConfirmFailedResponse.class);
-        return PaymentConfirmErrorCode.findByName(failedResponse.getCode());
-    }
 }

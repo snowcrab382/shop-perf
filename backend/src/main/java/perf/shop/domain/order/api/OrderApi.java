@@ -23,6 +23,6 @@ public class OrderApi {
     public ApiResponse<Void> order(@RequestBody @Valid OrderRequest orderRequest,
                                    @UserId Long userId) {
         orderFacadeService.order(userId, orderRequest);
-        return ApiResponse.of(ResponseCode.ORDER_COMPLETE);
+        return ApiResponse.of(ResponseCode.ORDER_REQUEST_COMPLETE);
     }
 }

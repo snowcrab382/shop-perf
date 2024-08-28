@@ -42,6 +42,12 @@ public class ProductService {
         });
     }
 
+    public void cancelDeductStocksWithOutLock(Order order) {
+        order.getOrderLines().forEach(orderLine -> {
+            productRepository.cancelDeductStock(orderLine.getProductId(), orderLine.getQuantity());
+        });
+    }
+
     public void saveProduct(ProductSaveRequest productSaveRequest, Long sellerId) {
         categoryService.validateCategoryExistsById(productSaveRequest.getCategoryId());
         productRepository.save(Product.of(productSaveRequest, sellerId));

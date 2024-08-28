@@ -78,11 +78,12 @@ public class Order extends BaseEntity {
         }
     }
 
-    public void updateOrderStateToPending() {
-        if (state != OrderState.CREATED) {
+    public void cancel() {
+        if (state != OrderState.PENDING) {
             throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
         }
-        state = OrderState.PENDING;
+        state = OrderState.CANCELED;
+        orderLines.clear();
     }
 
     public void updateOrderStateToPaymentApproved() {

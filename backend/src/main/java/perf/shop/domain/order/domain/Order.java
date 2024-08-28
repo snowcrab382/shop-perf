@@ -45,7 +45,7 @@ public class Order extends BaseEntity {
         this.id = id;
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
-        this.state = OrderState.CREATED;
+        this.state = OrderState.PENDING;
     }
 
     public static Order of(String id, Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {

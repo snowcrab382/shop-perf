@@ -75,6 +75,13 @@ dependencies {
     //aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    //aws sqs
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+
+    //jackson datetype converter
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 }
 
 editorconfig {

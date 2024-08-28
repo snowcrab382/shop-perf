@@ -13,8 +13,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.global.common.domain.BaseEntity;
+import perf.shop.infra.sqs.PaymentSuccessMessage;
 
 @Entity
 @Getter
@@ -64,7 +64,7 @@ public class Payment extends BaseEntity {
         this.approvedAt = approvedAt;
     }
 
-    public static Payment from(PaymentConfirmResponse response) {
+    public static Payment from(PaymentSuccessMessage response) {
         return Payment.builder()
                 .orderId(response.getOrderId())
                 .orderName(response.getOrderName())

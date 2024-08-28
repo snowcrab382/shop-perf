@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.domain.payment.application.PaymentClient;
-import perf.shop.domain.payment.application.PaymentService;
-import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
+import perf.shop.infra.sqs.PaymentFailedMessage;
+import perf.shop.infra.sqs.PaymentFailedMessageSender;
+import perf.shop.infra.sqs.PaymentSuccessMessage;
+import perf.shop.infra.sqs.PaymentSuccessMessageSender;
 
 @Slf4j
 @Component
@@ -16,8 +18,9 @@ import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 public class OrderFacadeService {
 
     private final OrderService orderService;
-    private final PaymentService paymentService;
     private final PaymentClient paymentClient;
+    private final PaymentSuccessMessageSender paymentSuccessMessageSender;
+    private final PaymentFailedMessageSender paymentFailedMessageSender;
 
     /**
      * 주문 로직
@@ -39,11 +42,12 @@ public class OrderFacadeService {
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            paymentService.savePayment(Payment.from(response));
             log.info("결제 완료: {}", newOrder.getId());
+            paymentSuccessMessageSender.sendMessage(PaymentSuccessMessage.from(response));
         } catch (Exception e) {
-            log.error("결제 실패 보상 트랜잭션 실시: {}", newOrder.getId());
-            orderService.cancelOrder(newOrder.getId());
+            log.error("{}", e.getClass());
+            log.error("결제 실패 : {}", newOrder.getId());
+            paymentFailedMessageSender.sendMessage(PaymentFailedMessage.of(newOrder.getId()));
         }
     }
 }

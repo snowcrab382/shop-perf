@@ -39,9 +39,8 @@ public class OrderService {
 
     public void cancelOrder(String id) {
         Order order = getOrder(id);
-        productService.cancelDeductStocksWithOutLock(order);
-        order.cancel();
         productService.increaseStocksWithImplicitLock(order);
+        order.failed();
         ordersRepository.save(order);
     }
 

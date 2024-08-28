@@ -85,11 +85,11 @@ public class Order extends BaseEntity implements Persistable<String> {
         }
     }
 
-    public void cancel() {
+    public void failed() {
         if (state != OrderState.PENDING) {
             throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
         }
-        state = OrderState.CANCELED;
+        state = OrderState.FAILED;
         orderLines.clear();
     }
 

@@ -19,7 +19,6 @@ import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.domain.payment.error.exception.PaymentConfirmErrorCode;
 import perf.shop.domain.payment.error.exception.PaymentConfirmFailedException;
 import perf.shop.global.config.properties.PaymentProperties;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -34,7 +33,7 @@ public class PaymentClient {
     private final WebClient webClient;
 
 
-    public Mono<PaymentConfirmResponse> confirmPayment(PaymentRequest paymentRequest) {
+    public PaymentConfirmResponse confirmPayment(PaymentRequest paymentRequest) {
         return webClient
                 .post()
                 .uri(paymentProperties.getConfirmUrl())
@@ -49,11 +48,12 @@ public class PaymentClient {
                     log.error("주문 번호 {} 에 대한 결제 승인 요청 중 오류 발생 : {}", paymentRequest.getOrderId(),
                             exception.getResponseBodyAsString());
                     throw new PaymentConfirmFailedException(PaymentConfirmErrorCode.findByName(exception.getMessage()));
-                });
+                })
+                .block();
 
     }
 
-    public Mono<PaymentConfirmResponse> fakeConfirmPayment(PaymentRequest paymentRequest) {
+    public PaymentConfirmResponse fakeConfirmPayment(PaymentRequest paymentRequest) {
         PaymentConfirmResponse fakeResponse = PaymentConfirmResponse.builder()
                 .paymentKey(paymentRequest.getPaymentKey())
                 .orderId(paymentRequest.getOrderId())
@@ -66,10 +66,12 @@ public class PaymentClient {
                 .build();
         Random random = new Random();
         int delay = 1000 + random.nextInt(1000);
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+        }
 
-        return Mono.delay(Duration.ofMillis(delay))
-                .flatMap(aLong -> Mono.error(
-                        new PaymentConfirmFailedException(PaymentConfirmErrorCode.PAYMENT_REQUEST_TIMEOUT)));
+        return fakeResponse;
     }
 
     private String createPaymentAuthHeader(PaymentProperties paymentProperties) {

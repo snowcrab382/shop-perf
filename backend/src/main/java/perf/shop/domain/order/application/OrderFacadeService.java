@@ -9,7 +9,6 @@ import perf.shop.domain.payment.application.PaymentClient;
 import perf.shop.domain.payment.application.PaymentService;
 import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -38,17 +37,13 @@ public class OrderFacadeService {
         Order newOrder = orderService.createOrder(userId, request);
 
         //트랜잭션 X, 비동기 처리
-        Mono<PaymentConfirmResponse> response = paymentClient.confirmPayment(request.getPaymentInfo());
-        response.subscribe(
-                result -> {
-                    //결제 성공 : 결제 정보 저장, 장바구니 삭제, 주문 상태 변경
-                    paymentService.savePayment(Payment.from(result));
-                },
-                error -> {
-                    //결제 실패 처리
-                    log.error("결제 실패 보상 트랜잭션 실시: {}", newOrder.getId());
-                    orderService.cancelOrder(newOrder.getId());
-                }
-        );
+        try {
+            PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
+            paymentService.savePayment(Payment.from(response));
+            log.info("결제 완료: {}", newOrder.getId());
+        } catch (Exception e) {
+            log.error("결제 실패 보상 트랜잭션 실시: {}", newOrder.getId());
+            orderService.cancelOrder(newOrder.getId());
+        }
     }
 }

@@ -2,6 +2,7 @@ package perf.shop.global.error;
 
 
 import java.nio.file.AccessDeniedException;
+import java.sql.SQLTransientConnectionException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -63,6 +64,11 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(errorCode);
     }
 
+    @ExceptionHandler(SQLTransientConnectionException.class)
+    protected ErrorResponse handleSQLTransientConnectionException(SQLTransientConnectionException e) {
+        return ErrorResponse.of(GlobalErrorCode.DATABASE_CONNECTION_TIMEOUT);
+    }
+
     /**
      * 직접 핸들링하지 않은 예외들을 처리
      *
@@ -71,7 +77,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     protected ErrorResponse handleException(Exception e) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("UNEXPECTED ERROR OCCURED : {}", e.getClass());
         return ErrorResponse.of(GlobalErrorCode.INTERNAL_SERVER_ERROR);
     }
 }

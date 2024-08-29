@@ -66,6 +66,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SQLTransientConnectionException.class)
     protected ErrorResponse handleSQLTransientConnectionException(SQLTransientConnectionException e) {
+        log.error("DATABASE CONNECTION TIMEOUT : {}", e.getClass());
         return ErrorResponse.of(GlobalErrorCode.DATABASE_CONNECTION_TIMEOUT);
     }
 

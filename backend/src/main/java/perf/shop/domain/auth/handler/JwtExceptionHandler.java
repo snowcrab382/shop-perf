@@ -18,17 +18,17 @@ public class JwtExceptionHandler {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    protected ErrorResponse handleExpiredJwtException(ExpiredJwtException e) {
+    protected ErrorResponse handleExpiredJwtException() {
         return ErrorResponse.of(GlobalErrorCode.JWT_EXPIRED);
     }
 
     @ExceptionHandler(MalformedJwtException.class)
-    protected ErrorResponse handleMalformedJwtException(MalformedJwtException e) {
+    protected ErrorResponse handleMalformedJwtException() {
         return ErrorResponse.of(GlobalErrorCode.JWT_MALFORMED);
     }
 
     @ExceptionHandler(SignatureException.class)
-    protected ErrorResponse handleSignatureException(SignatureException e) {
+    protected ErrorResponse handleSignatureException() {
         return ErrorResponse.of(GlobalErrorCode.JWT_SIGNATURE_INVALID);
     }
 

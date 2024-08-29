@@ -2,9 +2,9 @@ package perf.shop.global.error;
 
 
 import java.nio.file.AccessDeniedException;
-import java.sql.SQLTransientConnectionException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,8 +64,14 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(errorCode);
     }
 
-    @ExceptionHandler(SQLTransientConnectionException.class)
-    protected ErrorResponse handleSQLTransientConnectionException(SQLTransientConnectionException e) {
+    /**
+     * hikariCP 를 사용할 때, timeout 이 발생하는 경우 예외 처리
+     *
+     * @param e - 데이터베이스 연결 시간 초과 시 예외 발생
+     * @return ErrorResponse
+     */
+    @ExceptionHandler(CannotCreateTransactionException.class)
+    protected ErrorResponse handleCannotCreateTransactionException(CannotCreateTransactionException e) {
         log.error("DATABASE CONNECTION TIMEOUT : {}", e.getClass());
         return ErrorResponse.of(GlobalErrorCode.DATABASE_CONNECTION_TIMEOUT);
     }

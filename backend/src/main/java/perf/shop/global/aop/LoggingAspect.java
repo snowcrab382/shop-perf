@@ -20,15 +20,15 @@ public class LoggingAspect {
     public Object aroundLog(ProceedingJoinPoint joinPoint) throws Throwable {
 
         // 메서드 시작
-        log.info("시작: {}.{}()", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
+//        log.info("시작: {}.{}()", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
 
         // 실제 메서드 실행
         try {
             Object result = joinPoint.proceed();
 
             // 메서드 종료
-            log.info("종료: {}.{}()", joinPoint.getSignature().getDeclaringTypeName(),
-                    joinPoint.getSignature().getName());
+//            log.info("종료: {}.{}()", joinPoint.getSignature().getDeclaringTypeName(),
+//                    joinPoint.getSignature().getName());
             return result;
         } catch (Exception e) {
             // 메서드 예외

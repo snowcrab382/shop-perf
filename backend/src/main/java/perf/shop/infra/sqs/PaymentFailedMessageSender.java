@@ -11,7 +11,7 @@ public class PaymentFailedMessageSender {
 
     private final SqsTemplate sqsTemplate;
 
-    @Value("${spring.cloud.aws.sqs.payment-failed-queue}")
+    @Value("${spring.cloud.aws.sqs.payment-failed}")
     private String paymentFailedQueue;
 
     public void sendMessage(PaymentFailedMessage message) {

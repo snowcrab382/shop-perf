@@ -42,7 +42,6 @@ public class OrderFacadeService {
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            log.info("결제 완료: {}", newOrder.getId());
             paymentSuccessMessageSender.sendMessage(PaymentSuccessMessage.from(response));
         } catch (Exception e) {
             log.error("{}", e.getClass());

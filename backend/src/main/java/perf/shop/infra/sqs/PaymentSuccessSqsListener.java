@@ -1,7 +1,6 @@
 package perf.shop.infra.sqs;
 
 import io.awspring.cloud.sqs.annotation.SqsListener;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,12 +15,12 @@ public class PaymentSuccessSqsListener {
     private final PaymentService paymentService;
 
     @SqsListener(
-            value = "${spring.cloud.aws.sqs.payment-success-queue}",
+            value = "${spring.cloud.aws.sqs.payment-success}",
             factory = "defaultSqsListenerContainerFactory"
     )
-    public void messageListener(List<PaymentSuccessMessage> response) {
-        paymentService.saveAll(response.stream()
-                .map(Payment::from)
-                .toList());
+    public void messageListener(PaymentSuccessMessage response) {
+        log.info("결제 성공 메세지 수신 : {}", response);
+        paymentService.savePayment(Payment.from(response));
+        log.info("결제 정보 저장 완료");
     }
 }

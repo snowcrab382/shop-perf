@@ -1,11 +1,12 @@
 package perf.shop.infra.sqs;
 
 import io.awspring.cloud.sqs.annotation.SqsListener;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import perf.shop.domain.order.application.OrderService;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PaymentFailedSqsListener {
@@ -13,12 +14,10 @@ public class PaymentFailedSqsListener {
     private final OrderService orderService;
 
     @SqsListener(
-            value = "${spring.cloud.aws.sqs.payment-failed-queue}",
+            value = "${spring.cloud.aws.sqs.payment-failed}",
             factory = "defaultSqsListenerContainerFactory"
     )
-    public void messageListener(List<PaymentFailedMessage> response) {
-        response.forEach(message -> {
-            orderService.cancelOrder(message.getOrderId());
-        });
+    public void messageListener(PaymentFailedMessage response) {
+        orderService.cancelOrder(response.getOrderId());
     }
 }

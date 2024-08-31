@@ -13,7 +13,7 @@ public class PaymentSuccessMessageSender {
 
     private final SqsTemplate sqsTemplate;
 
-    @Value("${spring.cloud.aws.sqs.payment-success-queue}")
+    @Value("${spring.cloud.aws.sqs.payment-success}")
     private String paymentSuccessQueue;
 
     public void sendMessage(PaymentSuccessMessage message) {

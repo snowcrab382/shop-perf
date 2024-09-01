@@ -49,10 +49,15 @@ public class HelloController {
         return ApiResponse.of(ResponseCode.GET, ordersRepository.findOrderAndPaymentTimeDifference());
     }
 
-    @DeleteMapping("/admin/clear")
+    @DeleteMapping("/admin/orders/clear")
     public ApiResponse<Void> deleteAll() {
-        ordersRepository.deleteAll();
-        paymentRepository.deleteAll();
+        ordersRepository.deleteAllInBatch();
+        return ApiResponse.of(ResponseCode.DELETED);
+    }
+
+    @DeleteMapping("/admin/payments/clear")
+    public ApiResponse<Void> deleteAllPayments() {
+        paymentRepository.deleteAllInBatch();
         return ApiResponse.of(ResponseCode.DELETED);
     }
 

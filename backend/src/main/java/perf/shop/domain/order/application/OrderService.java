@@ -10,6 +10,7 @@ import perf.shop.domain.order.domain.OrderLine;
 import perf.shop.domain.order.domain.Orderer;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.domain.order.repository.OrdersRepository;
+import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.product.application.ProductService;
 import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.GlobalErrorCode;
@@ -20,6 +21,7 @@ import perf.shop.global.error.exception.GlobalErrorCode;
 public class OrderService {
 
     private final ProductService productService;
+    private final OutboxService outboxService;
     private final OrdersRepository ordersRepository;
     private final OrderLineFactory orderLineFactory;
 
@@ -34,6 +36,7 @@ public class OrderService {
 
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
         productService.decreaseStocksWithImplicitLock(newOrder);
+        outboxService.createOutbox(newOrder.getId());
         return newOrder;
     }
 

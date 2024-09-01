@@ -29,6 +29,7 @@ public enum GlobalErrorCode implements ErrorCode {
     CART_PRODUCT_NOT_FOUND(400, "장바구니 상품을 찾을 수 없습니다."),
     ADDRESS_BOOK_NOT_FOUND(400, "주소록을 찾을 수 없습니다."),
     ORDER_NOT_FOUND(400, "주문을 찾을 수 없습니다."),
+    OUTBOX_NOT_FOUND(400, "아웃박스를 찾을 수 없습니다."),
 
     /**
      * InvalidValueException

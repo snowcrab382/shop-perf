@@ -74,6 +74,23 @@ public class PaymentClient {
         return fakeResponse;
     }
 
+    public PaymentConfirmResponse checkPaymentByOrderId(String orderId) {
+        return webClient
+                .get()
+                .uri(paymentProperties.getCheckUrl() + orderId)
+                .header(HttpHeaders.AUTHORIZATION, createPaymentAuthHeader(paymentProperties))
+                .retrieve()
+                .bodyToMono(PaymentConfirmResponse.class)
+                .timeout(Duration.ofSeconds(REQUEST_TIMEOUT))
+                .doOnError(throwable -> {
+                    WebClientResponseException exception = (WebClientResponseException) throwable;
+                    log.error("주문 번호 {} 에 대한 결제 확인 중 오류 발생 : {}", orderId,
+                            exception.getResponseBodyAsString());
+                    throw new PaymentConfirmFailedException(PaymentConfirmErrorCode.findByName(exception.getMessage()));
+                })
+                .block();
+    }
+
     private String createPaymentAuthHeader(PaymentProperties paymentProperties) {
         byte[] encodedBytes = Base64.getEncoder().encode((paymentProperties.getSecretKey() + BASIC_DELIMITER).getBytes(
                 StandardCharsets.UTF_8));

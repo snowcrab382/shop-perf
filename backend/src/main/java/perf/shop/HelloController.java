@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import perf.shop.domain.order.repository.OrdersRepository;
+import perf.shop.domain.outbox.dao.OutboxRepository;
+import perf.shop.domain.outbox.domain.OutboxStatus;
 import perf.shop.domain.payment.repository.PaymentRepository;
 import perf.shop.global.common.response.ApiResponse;
 import perf.shop.global.common.response.ResponseCode;
@@ -21,6 +23,7 @@ public class HelloController {
 
     private final OrdersRepository ordersRepository;
     private final PaymentRepository paymentRepository;
+    private final OutboxRepository outboxRepository;
 
     @GetMapping("/")
     public String healthCheck() {
@@ -59,6 +62,11 @@ public class HelloController {
     public ApiResponse<Void> deleteAllPayments() {
         paymentRepository.deleteAllInBatch();
         return ApiResponse.of(ResponseCode.DELETED);
+    }
+
+    @GetMapping("/admin/orders/outbox")
+    public ApiResponse<Long> getOutboxCountsStatusReady() {
+        return ApiResponse.of(ResponseCode.GET, outboxRepository.countByStatus(OutboxStatus.READY));
     }
 
 

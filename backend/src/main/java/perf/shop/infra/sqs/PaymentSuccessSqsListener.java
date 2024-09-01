@@ -19,7 +19,6 @@ public class PaymentSuccessSqsListener {
             factory = "defaultSqsListenerContainerFactory"
     )
     public void messageListener(PaymentSuccessMessage response) {
-        log.info("결제 성공 메세지 수신 : {}", response);
         paymentService.savePayment(Payment.from(response));
         log.info("결제 정보 저장 완료");
     }

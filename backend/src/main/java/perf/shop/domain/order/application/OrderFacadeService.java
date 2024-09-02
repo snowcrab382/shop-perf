@@ -7,7 +7,6 @@ import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.domain.payment.application.PaymentClient;
 import perf.shop.domain.payment.application.PaymentService;
-import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.infra.sqs.PaymentFailedMessage;
 import perf.shop.infra.sqs.PaymentFailedMessageSender;
@@ -45,8 +44,7 @@ public class OrderFacadeService {
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            paymentService.savePayment(Payment.from(PaymentSuccessMessage.from(response)));
-//            paymentSuccessMessageSender.sendMessage(PaymentSuccessMessage.from(response));
+            paymentSuccessMessageSender.sendMessage(PaymentSuccessMessage.from(response));
         } catch (Exception e) {
             log.error("{}", e.getClass());
             paymentFailedMessageSender.sendMessage(PaymentFailedMessage.of(newOrder.getId()));

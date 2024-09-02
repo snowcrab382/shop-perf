@@ -69,5 +69,11 @@ public class HelloController {
         return ApiResponse.of(ResponseCode.GET, outboxRepository.countByStatus(OutboxStatus.READY));
     }
 
+    @DeleteMapping("/admin/orders/outbox/clear")
+    public ApiResponse<Void> deleteAllOutbox() {
+        outboxRepository.deleteAllInBatch();
+        return ApiResponse.of(ResponseCode.DELETED);
+    }
+
 
 }

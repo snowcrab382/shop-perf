@@ -40,6 +40,12 @@ public class OrderService {
         return newOrder;
     }
 
+    public void approveOrder(String id) {
+        Order order = getOrder(id);
+        order.paymentApproved();
+        ordersRepository.save(order);
+    }
+
     public void cancelOrder(String id) {
         Order order = getOrder(id);
         productService.increaseStocksWithImplicitLock(order);

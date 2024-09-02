@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
-import io.awspring.cloud.sqs.listener.acknowledgement.handler.AcknowledgementMode;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.awspring.cloud.sqs.support.converter.SqsMessagingMessageConverter;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,7 +66,9 @@ public class SQSConfig {
         return SqsMessageListenerContainerFactory.builder()
                 .configure(options -> options
                         .messageConverter(messagingMessageConverter())
-                        .acknowledgementMode(AcknowledgementMode.ON_SUCCESS)
+                        .maxConcurrentMessages(20)
+                        .maxMessagesPerPoll(20)
+                        .pollTimeout(Duration.ofSeconds(10))
                 )
                 .sqsAsyncClient(sqsAsyncClient())
                 .build();
@@ -76,9 +78,7 @@ public class SQSConfig {
     public SqsTemplate sqsTemplate() {
         return SqsTemplate.builder()
                 .sqsAsyncClient(sqsAsyncClient())
-                .configureDefaultConverter(converter -> {
-                    converter.setObjectMapper(objectMapper());
-                })
+                .messageConverter(messagingMessageConverter())
                 .build();
     }
 

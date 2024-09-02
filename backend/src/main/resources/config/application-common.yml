@@ -26,8 +26,8 @@ spring:
         access-key: ENC(AHEKZsAG0srLE5a4KbG0J5f3XXhzintTFrh9bXHJkao=)
         secret-key: ENC(iXbf7HGkxUVRHYof6GQML5eK0CGvOtqkOKxn2RU0tMXBTzEZ+5/Q8+QWPV4FpSHXgyObt/TAzmA=)
       sqs:
-        payment-success: payment-success.fifo
-        payment-failed: payment-failed.fifo
+        payment-success: payment-success
+        payment-failed: payment-failed
       stack:
         auto: false
 

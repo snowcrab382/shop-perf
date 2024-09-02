@@ -93,7 +93,7 @@ public class Order extends BaseEntity implements Persistable<String> {
         orderLines.clear();
     }
 
-    public void updateOrderStateToPaymentApproved() {
+    public void paymentApproved() {
         if (state != OrderState.PENDING) {
             throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
         }

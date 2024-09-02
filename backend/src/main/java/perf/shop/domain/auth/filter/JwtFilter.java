@@ -65,13 +65,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
             //세션에 사용자 등록
             SecurityContextHolder.getContext().setAuthentication(authToken);
+            filterChain.doFilter(request, response);
 
         } catch (Exception e) {
             log.error("JWT 검증 중 예외 발생 : {}", e.getClass());
             exceptionResolver.resolveException(request, response, null, e);
         }
-
-        filterChain.doFilter(request, response);
     }
 
 }

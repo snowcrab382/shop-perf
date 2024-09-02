@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
-import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.payment.application.PaymentClient;
+import perf.shop.domain.payment.application.PaymentService;
+import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.infra.sqs.PaymentFailedMessage;
 import perf.shop.infra.sqs.PaymentFailedMessageSender;
@@ -19,8 +20,8 @@ import perf.shop.infra.sqs.PaymentSuccessMessageSender;
 public class OrderFacadeService {
 
     private final OrderService orderService;
-    private final OutboxService outboxService;
     private final PaymentClient paymentClient;
+    private final PaymentService paymentService;
     private final PaymentSuccessMessageSender paymentSuccessMessageSender;
     private final PaymentFailedMessageSender paymentFailedMessageSender;
 
@@ -44,7 +45,8 @@ public class OrderFacadeService {
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            paymentSuccessMessageSender.sendMessage(PaymentSuccessMessage.from(response));
+            paymentService.savePayment(Payment.from(PaymentSuccessMessage.from(response)));
+//            paymentSuccessMessageSender.sendMessage(PaymentSuccessMessage.from(response));
         } catch (Exception e) {
             log.error("{}", e.getClass());
             paymentFailedMessageSender.sendMessage(PaymentFailedMessage.of(newOrder.getId()));

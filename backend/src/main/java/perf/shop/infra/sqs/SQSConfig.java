@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.awspring.cloud.sqs.support.converter.SqsMessagingMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -72,12 +71,12 @@ public class SQSConfig {
 //                .build();
 //    }
 
-    @Bean
-    public SqsTemplate sqsTemplate() {
-        return SqsTemplate.builder()
-                .sqsAsyncClient(sqsAsyncClient())
-                .messageConverter(messagingMessageConverter())
-                .build();
-    }
+//    @Bean
+//    public SqsTemplate sqsTemplate() {
+//        return SqsTemplate.builder()
+//                .sqsAsyncClient(sqsAsyncClient())
+//                .messageConverter(messagingMessageConverter())
+//                .build();
+//    }
 
 }

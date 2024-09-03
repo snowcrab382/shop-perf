@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.awspring.cloud.sqs.support.converter.SqsMessagingMessageConverter;
-import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,18 +59,18 @@ public class SQSConfig {
         return converter;
     }
 
-    @Bean
-    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory() {
-        return SqsMessageListenerContainerFactory.builder()
-                .configure(options -> options
-                        .messageConverter(messagingMessageConverter())
-                        .maxConcurrentMessages(20)
-                        .maxMessagesPerPoll(20)
-                        .pollTimeout(Duration.ofSeconds(10))
-                )
-                .sqsAsyncClient(sqsAsyncClient())
-                .build();
-    }
+//    @Bean
+//    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory() {
+//        return SqsMessageListenerContainerFactory.builder()
+//                .configure(options -> options
+//                        .messageConverter(messagingMessageConverter())
+//                        .maxConcurrentMessages(20)
+//                        .maxMessagesPerPoll(20)
+//                        .pollTimeout(Duration.ofSeconds(10))
+//                )
+//                .sqsAsyncClient(sqsAsyncClient())
+//                .build();
+//    }
 
     @Bean
     public SqsTemplate sqsTemplate() {

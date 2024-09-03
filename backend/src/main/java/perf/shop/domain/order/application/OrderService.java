@@ -35,7 +35,7 @@ public class OrderService {
         Order newOrder = ordersRepository.save(Order.of(orderId, orderer, shippingInfo, orderLines));
 
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
-        productService.decreaseStocksWithImplicitLock(newOrder);
+//        productService.decreaseStocksWithImplicitLock(newOrder);
         outboxService.createOutbox(newOrder.getId());
         return newOrder;
     }

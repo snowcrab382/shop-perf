@@ -67,14 +67,21 @@ public class Product extends BaseEntity {
                 .build();
     }
 
-    public void checkProductStock(Integer quantity) {
+    public void deductStock(Integer quantity) {
+        checkProductStock(quantity);
+        stock -= quantity;
+    }
+
+    public void restoreStock(Integer quantity) {
+        checkProductStock(quantity);
+        stock += quantity;
+    }
+
+    private void checkProductStock(Integer quantity) {
         if (stock < quantity) {
             throw new OutOfStockException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
         }
     }
 
-    public void deductStock(Integer quantity) {
-        checkProductStock(quantity);
-        stock -= quantity;
-    }
+
 }

@@ -26,21 +26,6 @@ public class ProductService {
         }
     }
 
-    public void decreaseStocksWithImplicitLock(Order order) {
-        order.getOrderLines().forEach(orderLine -> {
-            int count = productRepository.decreaseStock(orderLine.getProductId(), orderLine.getQuantity());
-            if (count == 0) {
-                throw new EntityNotFoundException(GlobalErrorCode.PRODUCT_OUT_OF_STOCK);
-            }
-        });
-    }
-
-    public void increaseStocksWithImplicitLock(Order order) {
-        order.getOrderLines().forEach(orderLine -> {
-            productRepository.increaseStock(orderLine.getProductId(), orderLine.getQuantity());
-        });
-    }
-
     public void saveProduct(ProductSaveRequest productSaveRequest, Long sellerId) {
         categoryService.validateCategoryExistsById(productSaveRequest.getCategoryId());
         productRepository.save(Product.of(productSaveRequest, sellerId));
@@ -52,7 +37,20 @@ public class ProductService {
         return ProductFindByIdResponse.of(product);
     }
 
-    //TODO: 비관적 락, 동시성 문제 해결 테스트에 사용
+    public void deductStock(Order order) {
+        order.getOrderLines().forEach(orderLine -> {
+            Product product = getProductForUpdate(orderLine.getProductId());
+            product.deductStock(orderLine.getQuantity());
+        });
+    }
+
+    public void restoreStock(Order order) {
+        order.getOrderLines().forEach(orderLine -> {
+            Product product = getProductForUpdate(orderLine.getProductId());
+            product.restoreStock(orderLine.getQuantity());
+        });
+    }
+
     private Product getProductForUpdate(Long id) {
         return productRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new EntityNotFoundException(GlobalErrorCode.PRODUCT_NOT_FOUND));

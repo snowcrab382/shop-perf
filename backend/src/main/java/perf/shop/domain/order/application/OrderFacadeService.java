@@ -2,17 +2,18 @@ package perf.shop.domain.order.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
+import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.payment.application.PaymentClient;
+import perf.shop.domain.payment.application.PaymentFacadeService;
 import perf.shop.domain.payment.application.PaymentService;
+import perf.shop.domain.payment.application.event.PaymentFailedEvent;
 import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
-import perf.shop.infra.sqs.PaymentFailedMessage;
-import perf.shop.infra.sqs.PaymentFailedMessageSender;
-import perf.shop.infra.sqs.PaymentSuccessMessage;
-import perf.shop.infra.sqs.PaymentSuccessMessageSender;
 
 @Slf4j
 @Component
@@ -22,8 +23,9 @@ public class OrderFacadeService {
     private final OrderService orderService;
     private final PaymentClient paymentClient;
     private final PaymentService paymentService;
-    private final PaymentSuccessMessageSender paymentSuccessMessageSender;
-    private final PaymentFailedMessageSender paymentFailedMessageSender;
+    private final OutboxService outboxService;
+    private final ApplicationEventPublisher eventPublisher;
+    private final PaymentFacadeService paymentFacadeService;
 
     /**
      * 주문 로직
@@ -38,6 +40,7 @@ public class OrderFacadeService {
      * <br>
      * 5. 결제 정보 저장
      */
+    @Transactional
     public void order(Long userId, OrderRequest request) {
         //트랜잭션 1
         Order newOrder = orderService.createOrder(userId, request);
@@ -45,12 +48,15 @@ public class OrderFacadeService {
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            Payment payment = Payment.from(PaymentSuccessMessage.from(response));
-            
+            Payment payment = Payment.from(response);
             paymentService.savePayment(payment);
+            orderService.approveOrder(newOrder.getId());
+//            Payment payment = Payment.from(response);
+//            log.info("결제 완료 이벤트 송신");
+//            eventPublisher.publishEvent(PaymentCompletedEvent.from(payment));
         } catch (Exception e) {
             log.error("{}", e.getClass());
-            paymentFailedMessageSender.sendMessage(PaymentFailedMessage.of(newOrder.getId()));
+            eventPublisher.publishEvent(PaymentFailedEvent.from(newOrder));
         }
     }
 }

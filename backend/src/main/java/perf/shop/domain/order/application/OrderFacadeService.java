@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.domain.outbox.application.OutboxService;
@@ -39,7 +38,6 @@ public class OrderFacadeService {
      * <br>
      * 5. 결제 정보 저장
      */
-    @Transactional
     public void order(Long userId, OrderRequest request) {
         //트랜잭션 1
         Order newOrder = orderService.createOrder(userId, request);
@@ -48,10 +46,7 @@ public class OrderFacadeService {
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
             Payment payment = Payment.from(response);
-            paymentService.savePayment(payment);
-            orderService.approveOrder(newOrder.getId());
-//            Payment payment = Payment.from(response);
-//            log.info("결제 완료 이벤트 송신");
+            paymentFacadeService.pay(payment);
 //            eventPublisher.publishEvent(PaymentCompletedEvent.from(payment));
         } catch (Exception e) {
             log.error("{}", e.getClass());

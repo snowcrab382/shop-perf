@@ -36,7 +36,7 @@ public class OrderService {
 
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
         productService.deductStock(newOrder);
-        outboxService.createOutbox(newOrder.getId());
+//        outboxService.createOutbox(newOrder.getId());
         return newOrder;
     }
 

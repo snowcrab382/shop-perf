@@ -11,7 +11,6 @@ import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.payment.application.PaymentClient;
 import perf.shop.domain.payment.application.PaymentFacadeService;
 import perf.shop.domain.payment.application.PaymentService;
-import perf.shop.domain.payment.application.event.PaymentFailedEvent;
 import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 
@@ -56,7 +55,7 @@ public class OrderFacadeService {
 //            eventPublisher.publishEvent(PaymentCompletedEvent.from(payment));
         } catch (Exception e) {
             log.error("{}", e.getClass());
-            eventPublisher.publishEvent(PaymentFailedEvent.from(newOrder));
+//            eventPublisher.publishEvent(PaymentFailedEvent.from(newOrder));
         }
     }
 }

@@ -5,17 +5,17 @@ import lombok.Getter;
 import perf.shop.domain.payment.domain.Payment;
 
 @Getter
-public class PaymentCompletedEvent {
+public class PaymentApprovedEvent {
 
     private final Payment payment;
 
     @Builder
-    private PaymentCompletedEvent(Payment payment) {
+    private PaymentApprovedEvent(Payment payment) {
         this.payment = payment;
     }
 
-    public static PaymentCompletedEvent from(Payment payment) {
-        return PaymentCompletedEvent.builder()
+    public static PaymentApprovedEvent from(Payment payment) {
+        return PaymentApprovedEvent.builder()
                 .payment(payment)
                 .build();
     }

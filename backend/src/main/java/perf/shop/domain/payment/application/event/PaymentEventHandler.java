@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.order.application.OrderService;
+import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.payment.application.PaymentService;
 import perf.shop.domain.product.application.ProductService;
@@ -24,19 +25,17 @@ public class PaymentEventHandler {
 
     @Async("taskExecutor")
     @EventListener
-    public void handlePaymentCompletedEvent(PaymentCompletedEvent event) {
-        log.info("결제 완료 이벤트 수신: {}", event.getPayment());
+    public void handlePaymentCompletedEvent(PaymentApprovedEvent event) {
         paymentService.savePayment(event.getPayment());
         orderService.approveOrder(event.getPayment().getOrderId());
         outboxService.updateStatusToDone(event.getPayment().getOrderId());
     }
 
-    //    @Async("taskExecutor")
+    @Async("taskExecutor")
     @EventListener
     public void handlePaymentFailedEvent(PaymentFailedEvent event) {
-        log.info("결제 실패 이벤트 수신: {}", event.getOrder());
-        orderService.failedOrder(event.getOrder().getId());
-        productService.restoreStock(event.getOrder());
-        outboxService.updateStatusToDone(event.getOrder().getId());
+        Order order = orderService.failedOrder(event.getPayment().getOrderId());
+        productService.restoreStock(order);
+        outboxService.updateStatusToDone(order.getId());
     }
 }

@@ -12,6 +12,7 @@ import perf.shop.domain.order.domain.Orderer;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.GlobalErrorCode;
+import perf.shop.global.error.exception.InvalidValueException;
 
 @Transactional
 @Service
@@ -22,6 +23,7 @@ public class OrderService {
     private final OrderLineFactory orderLineFactory;
 
     public Order createOrder(Long userId, OrderRequest request) {
+        validateOrder(request.getPaymentApproveRequest().getOrderId());
         Order newOrder = createOrderFromRequest(userId, request);
         newOrder.verifyAmount(request.getPaymentApproveRequest().getAmount());
         ordersRepository.save(newOrder);
@@ -44,6 +46,12 @@ public class OrderService {
         return ordersRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(GlobalErrorCode.ORDER_NOT_FOUND)
         );
+    }
+
+    private void validateOrder(String orderId) {
+        if (ordersRepository.existsById(orderId)) {
+            throw new InvalidValueException(GlobalErrorCode.ORDER_ALREADY_EXISTS);
+        }
     }
 
     private Order createOrderFromRequest(Long userId, OrderRequest request) {
@@ -72,5 +80,4 @@ public class OrderService {
                 .map(orderLineFactory::createOrderLine)
                 .toList();
     }
-
 }

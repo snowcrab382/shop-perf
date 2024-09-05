@@ -17,8 +17,6 @@ import perf.shop.domain.payment.domain.Payment;
 @RequiredArgsConstructor
 public class PaymentSuccessSqsListener {
 
-    private static Long count = 0L;
-
     private final PaymentService paymentService;
     private final OrderService orderService;
     private final OutboxService outboxService;
@@ -28,13 +26,11 @@ public class PaymentSuccessSqsListener {
             factory = "defaultSqsListenerContainerFactory"
     )
     public void messageListener(List<PaymentSuccessMessage> responses) {
-        count += responses.size();
         List<Payment> payments = responses.stream().map(Payment::from).toList();
         List<String> orderIds = responses.stream().map(PaymentSuccessMessage::getOrderId).toList();
         paymentService.bulkSavePayments(payments);
         orderService.bulkApproveOrders(orderIds);
         outboxService.bulkUpdateStatusToDone(orderIds);
-
-        log.info("총 메시지 수신: {}", count);
+        log.info("결제 성공 메세지 처리 완료 : {}", responses.size());
     }
 }

@@ -12,12 +12,6 @@ spring:
         default-page-size: 50
         max-page-size: 100
 
-  jpa:
-    properties:
-      hibernate:
-        jdbc:
-          batch_size: 500 # 엔티티의 ID가 DB에서 생성되는 경우에는 batch_size가 적용되지 않음
-  
   cloud:
     aws:
       region:

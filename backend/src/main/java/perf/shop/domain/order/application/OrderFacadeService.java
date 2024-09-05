@@ -2,17 +2,12 @@ package perf.shop.domain.order.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.dto.request.OrderRequest;
-import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.payment.application.PaymentClient;
-import perf.shop.domain.payment.application.PaymentFacadeService;
-import perf.shop.domain.payment.application.PaymentService;
+import perf.shop.domain.payment.application.event.PaymentEventPublisher;
+import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
-import perf.shop.infra.sqs.PaymentSuccessMessage;
-import perf.shop.infra.sqs.PaymentSuccessMessageSender;
 
 @Slf4j
 @Component
@@ -21,11 +16,7 @@ public class OrderFacadeService {
 
     private final OrderService orderService;
     private final PaymentClient paymentClient;
-    private final PaymentService paymentService;
-    private final OutboxService outboxService;
-    private final ApplicationEventPublisher eventPublisher;
-    private final PaymentFacadeService paymentFacadeService;
-    private final PaymentSuccessMessageSender paymentSuccessMessageSender;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     /**
      * 주문 로직
@@ -42,19 +33,16 @@ public class OrderFacadeService {
      */
     public void order(Long userId, OrderRequest request) {
         //트랜잭션 1
-        Order newOrder = orderService.createOrder(userId, request);
+        orderService.createOrder(userId, request);
 
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            PaymentSuccessMessage message = PaymentSuccessMessage.from(response);
-//            Payment payment = Payment.from(response);
-//            paymentFacadeService.pay(payment); // 동기 처리
-            paymentSuccessMessageSender.sendMessage(message); // sqs 비동기 처리
-//            eventPublisher.publishEvent(PaymentCompletedEvent.from(payment)); // 스프링 이벤트 처리
+            Payment payment = Payment.from(response);
+            paymentEventPublisher.publishPaymentApprovedEvent(payment); // 이벤트 처리
         } catch (Exception e) {
             log.error("{}", e.getClass());
-//            eventPublisher.publishEvent(PaymentFailedEvent.from(newOrder));
+//            paymentEventPublisher.publishPaymentFailedEvent(request.get);
         }
     }
 }

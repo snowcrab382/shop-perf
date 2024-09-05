@@ -10,8 +10,6 @@ import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.domain.OrderLine;
 import perf.shop.domain.order.domain.Orderer;
 import perf.shop.domain.order.dto.request.OrderRequest;
-import perf.shop.domain.outbox.application.OutboxService;
-import perf.shop.domain.product.application.ProductService;
 import perf.shop.global.error.exception.EntityNotFoundException;
 import perf.shop.global.error.exception.GlobalErrorCode;
 
@@ -20,23 +18,13 @@ import perf.shop.global.error.exception.GlobalErrorCode;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final ProductService productService;
-    private final OutboxService outboxService;
     private final OrderRepository ordersRepository;
     private final OrderLineFactory orderLineFactory;
 
     public Order createOrder(Long userId, OrderRequest request) {
-        String orderId = request.getPaymentInfo().getOrderId();
-        Orderer orderer = Orderer.from(userId, request.getOrderer());
-        ShippingInfo shippingInfo = ShippingInfo.from(request.getShippingInfo());
-        List<OrderLine> orderLines = request.getOrderLines().stream()
-                .map(orderLineFactory::createOrderLine)
-                .toList();
-        Order newOrder = ordersRepository.save(Order.of(orderId, orderer, shippingInfo, orderLines));
-
-        newOrder.verifyAmount(request.getPaymentInfo().getAmount());
-        productService.deductStock(newOrder);
-        outboxService.createOutbox(newOrder.getId());
+        Order newOrder = createOrderFromRequest(userId, request);
+        newOrder.verifyAmount(request.getPaymentApproveRequest().getAmount());
+        ordersRepository.save(newOrder);
         return newOrder;
     }
 
@@ -56,6 +44,33 @@ public class OrderService {
         return ordersRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(GlobalErrorCode.ORDER_NOT_FOUND)
         );
+    }
+
+    private Order createOrderFromRequest(Long userId, OrderRequest request) {
+        String orderId = getOrderId(request);
+        Orderer orderer = createOrderer(userId, request);
+        ShippingInfo shippingInfo = createShippingInfo(request);
+        List<OrderLine> orderLines = createOrderLines(request);
+
+        return Order.of(orderId, orderer, shippingInfo, orderLines);
+    }
+
+    private String getOrderId(OrderRequest request) {
+        return request.getPaymentApproveRequest().getOrderId();
+    }
+
+    private Orderer createOrderer(Long userId, OrderRequest request) {
+        return Orderer.from(userId, request.getOrderer());
+    }
+
+    private ShippingInfo createShippingInfo(OrderRequest request) {
+        return ShippingInfo.from(request.getShippingInfo());
+    }
+
+    private List<OrderLine> createOrderLines(OrderRequest request) {
+        return request.getOrderLines().stream()
+                .map(orderLineFactory::createOrderLine)
+                .toList();
     }
 
 }

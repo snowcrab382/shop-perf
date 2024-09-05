@@ -34,7 +34,7 @@ public class PaymentEventHandler {
     @Async("taskExecutor")
     @EventListener
     public void handlePaymentFailedEvent(PaymentFailedEvent event) {
-        Order order = orderService.failedOrder(event.getPayment().getOrderId());
+        Order order = orderService.failedOrder(event.getOrderId());
         productService.restoreStock(order);
         outboxService.updateStatusToDone(order.getId());
     }

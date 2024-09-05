@@ -2,21 +2,20 @@ package perf.shop.domain.payment.application.event;
 
 import lombok.Builder;
 import lombok.Getter;
-import perf.shop.domain.payment.domain.Payment;
 
 @Getter
 public class PaymentFailedEvent {
 
-    private final Payment payment;
+    private final String orderId;
 
     @Builder
-    private PaymentFailedEvent(Payment payment) {
-        this.payment = payment;
+    private PaymentFailedEvent(String orderId) {
+        this.orderId = orderId;
     }
 
-    public static PaymentFailedEvent from(Payment payment) {
+    public static PaymentFailedEvent from(String orderId) {
         return PaymentFailedEvent.builder()
-                .payment(payment)
+                .orderId(orderId)
                 .build();
     }
 }

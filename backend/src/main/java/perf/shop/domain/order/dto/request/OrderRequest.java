@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import perf.shop.domain.model.dto.request.ShippingInfoRequest;
-import perf.shop.domain.payment.dto.request.PaymentRequest;
+import perf.shop.domain.payment.dto.request.PaymentApproveRequest;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,16 +28,16 @@ public class OrderRequest {
 
     @Valid
     @NotNull
-    private PaymentRequest paymentInfo;
+    private PaymentApproveRequest paymentApproveRequest;
 
     @Builder
     private OrderRequest(OrdererRequest orderer, ShippingInfoRequest shippingInfo,
                          List<OrderLineRequest> orderLines,
-                         PaymentRequest paymentInfo) {
+                         PaymentApproveRequest paymentApproveRequest) {
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
         this.orderLines = orderLines;
-        this.paymentInfo = paymentInfo;
+        this.paymentApproveRequest = paymentApproveRequest;
     }
 }
 

@@ -16,8 +16,8 @@ public class PaymentEventPublisher {
         eventPublisher.publishEvent(event);
     }
 
-    public void publishPaymentFailedEvent(Payment payment) {
-        PaymentFailedEvent event = PaymentFailedEvent.from(payment);
+    public void publishPaymentFailedEvent(String orderId) {
+        PaymentFailedEvent event = PaymentFailedEvent.from(orderId);
         eventPublisher.publishEvent(event);
     }
 }

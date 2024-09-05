@@ -37,11 +37,15 @@ public class ProductService {
         return ProductFindByIdResponse.of(product);
     }
 
-    public void deductStock(Order order) {
+    public void deductStockFromOrder(Order order) {
         order.getOrderLines().forEach(orderLine -> {
-            Product product = getProductForUpdate(orderLine.getProductId());
-            product.deductStock(orderLine.getQuantity());
+            deductStock(orderLine.getProductId(), orderLine.getQuantity());
         });
+    }
+
+    public void deductStock(Long productId, Integer quantity) {
+        Product product = getProductForUpdate(productId);
+        product.deductStock(quantity);
     }
 
     public void restoreStock(Order order) {

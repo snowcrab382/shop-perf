@@ -11,8 +11,7 @@ public enum ResponseCode {
     CREATED(201, "생성 성공"),
     UPDATED(200, "수정 성공"),
     DELETED(200, "삭제 성공"),
-    ORDER_REQUEST_COMPLETE(201, "주문 요청 성공"),
-    ;
+    ORDER_SUCCESS(201, "주문 성공");
 
     private final int status;
     private final String message;

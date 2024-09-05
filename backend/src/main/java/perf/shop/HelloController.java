@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import perf.shop.domain.order.repository.OrdersRepository;
+import perf.shop.domain.order.dao.OrderRepository;
 import perf.shop.domain.outbox.dao.OutboxRepository;
 import perf.shop.domain.outbox.domain.OutboxStatus;
-import perf.shop.domain.payment.repository.PaymentRepository;
+import perf.shop.domain.payment.dao.PaymentRepository;
 import perf.shop.global.common.response.ApiResponse;
 import perf.shop.global.common.response.ResponseCode;
 import perf.shop.global.util.CookieUtil;
@@ -21,7 +21,7 @@ import perf.shop.global.util.JwtUtil;
 @RequiredArgsConstructor
 public class HelloController {
 
-    private final OrdersRepository ordersRepository;
+    private final OrderRepository ordersRepository;
     private final PaymentRepository paymentRepository;
     private final OutboxRepository outboxRepository;
 

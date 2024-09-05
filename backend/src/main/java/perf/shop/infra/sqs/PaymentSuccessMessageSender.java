@@ -11,13 +11,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PaymentSuccessMessageSender {
 
-    private static Long count = 0L;
     private final SqsTemplate sqsTemplate;
     @Value("${spring.cloud.aws.sqs.payment-success}")
     private String paymentSuccessQueue;
 
     public void sendMessage(PaymentSuccessMessage message) {
         sqsTemplate.send(to -> to.queue(paymentSuccessQueue).payload(message));
-        log.info("결제 성공 메시지 전송: {}", ++count);
     }
 }

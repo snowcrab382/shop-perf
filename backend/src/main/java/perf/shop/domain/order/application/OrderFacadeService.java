@@ -10,8 +10,9 @@ import perf.shop.domain.outbox.application.OutboxService;
 import perf.shop.domain.payment.application.PaymentClient;
 import perf.shop.domain.payment.application.PaymentFacadeService;
 import perf.shop.domain.payment.application.PaymentService;
-import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
+import perf.shop.infra.sqs.PaymentSuccessMessage;
+import perf.shop.infra.sqs.PaymentSuccessMessageSender;
 
 @Slf4j
 @Component
@@ -24,6 +25,7 @@ public class OrderFacadeService {
     private final OutboxService outboxService;
     private final ApplicationEventPublisher eventPublisher;
     private final PaymentFacadeService paymentFacadeService;
+    private final PaymentSuccessMessageSender paymentSuccessMessageSender;
 
     /**
      * 주문 로직
@@ -45,9 +47,11 @@ public class OrderFacadeService {
         //트랜잭션 X, 비동기 처리
         try {
             PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request.getPaymentInfo());
-            Payment payment = Payment.from(response);
-            paymentFacadeService.pay(payment);
-//            eventPublisher.publishEvent(PaymentCompletedEvent.from(payment));
+            PaymentSuccessMessage message = PaymentSuccessMessage.from(response);
+//            Payment payment = Payment.from(response);
+//            paymentFacadeService.pay(payment); // 동기 처리
+            paymentSuccessMessageSender.sendMessage(message); // sqs 비동기 처리
+//            eventPublisher.publishEvent(PaymentCompletedEvent.from(payment)); // 스프링 이벤트 처리
         } catch (Exception e) {
             log.error("{}", e.getClass());
 //            eventPublisher.publishEvent(PaymentFailedEvent.from(newOrder));

@@ -65,7 +65,7 @@ public class PaymentClient {
                 .status(PaymentStatus.DONE)
                 .build();
         Random random = new Random();
-        int delay = 1000 + random.nextInt(1000);
+        int delay = 1000;
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {

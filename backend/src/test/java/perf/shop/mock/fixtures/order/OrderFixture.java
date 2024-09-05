@@ -7,7 +7,7 @@ import perf.shop.domain.order.dto.request.OrderCreateRequest;
 import perf.shop.domain.order.dto.request.OrderLineRequest;
 import perf.shop.domain.order.dto.request.OrderRequest;
 import perf.shop.domain.order.dto.request.OrdererRequest;
-import perf.shop.domain.payment.dto.request.PaymentRequest;
+import perf.shop.domain.payment.dto.request.PaymentApproveRequest;
 
 public class OrderFixture {
 
@@ -21,12 +21,13 @@ public class OrderFixture {
     }
 
     public static OrderRequest createOrderRequest(OrdererRequest orderer, ShippingInfoRequest shippingInfo,
-                                                  List<OrderLineRequest> orderLines, PaymentRequest paymentInfo) {
+                                                  List<OrderLineRequest> orderLines,
+                                                  PaymentApproveRequest paymentApproveRequest) {
         return OrderRequest.builder()
                 .orderer(orderer)
                 .shippingInfo(shippingInfo)
                 .orderLines(orderLines)
-                .paymentInfo(paymentInfo)
+                .paymentApproveRequest(paymentApproveRequest)
                 .build();
     }
 

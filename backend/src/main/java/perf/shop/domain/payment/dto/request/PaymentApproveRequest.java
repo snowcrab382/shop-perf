@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PaymentRequest {
+public class PaymentApproveRequest {
 
     @NotEmpty
     private String paymentKey;
@@ -21,7 +21,7 @@ public class PaymentRequest {
     private Long amount;
 
     @Builder
-    private PaymentRequest(String paymentKey, String orderId, Long amount) {
+    private PaymentApproveRequest(String paymentKey, String orderId, Long amount) {
         this.paymentKey = paymentKey;
         this.orderId = orderId;
         this.amount = amount;

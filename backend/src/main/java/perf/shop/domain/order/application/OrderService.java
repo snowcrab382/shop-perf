@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import perf.shop.domain.model.ShippingInfo;
-import perf.shop.domain.order.dao.BatchOrderRepository;
 import perf.shop.domain.order.dao.OrderRepository;
 import perf.shop.domain.order.domain.Order;
 import perf.shop.domain.order.domain.OrderLine;
@@ -25,7 +24,6 @@ public class OrderService {
     private final OutboxService outboxService;
     private final OrderRepository ordersRepository;
     private final OrderLineFactory orderLineFactory;
-    private final BatchOrderRepository batchOrderRepository;
 
     public Order createOrder(Long userId, OrderRequest request) {
         String orderId = request.getPaymentInfo().getOrderId();
@@ -38,7 +36,7 @@ public class OrderService {
 
         newOrder.verifyAmount(request.getPaymentInfo().getAmount());
         productService.deductStock(newOrder);
-//        outboxService.createOutbox(newOrder.getId());
+        outboxService.createOutbox(newOrder.getId());
         return newOrder;
     }
 
@@ -48,14 +46,10 @@ public class OrderService {
         ordersRepository.save(order);
     }
 
-    public void bulkApproveOrders(List<String> orderIds) {
-        batchOrderRepository.bulkApproveOrders(orderIds);
-    }
-
-    public void failedOrder(String id) {
+    public Order failedOrder(String id) {
         Order order = getOrder(id);
         order.failed();
-        ordersRepository.save(order);
+        return ordersRepository.save(order);
     }
 
     private Order getOrder(String id) {

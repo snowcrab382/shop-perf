@@ -69,8 +69,9 @@ dependencies {
     implementation 'p6spy:p6spy:3.9.1'
     implementation 'com.github.gavlyukovskiy:datasource-decorator-spring-boot-autoconfigure:1.9.0'
 
-    //webflux
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    //retry
+    implementation 'org.springframework.retry:spring-retry'
 
     //aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'

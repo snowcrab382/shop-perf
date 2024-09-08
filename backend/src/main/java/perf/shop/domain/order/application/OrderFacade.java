@@ -14,6 +14,6 @@ public class OrderFacade {
 
     public void processOrder(Long userId, OrderRequest orderRequest) {
         orderProcessService.processOrderCreation(userId, orderRequest);
-        paymentService.requestApprove(orderRequest.getPaymentApproveRequest());
+        paymentService.processPaymentApprove(orderRequest.getPaymentApproveRequest());
     }
 }

@@ -1,9 +1,8 @@
 package perf.shop.domain.payment.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.retry.annotation.Retry;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -17,9 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import perf.shop.domain.payment.domain.PaymentStatus;
@@ -31,7 +27,6 @@ import perf.shop.domain.payment.error.PaymentExceptionInterceptor;
 import perf.shop.domain.payment.error.exception.PaymentConfirmErrorCode;
 import perf.shop.domain.payment.error.exception.PaymentConfirmFailedException;
 import perf.shop.domain.payment.error.exception.PaymentConfirmTemporaryFailedException;
-import perf.shop.domain.payment.error.exception.PaymentStatusUncertainException;
 import perf.shop.global.config.properties.PaymentProperties;
 
 @Slf4j
@@ -42,7 +37,7 @@ public class PaymentClient {
     private static final String AUTH_HEADER_PREFIX = "Basic ";
     private static final String IDEMPOTENT_HEADER = "Idempotency-Key";
     private static final int CONNECT_TIMEOUT_SECONDS = 1;
-    private static final int READ_TIMEOUT_SECONDS = 3;
+    private static final int READ_TIMEOUT_SECONDS = 30;
 
     private final PaymentProperties paymentProperties;
     private final ObjectMapper objectMapper;
@@ -58,15 +53,7 @@ public class PaymentClient {
                 .build();
     }
 
-    @Retryable(
-            retryFor = {
-                    PaymentConfirmTemporaryFailedException.class,
-                    ConnectException.class,
-                    SocketTimeoutException.class
-            },
-            backoff = @Backoff(delay = 1000, maxDelay = 3000, multiplier = 2),
-            recover = "recoverPaymentConfirm"
-    )
+    @Retry(name = "paymentConfirmRetry")
     public PaymentConfirmResponse confirmPayment(PaymentApproveRequest paymentApproveRequest) {
         return restClient
                 .post()
@@ -87,11 +74,6 @@ public class PaymentClient {
                             getPaymentConfirmErrorCode(response));
                 })
                 .body(PaymentConfirmResponse.class);
-    }
-
-    @Recover
-    public PaymentConfirmResponse recoverPaymentConfirm(Exception e, PaymentApproveRequest paymentApproveRequest) {
-        throw new PaymentStatusUncertainException(PaymentConfirmErrorCode.PAYMENT_STATUS_UNCERTAIN);
     }
 
     public PaymentConfirmResponse fakeConfirmPayment(PaymentApproveRequest paymentApproveRequest) {
@@ -115,23 +97,6 @@ public class PaymentClient {
         return fakeResponse;
     }
 
-//    public PaymentConfirmResponse checkPaymentByOrderId(String orderId) {
-//        return restClient
-//                .get()
-//                .uri(paymentProperties.getCheckUrl() + orderId)
-//                .header(HttpHeaders.AUTHORIZATION, createPaymentAuthHeader(paymentProperties))
-//                .retrieve()
-//                .body(PaymentConfirmResponse.class)
-//                .timeout(Duration.ofSeconds(REQUEST_TIMEOUT))
-//                .doOnError(throwable -> {
-//                    WebClientResponseException exception = (WebClientResponseException) throwable;
-//                    log.error("주문 번호 {} 에 대한 결제 확인 중 오류 발생 : {}", orderId,
-//                            exception.getResponseBodyAsString());
-//                    throw new PaymentConfirmFailedException(PaymentConfirmErrorCode.findByName(exception.getMessage()));
-//                })
-//                .block();
-//    }
-
     private ClientHttpRequestFactory createPaymentRequestFactory() {
         ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
                 .withConnectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
@@ -151,4 +116,6 @@ public class PaymentClient {
                 response.getBody(), PaymentConfirmFailedResponse.class);
         return PaymentConfirmErrorCode.findByName(confirmFailedResponse.getCode());
     }
+
+
 }

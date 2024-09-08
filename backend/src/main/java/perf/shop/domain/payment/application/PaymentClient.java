@@ -1,6 +1,7 @@
 package perf.shop.domain.payment.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +28,7 @@ import perf.shop.domain.payment.error.PaymentExceptionInterceptor;
 import perf.shop.domain.payment.error.exception.PaymentConfirmErrorCode;
 import perf.shop.domain.payment.error.exception.PaymentConfirmFailedException;
 import perf.shop.domain.payment.error.exception.PaymentConfirmTemporaryFailedException;
+import perf.shop.global.config.Resilience4jConfig;
 import perf.shop.global.config.properties.PaymentProperties;
 
 @Slf4j
@@ -53,7 +55,8 @@ public class PaymentClient {
                 .build();
     }
 
-    @Retry(name = "paymentConfirmRetry")
+    @Retry(name = Resilience4jConfig.PAYMENT_CONFIRM_RETRY)
+    @CircuitBreaker(name = Resilience4jConfig.PAYMENT_CONFIRM_CIRCUIT_BREAKER)
     public PaymentConfirmResponse confirmPayment(PaymentApproveRequest paymentApproveRequest) {
         return restClient
                 .post()

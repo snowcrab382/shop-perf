@@ -1,6 +1,7 @@
 package perf.shop.global.error;
 
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -86,5 +87,11 @@ public class GlobalExceptionHandler {
     protected ErrorResponse handleException(Exception e) {
         log.error("UNEXPECTED ERROR OCCURED : {}", e.getClass());
         return ErrorResponse.of(GlobalErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CallNotPermittedException.class)
+    protected ErrorResponse handleCallNotPermittedException(CallNotPermittedException e) {
+        log.error("CIRCUIT BREAKER IS OPEN : {}", e.getClass());
+        return ErrorResponse.of(GlobalErrorCode.CIRCUIT_BREAKER_OPEN);
     }
 }

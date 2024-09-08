@@ -19,6 +19,7 @@ public enum GlobalErrorCode implements ErrorCode {
     JWT_EXPIRED(403, "토큰이 만료되었습니다."),
     JWT_SIGNATURE_INVALID(403, "토큰의 시그니쳐가 유효하지 않습니다."),
     DATABASE_CONNECTION_TIMEOUT(500, "데이터베이스 연결 시간을 초과하였습니다. 잠시 후 다시 시도해주세요."),
+    CIRCUIT_BREAKER_OPEN(500, "서비스가 현재 요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요."),
 
     /**
      * EntityNotFoundException

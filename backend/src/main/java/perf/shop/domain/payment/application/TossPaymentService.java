@@ -1,6 +1,7 @@
 package perf.shop.domain.payment.application;
 
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class TossPaymentService {
         try {
             Payment newPayment = confirmPayment(request);
             paymentEventPublisher.publishPaymentApprovedEvent(newPayment);
-        } catch (PaymentConfirmFailedException e) {
+        } catch (PaymentConfirmFailedException | CallNotPermittedException e) {
             paymentEventPublisher.publishPaymentFailedEvent(request.getOrderId());
             throw e;
         }

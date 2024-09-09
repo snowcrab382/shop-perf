@@ -9,6 +9,9 @@ import perf.shop.global.error.exception.ErrorCode;
 @AllArgsConstructor
 public enum PaymentConfirmErrorCode implements ErrorCode {
 
+    /**
+     * 정상적으로 결제요청에 대한 응답이 왔지만, 결제 실패한 경우
+     */
     ALREADY_PROCESSED_PAYMENT(400, "이미 처리된 결제 입니다."),
     PROVIDER_ERROR(400, "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."),
     EXCEED_MAX_CARD_INSTALLMENT_PLAN(400, "설정 가능한 최대 할부 개월 수를 초과했습니다."),
@@ -53,14 +56,19 @@ public enum PaymentConfirmErrorCode implements ErrorCode {
     FDS_ERROR(403, "[토스페이먼츠] 위험거래가 감지되어 결제가 제한됩니다. 발송된 문자에 포함된 링크를 통해 본인인증 후 결제가 가능합니다. (고객센터: 1644-8051)"),
     NOT_FOUND_PAYMENT(404, "존재하지 않는 결제 정보 입니다."),
     NOT_FOUND_PAYMENT_SESSION(404, "결제 시간이 만료되어 결제 진행 데이터가 존재하지 않습니다."),
+
+    /**
+     * 일시적으로 결제가 실패하여 재시도가 필요한 경우
+     */
     FAILED_PAYMENT_INTERNAL_SYSTEM_PROCESSING(500, "결제가 완료되지 않았어요. 다시 시도해주세요."),
     FAILED_INTERNAL_SYSTEM_PROCESSING(500, "내부 시스템 처리 작업이 실패했습니다. 잠시 후 다시 시도해주세요."),
     UNKNOWN_PAYMENT_ERROR(500, "결제에 실패했어요. 같은 문제가 반복된다면 은행이나 카드사로 문의해주세요."),
 
+    /**
+     * 기타 서버 에러
+     */
     UNEXPECTED_PAYMENT_ERROR(500, "결제 과정에서 예상치 못한 서버 에러가 발생했습니다."),
-    PAYMENT_REQUEST_TIMEOUT(408, "결제 요청 시간을 초과하였습니다."),
-
-    ;
+    PAYMENT_STATUS_UNCERTAIN(202, "결제 상태를 확인중입니다. 결제 완료 메세지를 받았다면 결제가 완료된 것입니다. 추가 문의는 고객센터로 문의해주세요.");
 
     private final int status;
     private final String message;

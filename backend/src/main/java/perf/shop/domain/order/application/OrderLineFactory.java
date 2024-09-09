@@ -13,7 +13,7 @@ public class OrderLineFactory {
     private final ProductService productService;
 
     public OrderLine createOrderLine(OrderLineRequest request) {
-        productService.checkProductStock(request.getProductId(), request.getQuantity());
+        productService.validateProductExistsById(request.getProductId());
         return OrderLine.from(request);
     }
 }

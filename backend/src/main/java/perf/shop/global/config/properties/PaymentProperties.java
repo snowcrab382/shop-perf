@@ -14,9 +14,14 @@ public class PaymentProperties {
     private String secretKey;
     private String baseUrl;
     private String confirmEndpoint;
+    private String checkEndpoint;
 
     public String getConfirmUrl() {
         return baseUrl + confirmEndpoint;
+    }
+
+    public String getCheckUrl() {
+        return baseUrl + checkEndpoint;
     }
 
 }

@@ -1,9 +1,11 @@
 package perf.shop.global.error;
 
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,6 +66,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * hikariCP 를 사용할 때, timeout 이 발생하는 경우 예외 처리
+     *
+     * @param e - 데이터베이스 연결 시간 초과 시 예외 발생
+     * @return ErrorResponse
+     */
+    @ExceptionHandler(CannotCreateTransactionException.class)
+    protected ErrorResponse handleCannotCreateTransactionException(CannotCreateTransactionException e) {
+        log.error("DATABASE CONNECTION TIMEOUT : {}", e.getClass());
+        return ErrorResponse.of(GlobalErrorCode.DATABASE_CONNECTION_TIMEOUT);
+    }
+
+    /**
      * 직접 핸들링하지 않은 예외들을 처리
      *
      * @param e 핸들링하지 않은 예외들(ex. InvalidDataAccessApiUsageException)
@@ -71,7 +85,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     protected ErrorResponse handleException(Exception e) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("UNEXPECTED ERROR OCCURED : {}", e.getClass());
         return ErrorResponse.of(GlobalErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CallNotPermittedException.class)
+    protected ErrorResponse handleCallNotPermittedException(CallNotPermittedException e) {
+        log.error("CIRCUIT BREAKER IS OPEN : {}", e.getClass());
+        return ErrorResponse.of(GlobalErrorCode.CIRCUIT_BREAKER_OPEN);
     }
 }

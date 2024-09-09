@@ -1,22 +1,25 @@
 package perf.shop.domain.payment.dto.response;
 
 import java.time.ZonedDateTime;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import perf.shop.domain.payment.domain.PaymentStatus;
 import perf.shop.domain.payment.domain.PaymentType;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PaymentConfirmResponse {
 
-    private final String paymentKey;
-    private final String orderId;
-    private final String orderName;
-    private final Long totalAmount;
-    private final ZonedDateTime requestedAt;
-    private final ZonedDateTime approvedAt;
-    private final PaymentType type;
-    private final PaymentStatus status;
+    private String paymentKey;
+    private String orderId;
+    private String orderName;
+    private Long totalAmount;
+    private ZonedDateTime requestedAt;
+    private ZonedDateTime approvedAt;
+    private PaymentType type;
+    private PaymentStatus status;
 
     @Builder
     private PaymentConfirmResponse(String paymentKey, String orderId, String orderName, Long totalAmount,

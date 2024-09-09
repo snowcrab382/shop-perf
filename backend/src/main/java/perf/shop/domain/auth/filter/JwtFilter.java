@@ -3,8 +3,10 @@ package perf.shop.domain.auth.filter;
 import static perf.shop.domain.auth.domain.OAuth2Attributes.AUTHORIZATION;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RequestMatcher publicEndpoints;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
             //필터 로직을 수행 할 필요 없는 uri 인 경우 곧바로 통과
             if (publicEndpoints.matches(request)) {
@@ -62,13 +65,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
             //세션에 사용자 등록
             SecurityContextHolder.getContext().setAuthentication(authToken);
-
             filterChain.doFilter(request, response);
+
         } catch (Exception e) {
-            log.error("Exception 발생 : {}", e.getClass());
+            log.error("JWT 검증 중 예외 발생 : {}", e.getClass());
             exceptionResolver.resolveException(request, response, null, e);
         }
-
     }
 
 }

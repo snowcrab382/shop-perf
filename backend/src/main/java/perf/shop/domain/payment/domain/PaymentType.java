@@ -14,6 +14,7 @@ public enum PaymentType {
     CULTURE_VOUCHER("문화상품권"),
     BOOK_CULTURE_VOUCHER("도서문화상품권"),
     GAME_CULTURE_VOUCHER("게임문화상품권"),
+    NORMAL("일반"),
     ;
 
     private final String value;

@@ -18,6 +18,8 @@ public enum GlobalErrorCode implements ErrorCode {
     JWT_MALFORMED(403, "토큰이 변조되었습니다."),
     JWT_EXPIRED(403, "토큰이 만료되었습니다."),
     JWT_SIGNATURE_INVALID(403, "토큰의 시그니쳐가 유효하지 않습니다."),
+    DATABASE_CONNECTION_TIMEOUT(500, "데이터베이스 연결 시간을 초과하였습니다. 잠시 후 다시 시도해주세요."),
+    CIRCUIT_BREAKER_OPEN(500, "서비스가 현재 요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요."),
 
     /**
      * EntityNotFoundException
@@ -27,11 +29,16 @@ public enum GlobalErrorCode implements ErrorCode {
     PRODUCT_NOT_FOUND(400, "상품을 찾을 수 없습니다."),
     CART_PRODUCT_NOT_FOUND(400, "장바구니 상품을 찾을 수 없습니다."),
     ADDRESS_BOOK_NOT_FOUND(400, "주소록을 찾을 수 없습니다."),
+    ORDER_NOT_FOUND(400, "주문을 찾을 수 없습니다."),
+    OUTBOX_NOT_FOUND(400, "아웃박스를 찾을 수 없습니다."),
 
     /**
      * InvalidValueException
      */
     ORDER_LINE_NOT_EXIST(400, "주문 상품은 최소 1개 이상이어야 합니다."),
+    ORDER_ALREADY_EXISTS(400, "이미 주문이 존재합니다."),
+    INVALID_ORDER_STATE(400, "주문 상태가 유효하지 않습니다."),
+    INVALID_PAYMENT_AMOUNT(400, "결제 금액이 유효하지 않습니다."),
 
     /**
      * OutOfStockException

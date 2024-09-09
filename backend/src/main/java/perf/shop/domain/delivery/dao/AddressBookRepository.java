@@ -1,4 +1,4 @@
-package perf.shop.domain.delivery.repository;
+package perf.shop.domain.delivery.dao;
 
 import java.util.List;
 import java.util.Optional;

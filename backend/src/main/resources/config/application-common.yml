@@ -12,7 +12,18 @@ spring:
         default-page-size: 50
         max-page-size: 100
 
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: ENC(AHEKZsAG0srLE5a4KbG0J5f3XXhzintTFrh9bXHJkao=)
+        secret-key: ENC(iXbf7HGkxUVRHYof6GQML5eK0CGvOtqkOKxn2RU0tMXBTzEZ+5/Q8+QWPV4FpSHXgyObt/TAzmA=)
+      stack:
+        auto: false
+
 payment:
   secret-key: ENC(/zMxUzBbhivsJUrW6PBujFT0Pc+cYkMtduC+d3rE89S9R4yswd0LItNyrqQHKGBs)
   base-url: https://api.tosspayments.com/v1/payments
   confirm-endpoint: /confirm
+  check-endpoint: /orders/

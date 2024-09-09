@@ -7,14 +7,17 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Persistable;
 import perf.shop.domain.model.ShippingInfo;
 import perf.shop.global.common.domain.BaseEntity;
 import perf.shop.global.error.exception.GlobalErrorCode;
@@ -24,7 +27,7 @@ import perf.shop.global.error.exception.InvalidValueException;
 @Getter
 @Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseEntity {
+public class Order extends BaseEntity implements Persistable<String> {
 
     @Id
     private String id;
@@ -41,16 +44,20 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderState state;
 
+    @Transient
+    private boolean isNew = true;
+
     @Builder
-    private Order(Orderer orderer, ShippingInfo shippingInfo) {
-        this.id = generateOrderId();
+    private Order(String id, Orderer orderer, ShippingInfo shippingInfo) {
+        this.id = id;
         this.orderer = orderer;
         this.shippingInfo = shippingInfo;
-        this.state = OrderState.CREATED;
+        this.state = OrderState.PENDING;
     }
 
-    public static Order of(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
+    public static Order of(String id, Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLines) {
         Order newOrder = Order.builder()
+                .id(id)
                 .orderer(orderer)
                 .shippingInfo(shippingInfo)
                 .build();
@@ -72,13 +79,40 @@ public class Order extends BaseEntity {
                 .sum();
     }
 
+    public void verifyAmount(Long amount) {
+        if (!amount.equals(calculateTotalAmounts())) {
+            throw new InvalidValueException(GlobalErrorCode.INVALID_PAYMENT_AMOUNT);
+        }
+    }
+
+    public void failed() {
+        if (state != OrderState.PENDING) {
+            throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
+        }
+        state = OrderState.FAILED;
+        orderLines.clear();
+    }
+
+    public void paymentApproved() {
+        if (state != OrderState.PENDING) {
+            throw new InvalidValueException(GlobalErrorCode.INVALID_ORDER_STATE);
+        }
+        state = OrderState.PAYMENT_APPROVED;
+    }
+
     private void addOrderLine(OrderLine orderLine) {
         orderLine.setOrder(this);
         orderLines.add(orderLine);
     }
 
-    private String generateOrderId() {
-        return UUID.randomUUID().toString().replace("-", "");
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNew = false;
+    }
 }

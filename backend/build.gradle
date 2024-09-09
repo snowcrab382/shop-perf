@@ -69,6 +69,26 @@ dependencies {
     implementation 'p6spy:p6spy:3.9.1'
     implementation 'com.github.gavlyukovskiy:datasource-decorator-spring-boot-autoconfigure:1.9.0'
 
+
+    //retry
+    implementation 'org.springframework.retry:spring-retry'
+
+    //aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    //aws sqs
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.1")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+
+    //jackson datetype converter
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    //resilience4j(aop, actuator)
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+
+    //actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
 editorconfig {

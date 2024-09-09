@@ -7,34 +7,53 @@
     <script src="https://js.tosspayments.com/v1"></script>
 </head>
 <body>
-<h1>상품: 테스트 상품</h1>
-<p>가격: 1,000원</p>
+<h1>토스페이먼츠 결제 테스트</h1>
 <button id="payment-button">결제하기</button>
+
+<div id="payment-result" style="display: none;">
+    <h2>결제 결과</h2>
+    <pre id="result"></pre>
+</div>
 
 <script>
     var clientKey = 'test_ck_GePWvyJnrKjkDLyaZGYOVgLzN97E';
     var tossPayments = TossPayments(clientKey);
 
-    var button = document.getElementById('payment-button');
-
-    button.addEventListener('click', function () {
+    document.getElementById('payment-button').addEventListener('click', function () {
         tossPayments.requestPayment('카드', {
             amount: 1000,
             orderId: 'ORDER_ID_' + new Date().getTime(),
             orderName: '테스트 상품',
             customerName: '홍길동',
-            successUrl: window.location.origin + '/success',
-            failUrl: window.location.origin + '/fail',
+            successUrl: window.location.href,
+            failUrl: window.location.href,
         })
                 .catch(function (error) {
                     if (error.code === 'USER_CANCEL') {
-                        // 결제 고객이 결제창을 닫았을 때 에러 처리
                         console.log("사용자가 결제를 취소하였습니다.");
                     } else if (error.code === 'INVALID_CARD_COMPANY') {
-                        // 유효하지 않은 카드 코드에 대한 에러 처리
                         console.log("유효하지 않은 카드입니다.");
                     }
                 });
+    });
+
+    // URL 파라미터 파싱 함수
+    function getUrlParams() {
+        var params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+            params[key] = decodeURIComponent(value);
+        });
+        return params;
+    }
+
+    // 페이지 로드 시 실행
+    window.addEventListener('load', function () {
+        var params = getUrlParams();
+        if (params.paymentKey && params.orderId && params.amount) {
+            document.getElementById('payment-button').style.display = 'none';
+            document.getElementById('payment-result').style.display = 'block';
+            document.getElementById('result').textContent = JSON.stringify(params, null, 2);
+        }
     });
 </script>
 </body>

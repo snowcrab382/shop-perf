@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CouponType {
-    FIRST_COMES_FIRST_SERVES("first_comes_first_serves"),
+    FIRST_COMES_FIRST_SERVES("FIRST_COMES_FIRST_SERVES"),
     ;
 
     private final String value;

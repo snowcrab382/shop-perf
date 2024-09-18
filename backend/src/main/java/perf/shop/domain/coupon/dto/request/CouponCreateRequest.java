@@ -1,5 +1,6 @@
 package perf.shop.domain.coupon.dto.request;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,15 +24,15 @@ public class CouponCreateRequest {
     @NotBlank
     private String discountType;
 
-    @NotNull
-    private Integer amount;
+    @Min(100)
+    private Integer discountAmount;
+
+    @Min(1)
+    @Max(100)
+    private Integer discountPercent;
 
     @NotNull
     private Integer totalCount;
-
-    @NotNull
-    @Min(1)
-    private Integer maxCountPerUser;
 
     @NotNull
     private LocalDateTime startedAt;

@@ -47,7 +47,8 @@ public class SecurityConfig {
                 new AntPathRequestMatcher("/actuator/**", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/products/**", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/categories/**", HttpMethod.GET.name()),
-                new AntPathRequestMatcher("/pavicon.ico")
+                new AntPathRequestMatcher("/pavicon.ico"),
+                new AntPathRequestMatcher("/token")
         );
 
         http

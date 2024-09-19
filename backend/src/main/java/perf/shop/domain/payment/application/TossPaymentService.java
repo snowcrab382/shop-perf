@@ -24,7 +24,7 @@ public class TossPaymentService {
     private final OrderService orderService;
     private final OutboxService outboxService;
 
-    public void processPaymentApprove(PaymentApproveRequest request) {
+    public void processPaymentApproveAsync(PaymentApproveRequest request) {
         try {
             Payment newPayment = confirmPayment(request);
             paymentEventPublisher.publishPaymentApprovedEvent(newPayment);

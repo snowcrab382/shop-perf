@@ -22,7 +22,7 @@ public class OrderApi {
     @PostMapping("/async")
     public ApiResponse<Void> processOrderAsync(@RequestBody @Valid OrderRequest orderRequest,
                                                @UserId Long userId) {
-        orderFacade.processOrder(userId, orderRequest);
+        orderFacade.processOrderAsync(userId, orderRequest);
         return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
     }
 

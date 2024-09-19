@@ -12,9 +12,9 @@ public class OrderFacade {
     private final OrderProcessService orderProcessService;
     private final TossPaymentService paymentService;
 
-    public void processOrder(Long userId, OrderRequest orderRequest) {
+    public void processOrderAsync(Long userId, OrderRequest orderRequest) {
         orderProcessService.processOrderCreation(userId, orderRequest);
-        paymentService.processPaymentApprove(orderRequest.getPaymentApproveRequest());
+        paymentService.processPaymentApproveAsync(orderRequest.getPaymentApproveRequest());
     }
 
     public void processOrderSync(Long userId, OrderRequest orderRequest) {

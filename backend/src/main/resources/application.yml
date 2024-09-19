@@ -6,7 +6,9 @@ spring:
       local:
         - common
         - auth
+        - monitor
       deploy:
         - common
         - auth-deploy
+        - monitor
     

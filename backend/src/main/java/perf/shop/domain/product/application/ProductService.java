@@ -44,13 +44,13 @@ public class ProductService {
     }
 
     public void deductStock(Long productId, Integer quantity) {
-        Product product = getProductForUpdate(productId);
+        Product product = getProduct(productId);
         product.deductStock(quantity);
     }
 
     public void restoreStock(Order order) {
         order.getOrderLines().forEach(orderLine -> {
-            Product product = getProductForUpdate(orderLine.getProductId());
+            Product product = getProduct(orderLine.getProductId());
             product.restoreStock(orderLine.getQuantity());
         });
     }

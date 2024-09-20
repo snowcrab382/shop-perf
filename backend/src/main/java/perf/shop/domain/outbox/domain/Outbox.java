@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import perf.shop.global.common.domain.BaseEntity;
 
 @Entity
 @Getter
-@Table(name = "outbox")
+@Table(name = "outbox", indexes = @Index(name = "idx_order_id", columnList = "order_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Outbox extends BaseEntity {
 
@@ -24,7 +25,7 @@ public class Outbox extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "order_id", nullable = false)
     private String orderId;
 
     @Enumerated(EnumType.STRING)

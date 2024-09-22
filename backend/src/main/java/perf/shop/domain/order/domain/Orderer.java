@@ -29,7 +29,7 @@ public class Orderer {
         this.ordererEmail = ordererEmail;
     }
 
-    public static Orderer from(Long userId, OrdererRequest request) {
+    public static Orderer from(long userId, OrdererRequest request) {
         return Orderer.builder()
                 .userId(userId)
                 .ordererName(request.getOrdererName())

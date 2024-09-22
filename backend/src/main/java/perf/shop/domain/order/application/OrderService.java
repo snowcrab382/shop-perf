@@ -22,7 +22,7 @@ public class OrderService {
     private final OrderRepository ordersRepository;
     private final OrderLineFactory orderLineFactory;
 
-    public Order createOrder(Long userId, OrderRequest request) {
+    public Order createOrder(long userId, OrderRequest request) {
         validateOrder(request.getPaymentApproveRequest().getOrderId());
         Order newOrder = createOrderFromRequest(userId, request);
         newOrder.verifyAmount(request.getPaymentApproveRequest().getAmount());
@@ -54,7 +54,7 @@ public class OrderService {
         }
     }
 
-    private Order createOrderFromRequest(Long userId, OrderRequest request) {
+    private Order createOrderFromRequest(long userId, OrderRequest request) {
         String orderId = getOrderId(request);
         Orderer orderer = createOrderer(userId, request);
         ShippingInfo shippingInfo = createShippingInfo(request);
@@ -67,7 +67,7 @@ public class OrderService {
         return request.getPaymentApproveRequest().getOrderId();
     }
 
-    private Orderer createOrderer(Long userId, OrderRequest request) {
+    private Orderer createOrderer(long userId, OrderRequest request) {
         return Orderer.from(userId, request.getOrderer());
     }
 

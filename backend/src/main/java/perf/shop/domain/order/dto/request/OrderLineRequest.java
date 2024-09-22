@@ -12,17 +12,17 @@ import lombok.NoArgsConstructor;
 public class OrderLineRequest {
 
     @NotNull
-    private Long productId;
+    private long productId;
 
     @NotNull
     @Min(1)
-    private Integer quantity;
+    private int quantity;
 
     @NotNull
-    private Long price;
+    private long price;
 
     @Builder
-    private OrderLineRequest(Long productId, Integer quantity, Long price) {
+    private OrderLineRequest(long productId, int quantity, long price) {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;

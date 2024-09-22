@@ -19,7 +19,7 @@ public class OrderProcessService {
 
     public void processOrderCreation(long userId, OrderRequest request) {
         Order newOrder = orderService.createOrder(userId, request);
-        outboxService.createOutbox(newOrder.getId());
+//        outboxService.createOutbox(newOrder.getId());
         productService.deductStockFromOrder(newOrder);
     }
 }

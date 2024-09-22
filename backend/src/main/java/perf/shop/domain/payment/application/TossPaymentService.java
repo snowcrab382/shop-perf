@@ -23,16 +23,16 @@ public class TossPaymentService {
     public void processPaymentApproveAsync(PaymentApproveRequest request) {
         try {
             Payment newPayment = confirmPayment(request);
-            paymentEventPublisher.publishPaymentApprovedEvent(newPayment);
+//            paymentEventPublisher.publishPaymentApprovedEvent(newPayment);
         } catch (PaymentConfirmFailedException | CallNotPermittedException e) {
-            paymentEventPublisher.publishPaymentFailedEvent(request.getOrderId());
-            throw e;
+//            paymentEventPublisher.publishPaymentFailedEvent(request.getOrderId());
+//            throw e;
         }
     }
 
     public void processPaymentApproveSync(PaymentApproveRequest request) {
         Payment newPayment = confirmPayment(request);
-        paymentApprovedService.processPaymentApproved(newPayment);
+//        paymentApprovedService.processPaymentApproved(newPayment);
     }
 
     private Payment confirmPayment(PaymentApproveRequest request) {

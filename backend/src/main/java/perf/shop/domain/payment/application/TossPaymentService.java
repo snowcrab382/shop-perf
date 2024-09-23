@@ -35,6 +35,10 @@ public class TossPaymentService {
         paymentApprovedService.processPaymentApproved(newPayment);
     }
 
+    public void processPaymentApproveOnly(PaymentApproveRequest request) {
+        Payment newPayment = confirmPayment(request);
+    }
+
     private Payment confirmPayment(PaymentApproveRequest request) {
         PaymentConfirmResponse paymentConfirmResponse = paymentClient.fakeConfirmPayment(request);
         return Payment.from(paymentConfirmResponse);

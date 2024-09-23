@@ -32,4 +32,10 @@ public class OrderApi {
         orderFacade.processOrderSync(userId, orderRequest);
         return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
     }
+
+    @PostMapping("/only-payment")
+    public ApiResponse<Void> processOrderWithPaymentApprove(@RequestBody @Valid OrderRequest orderRequest) {
+        orderFacade.processOrderWithPaymentApprove(orderRequest);
+        return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
+    }
 }

@@ -32,7 +32,7 @@ public class TossPaymentService {
 
     public void processPaymentApproveSync(PaymentApproveRequest request) {
         Payment newPayment = confirmPayment(request);
-//        paymentApprovedService.processPaymentApproved(newPayment);
+        paymentApprovedService.processPaymentApproved(newPayment);
     }
 
     private Payment confirmPayment(PaymentApproveRequest request) {

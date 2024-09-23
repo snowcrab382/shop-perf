@@ -22,4 +22,5 @@ decorator:
 server:
   tomcat:
     threads:
-      max: 150
+      max: 100
+      min-spare: 100

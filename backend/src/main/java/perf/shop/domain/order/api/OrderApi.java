@@ -28,7 +28,7 @@ public class OrderApi {
 
     @PostMapping("/sync")
     public ApiResponse<Void> processOrderSync(@RequestBody @Valid OrderRequest orderRequest,
-                                              @UserId long userId) {
+                                              @UserId Long userId) {
         orderFacade.processOrderSync(userId, orderRequest);
         return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
     }

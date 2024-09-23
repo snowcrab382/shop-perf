@@ -18,10 +18,10 @@ public class PaymentApproveRequest {
     private String orderId;
 
     @NotNull
-    private long amount;
+    private Long amount;
 
     @Builder
-    private PaymentApproveRequest(String paymentKey, String orderId, long amount) {
+    private PaymentApproveRequest(String paymentKey, String orderId, Long amount) {
         this.paymentKey = paymentKey;
         this.orderId = orderId;
         this.amount = amount;

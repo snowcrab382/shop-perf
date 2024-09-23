@@ -17,7 +17,7 @@ public class OrderProcessService {
     private final OutboxService outboxService;
     private final ProductService productService;
 
-    public void processOrderCreation(long userId, OrderRequest request) {
+    public void processOrderCreation(Long userId, OrderRequest request) {
         Order newOrder = orderService.createOrder(userId, request);
 //        outboxService.createOutbox(newOrder.getId());
         productService.deductStockFromOrder(newOrder);

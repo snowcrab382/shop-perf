@@ -34,8 +34,9 @@ public class OrderApi {
     }
 
     @PostMapping("/only-payment")
-    public ApiResponse<Void> processOrderWithPaymentApprove(@RequestBody @Valid OrderRequest orderRequest) {
-        orderFacade.processOrderWithPaymentApprove(orderRequest);
+    public ApiResponse<Void> processOrderWithPaymentApprove(@RequestBody @Valid OrderRequest orderRequest,
+                                                            @UserId Long userId) {
+        orderFacade.processOrderWithPaymentApprove(userId, orderRequest);
         return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
     }
 }

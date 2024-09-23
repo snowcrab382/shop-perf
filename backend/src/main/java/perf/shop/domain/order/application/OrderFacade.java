@@ -22,7 +22,8 @@ public class OrderFacade {
         paymentService.processPaymentApproveSync(orderRequest.getPaymentApproveRequest());
     }
 
-    public void processOrderWithPaymentApprove(OrderRequest orderRequest) {
+    public void processOrderWithPaymentApprove(Long userId, OrderRequest orderRequest) {
+        orderProcessService.processOrderCreation(userId, orderRequest);
         paymentService.processPaymentApproveOnly(orderRequest.getPaymentApproveRequest());
     }
 }

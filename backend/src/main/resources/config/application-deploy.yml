@@ -23,4 +23,3 @@ server:
   tomcat:
     threads:
       max: 170
-      min-spare: 100

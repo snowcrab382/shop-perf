@@ -19,24 +19,11 @@ public class OrderApi {
 
     private final OrderFacade orderFacade;
 
-    @PostMapping("/async")
+    @PostMapping
     public ApiResponse<Void> processOrderAsync(@RequestBody @Valid OrderRequest orderRequest,
                                                @UserId Long userId) {
-        orderFacade.processOrderAsync(userId, orderRequest);
+        orderFacade.processOrder(userId, orderRequest);
         return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
     }
 
-    @PostMapping("/sync")
-    public ApiResponse<Void> processOrderSync(@RequestBody @Valid OrderRequest orderRequest,
-                                              @UserId Long userId) {
-        orderFacade.processOrderSync(userId, orderRequest);
-        return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
-    }
-
-    @PostMapping("/only-payment")
-    public ApiResponse<Void> processOrderWithPaymentApprove(@RequestBody @Valid OrderRequest orderRequest,
-                                                            @UserId Long userId) {
-        orderFacade.processOrderWithPaymentApprove(userId, orderRequest);
-        return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
-    }
 }

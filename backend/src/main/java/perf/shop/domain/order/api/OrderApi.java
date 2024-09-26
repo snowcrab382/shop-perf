@@ -20,8 +20,8 @@ public class OrderApi {
     private final OrderFacade orderFacade;
 
     @PostMapping
-    public ApiResponse<Void> processOrderAsync(@RequestBody @Valid OrderRequest orderRequest,
-                                               @UserId Long userId) {
+    public ApiResponse<Void> processOrder(@RequestBody @Valid OrderRequest orderRequest,
+                                          @UserId Long userId) {
         orderFacade.processOrder(userId, orderRequest);
         return ApiResponse.of(ResponseCode.ORDER_SUCCESS);
     }

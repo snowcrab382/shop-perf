@@ -3,34 +3,33 @@ package perf.shop.domain.payment.application;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import perf.shop.domain.payment.application.event.PaymentEventPublisher;
-import perf.shop.domain.payment.domain.Payment;
 import perf.shop.domain.payment.dto.request.PaymentApproveRequest;
 import perf.shop.domain.payment.dto.response.PaymentConfirmResponse;
 import perf.shop.domain.payment.error.exception.PaymentConfirmFailedException;
+import perf.shop.infra.sqs.application.MessageSender;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TossPaymentService {
 
-    private final PaymentEventPublisher paymentEventPublisher;
     private final PaymentClient paymentClient;
+    private final MessageSender messageSender;
 
-    public void processPaymentApprove(PaymentApproveRequest request) {
+    @Value("${spring.cloud.aws.sqs.payment-failed-queue}")
+    private String PAYMENT_FAILED_QUEUE;
+    @Value("${spring.cloud.aws.sqs.payment-success-queue}")
+    private String PAYMENT_SUCCESS_QUEUE;
+
+    public void processPayment(PaymentApproveRequest request) {
         try {
-            Payment newPayment = confirmPayment(request);
-            paymentEventPublisher.publishPaymentApprovedEvent(newPayment);
+            PaymentConfirmResponse response = paymentClient.fakeConfirmPayment(request);
+            messageSender.send(PAYMENT_SUCCESS_QUEUE, response);
         } catch (PaymentConfirmFailedException | CallNotPermittedException e) {
-            paymentEventPublisher.publishPaymentFailedEvent(request.getOrderId());
+            messageSender.send(PAYMENT_FAILED_QUEUE, request.getOrderId());
             throw e;
         }
     }
 
-    private Payment confirmPayment(PaymentApproveRequest request) {
-        PaymentConfirmResponse paymentConfirmResponse = paymentClient.confirmPayment(request);
-        return Payment.from(paymentConfirmResponse);
-    }
 }

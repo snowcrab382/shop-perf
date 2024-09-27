@@ -36,8 +36,8 @@ env:
   JASYPT_SECRET_KEY: ${{ secrets.JASYPT_SECRET_KEY }}
   AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: spring-app           # set this to your Amazon ECR repository name
-  ECS_SERVICE: ecs-shop-app                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: ecs-shop                 # set this to your Amazon ECS cluster name
+  ECS_SERVICE: shop-service                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: shop                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: ecs-shop # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: shop-app           # set this to the name of the container in the

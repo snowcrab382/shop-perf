@@ -28,7 +28,7 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "refactor/issue-52" ]
+    branches: [ "develop" ]
     paths:
       - 'backend/**'
 
